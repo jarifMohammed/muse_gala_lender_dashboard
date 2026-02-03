@@ -48,7 +48,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
   });
 
   const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["add-cart"],
+    mutationKey: ["add-card"],
     mutationFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/savePaymentInfo`,
@@ -70,7 +70,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
     },
   });
 
-  const handleCart = async () => {
+  const handleCard = async () => {
     try {
       await mutateAsync();
     } catch (error) {
@@ -101,15 +101,15 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
                     (profile?.stripeCustomerId &&
                       profile?.defaultPaymentMethodId)
                   }
-                  onClick={handleCart}
+                  onClick={handleCard}
                   className="bg-black hover:bg-black disabled:cursor-not-allowed"
                 >
-                  {isPending ? "Add Cart..." : "Add Cart"}
+                  {isPending ? "Add Card..." : "Add Card"}
                 </Button>
               </TooltipTrigger>
               {profile?.stripeCustomerId && profile?.defaultPaymentMethodId && (
                 <TooltipContent>
-                  <p>Cart already added.</p>
+                  <p>Card already added.</p>
                 </TooltipContent>
               )}
             </Tooltip>
@@ -128,7 +128,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
               </TooltipTrigger>
               {isDisabled && (
                 <TooltipContent>
-                  <p>Please add cart first</p>
+                  <p>Please add card first</p>
                 </TooltipContent>
               )}
             </Tooltip>
