@@ -221,7 +221,7 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
         </Card>
       </SkeletonWrapper>
 
-      <div className="grid grid-cols-2 gap-5">
+      {/* <div className="grid grid-cols-2 gap-5">
         <SkeletonWrapper isLoading={isLoading}>
           <Card className=" w-full">
             <CardHeader>
@@ -242,7 +242,7 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
             </CardContent>
           </Card>
         </SkeletonWrapper>
-      </div>
+      </div> */}
 
       <AlertModal
         loading={isRouteChanging}
