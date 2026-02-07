@@ -104,7 +104,7 @@ const DescriptionAndDetailsForm = ({ form }: Props) => {
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="Local">Local</SelectItem>
+                <SelectItem value="Local-Pickup">Local Pickup</SelectItem>
                 <SelectItem value="Australia-wide">Australia-wide</SelectItem>
                 <SelectItem value="Both">Both</SelectItem>
               </SelectContent>

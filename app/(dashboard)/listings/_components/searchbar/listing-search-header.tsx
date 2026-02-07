@@ -54,7 +54,7 @@ const ListingSearchHeader: FC = () => {
     "Altered",
     "Vintage",
   ];
-  const deliveryOptions = ["All", "Local", "Australia-wide", "Both"];
+  const deliveryOptions = ["All", "Local-Pickup", "Australia-wide", "Both"];
 
   const router = useRouter();
 
