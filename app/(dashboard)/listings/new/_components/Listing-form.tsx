@@ -98,7 +98,7 @@ export default function ListingForm({ token, initialId }: Props) {
             eightDays: 0,
           },
           media: [],
-          pickupOption: "Local", // default pickup option
+          pickupOption: "Local-Pickup", // default pickup option
         },
         { keepValues: false } // ensures all values are replaced with these defaults
       );
@@ -153,7 +153,7 @@ export default function ListingForm({ token, initialId }: Props) {
             eightDays: 0,
           },
           media: [],
-          pickupOption: "Local", // default pickup option
+          pickupOption: "Local-Pickup", // default pickup option
         },
         { keepValues: false } // ensures all values are replaced with these defaults
       );

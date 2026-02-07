@@ -32,7 +32,7 @@ interface APiProps {
   };
 }
 
-// ?page=1&limit=5&search=zara&condition=Worn&status=available&pickupOption=Local&size=L
+// ?page=1&limit=5&search=zara&condition=Worn&status=available&pickupOption=Local-Pickup&size=L
 const ListingTableContainer = ({ token }: Props) => {
   const {
     page,

@@ -74,7 +74,7 @@ export const listingSchema = z.object({
   media: z
     .array(z.string().url({ message: "Each media item must be a valid URL." }))
     .nonempty({ message: "At least one media file is required." }),
-  pickupOption: z.enum(["Local", "Australia-wide", "Both"], {
+  pickupOption: z.enum(["Local-Pickup", "Australia-wide", "Both"], {
     required_error: "Pickup option is required",
   }),
 });
@@ -147,7 +147,7 @@ export type Listing = {
     | "Other";
   occasion: string[];
   insurance: boolean;
-  pickupOption: "Local" | "Australia-wide" | "Both";
+  pickupOption: "Local-Pickup" | "Australia-wide" | "Both";
   approvalStatus: "pending" | "approved" | "rejected";
   reasonsForRejection?: string;
   isActive: boolean;
