@@ -13,6 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { LoaderCircle } from "lucide-react";
 
 export default function DisputeForm() {
   const [disputeReason, setDisputeReason] = useState("Damaged Dress");
@@ -20,6 +25,11 @@ export default function DisputeForm() {
   const [fileName, setFileName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const params = useParams();
+  const id = params.id;
+  const { data: session } = useSession();
+  const token = session?.user?.accessToken;
 
   const handleFileUpload = () => {
     fileInputRef.current?.click();
@@ -33,8 +43,62 @@ export default function DisputeForm() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Form submitted", { disputeReason, description, selectedFile });
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: ["submit-dispute"],
+    mutationFn: async () => {
+      if (!token) {
+        throw new Error("You must be logged in to submit a dispute");
+      }
+
+      const formData = new FormData();
+      formData.append("bookingId", id as string);
+      formData.append("issueType", disputeReason);
+      formData.append("description", description);
+      if (selectedFile) {
+        formData.append("filename", selectedFile);
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/disputes`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to submit dispute");
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Dispute submitted successfully");
+      setDescription("");
+      setSelectedFile(null);
+      setFileName("");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Something went wrong");
+    },
+  });
+
+  const handleSubmit = async () => {
+    if (!description.trim()) {
+      toast.error("Please provide a description of the issue");
+      return;
+    }
+
+    try {
+      await mutateAsync();
+    } catch (error) {
+      console.log(`error from submit dispute : ${error}`);
+    }
   };
 
   return (
@@ -72,8 +136,9 @@ export default function DisputeForm() {
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-[120px] resize-none bg-white"
+              className="min-h-[120px] resize-none bg-white font-normal"
               placeholder=""
+              disabled={isPending}
             />
           </div>
 
@@ -84,7 +149,9 @@ export default function DisputeForm() {
                 <span className="text-sm text-gray-500">
                   {fileName || "File name"}
                 </span>
-                <Button onClick={handleFileUpload}>Upload File</Button>
+                <Button onClick={handleFileUpload} disabled={isPending}>
+                  Upload File
+                </Button>
               </div>
               <input
                 ref={fileInputRef}
@@ -102,7 +169,16 @@ export default function DisputeForm() {
             for urgent issues.
           </p>
 
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit} disabled={isPending}>
+            {isPending ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircle className="h-4 w-4 animate-spin" />
+                <span>Submitting...</span>
+              </div>
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </div>
       </Card>
     </div>

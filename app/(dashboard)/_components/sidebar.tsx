@@ -90,7 +90,7 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 border-r bg-primary">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 border-r bg-[#54051d]">
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="border-none p-6 flex justify-center items-center">
@@ -113,11 +113,10 @@ const Sidebar = () => {
                   <Link
                     href={route.href}
                     className={`flex text-white/80 items-center gap-3 rounded-md px-3 py-2
-          ${
-            isActive
-              ? "bg-white/20 text-primary-foreground"
-              : " hover:bg-white/30 hover:text-white/70"
-          }
+          ${isActive
+                        ? "bg-white/20 text-primary-foreground"
+                        : " hover:bg-white/30 hover:text-white/70"
+                      }
         `}
                   >
                     {/* <Icon className="h-5 w-5" /> */}

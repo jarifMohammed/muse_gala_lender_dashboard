@@ -3,7 +3,6 @@
 import { BookingsResponse } from "@/types/bookings/bookingTypes";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import AboutOrder from "./about-order";
 import AboutAnalytics from "./dispute-description";
 import DisputeForm from "./dispute-form";
 import AboutDisputes from "./about-dispute";
@@ -51,7 +50,6 @@ const DisputesDetails = ({ token }: Props) => {
           disputesDetails={disputesDetails}
           isLoading={isLoading}
         />
-        <AboutOrder disputesDetails={disputesDetails} isLoading={isLoading} />
         <DisputeReason
           disputesDetails={disputesDetails}
           isLoading={isLoading}
@@ -68,10 +66,6 @@ const DisputesDetails = ({ token }: Props) => {
           disputesDetails={disputesDetails}
           isLoading={isLoading}
         />
-      </div>
-
-      <div>
-        <DisputeForm />
       </div>
 
       <div>

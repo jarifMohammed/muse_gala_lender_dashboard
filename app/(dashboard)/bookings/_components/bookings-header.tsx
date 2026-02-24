@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
-  const { setSearch, setDate } = useBookingsFilter();
+  const { setSearch, setStartDate, setEndDate } = useBookingsFilter();
   const [isOpen, setIsOpen] = useState(false);
   const [isDisabled, setIsDisabled] = useState<boolean>();
   const router = useRouter();
@@ -104,12 +104,12 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
                   onClick={handleCard}
                   className="bg-black hover:bg-black disabled:cursor-not-allowed"
                 >
-                  {isPending ? "Add Card..." : "Add Card"}
+                  {isPending ? "Add Payment Method..." : "Add Payment Method"}
                 </Button>
               </TooltipTrigger>
               {profile?.stripeCustomerId && profile?.defaultPaymentMethodId && (
                 <TooltipContent>
-                  <p>Card already added.</p>
+                  <p>Payment method already added.</p>
                 </TooltipContent>
               )}
             </Tooltip>
@@ -128,7 +128,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
               </TooltipTrigger>
               {isDisabled && (
                 <TooltipContent>
-                  <p>Please add card first</p>
+                  <p>Please add payment method first</p>
                 </TooltipContent>
               )}
             </Tooltip>
@@ -173,11 +173,20 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
         </div>
 
         <div className="flex items-center gap-5">
-          <div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] text-gray-500 uppercase ml-1">Start Date</span>
             <input
               type="date"
-              className="w-[180px] focus-visible:ring-0 border border-input h-9 rounded-md text-base shadow-sm px-3 py-1"
-              onChange={(e) => setDate(e.target.value)}
+              className="w-[160px] focus-visible:ring-0 border border-input h-9 rounded-md text-sm shadow-sm px-3 py-1"
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] text-gray-500 uppercase ml-1">End Date</span>
+            <input
+              type="date"
+              className="w-[160px] focus-visible:ring-0 border border-input h-9 rounded-md text-sm shadow-sm px-3 py-1"
+              onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
         </div>

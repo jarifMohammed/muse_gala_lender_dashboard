@@ -18,8 +18,6 @@ export default function DisputeForm() {
           <Link href={`/disputes/${id}/escalate-dispute`}>
             <Button>Escalate Dispute</Button>
           </Link>
-          <Button variant="outline">Download Report</Button>
-          <Button variant="outline">Close</Button>
         </div>
       </Card>
     </div>

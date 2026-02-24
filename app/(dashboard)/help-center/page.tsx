@@ -1,9 +1,10 @@
 "use client";
 
 import { Layout } from "@/components/layout";
-import { SearchInput } from "@/components/ui/search-input";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { SupportForm } from "./_components/support-form";
 
 // FAQ sections with questions
 const faqSections = [
@@ -136,10 +137,7 @@ export default function HelpCenterPage() {
               key={section.title}
               className="bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-[15px] p-[30px]"
             >
-              <div
-                className="flex justify-between items-center mb-[30px]"
-                // onClick={() => toggleSection(section.title)}
-              >
+              <div className="flex justify-between items-center mb-[30px]">
                 <h3 className="text-xl font-medium text-black font-avenirNormal tracking-[0%] leading-[120%]">
                   {section.title}
                 </h3>
@@ -181,6 +179,15 @@ export default function HelpCenterPage() {
               )}
             </div>
           ))}
+
+          {/* Contact Support Section */}
+          <div className="bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-[15px] p-[30px]">
+            <h3 className="text-xl font-medium text-black font-avenirNormal tracking-[0%] leading-[120%] mb-[30px]">
+              CONTACT SUPPORT
+            </h3>
+
+            <SupportForm />
+          </div>
         </div>
       </div>
     </Layout>

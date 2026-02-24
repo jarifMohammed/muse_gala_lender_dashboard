@@ -65,7 +65,6 @@ const DisputesTable = ({ token }: Props) => {
               <TableHead className="w-[100px] text-center">
                 Customer ID
               </TableHead>
-              <TableHead className="w-[100px] text-center">Dress ID</TableHead>
               <TableHead className="w-[100px] text-center">
                 Dispute Reason
               </TableHead>
@@ -78,7 +77,7 @@ const DisputesTable = ({ token }: Props) => {
             {isLoading || isFetching ? (
               Array.from({ length: 10 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 7 }).map((_, j) => (
+                  {Array.from({ length: 6 }).map((_, j) => (
                     <TableCell key={j} className="text-center">
                       <Skeleton className="h-5 w-20 mx-auto" />
                     </TableCell>
@@ -98,20 +97,16 @@ const DisputesTable = ({ token }: Props) => {
                     {dispute?.booking?.customer?._id}
                   </TableCell>
                   <TableCell className="text-center">
-                    {dispute?.booking?.listing?.dressId}
-                  </TableCell>
-                  <TableCell className="text-center">
                     {dispute?.issueType}
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${
-                        dispute?.status === "Pending"
+                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${dispute?.status === "Pending"
                           ? "text-orange-600 bg-orange-200"
                           : dispute.status === "Resolved"
-                          ? "text-green-600 bg-green-200"
-                          : "text-blue-600 bg-blue-200"
-                      }`}
+                            ? "text-green-600 bg-green-200"
+                            : "text-blue-600 bg-blue-200"
+                        }`}
                     >
                       {dispute?.status}
                     </span>
@@ -126,7 +121,7 @@ const DisputesTable = ({ token }: Props) => {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={6}
                   className="text-center py-6 text-gray-500"
                 >
                   No disputes found

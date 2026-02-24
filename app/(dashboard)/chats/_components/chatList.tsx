@@ -28,12 +28,17 @@ export default function ChatList({
 
   // ✅ Highlight function
   const highlightText = (text: string, query: string) => {
-    if (!query) return text
-    const regex = new RegExp(`(${query})`, 'gi')
-    return text.replace(
-      regex,
-      `<span class="bg-yellow-200 font-semibold">$1</span>`
-    )
+    if (!query || !text) return String(text || '')
+    try {
+      const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(`(${escapedQuery})`, 'gi')
+      return String(text).replace(
+        regex,
+        `<span class="bg-yellow-200 font-semibold">$1</span>`
+      )
+    } catch (e) {
+      return String(text)
+    }
   }
 
   // ✅ Filter conversations (name + timestamp + preview)
@@ -43,10 +48,13 @@ export default function ChatList({
     const lower = debouncedSearch.toLowerCase()
 
     return conversations.filter((c) => {
+      const lowerQuery = lower.trim()
       return (
-        c.name?.toLowerCase().includes(lower) ||
-        c.timestamp?.toLowerCase().includes(lower) ||
-        c.preview?.toLowerCase().includes(lower)
+        String(c.name || '').toLowerCase().includes(lowerQuery) ||
+        String(c.email || '').toLowerCase().includes(lowerQuery) ||
+        String(c.orderId || '').toLowerCase().includes(lowerQuery) ||
+        String(c.timestamp || '').toLowerCase().includes(lowerQuery) ||
+        String(c.preview || '').toLowerCase().includes(lowerQuery)
       )
     })
   }, [debouncedSearch, conversations])
@@ -81,9 +89,8 @@ export default function ChatList({
         {filteredConversations.map((conversation) => (
           <div
             key={conversation.id}
-            className={`p-4 flex items-start gap-3 rounded-md cursor-pointer hover:bg-red-50 border-b ${
-              activeConversation === conversation.id ? 'bg-red-100' : ''
-            }`}
+            className={`p-4 flex items-start gap-3 rounded-md cursor-pointer hover:bg-red-50 border-b ${activeConversation === conversation.id ? 'bg-red-100' : ''
+              }`}
             onClick={() => onSelect(conversation.id)}
           >
             {/* Icon */}
@@ -112,6 +119,18 @@ export default function ChatList({
                   __html: highlightText(conversation.preview, debouncedSearch),
                 }}
               />
+
+              {conversation.orderId && (
+                <p
+                  className="text-[10px] text-gray-400 mt-1 uppercase"
+                  dangerouslySetInnerHTML={{
+                    __html: `ID: ${highlightText(
+                      conversation.orderId,
+                      debouncedSearch
+                    )}`,
+                  }}
+                />
+              )}
             </div>
           </div>
         ))}

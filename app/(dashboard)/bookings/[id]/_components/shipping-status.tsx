@@ -55,7 +55,7 @@ const ShippingStatus = ({ deliveryStatus, token }: Props) => {
         statusValue="Return Due"
         IconName={Undo2}
         bookingId={bookingId as string}
-        btnName="Mark as Returned"
+        btnName="Return Due"
         title="Return Due"
         token={token}
       />
@@ -66,7 +66,7 @@ const ShippingStatus = ({ deliveryStatus, token }: Props) => {
         statusValue="Dress Returned"
         IconName={Box}
         bookingId={bookingId as string}
-        btnName="Escalate Dispute"
+        btnName="Dress Returned"
         title="Dress Returned"
         token={token}
       />

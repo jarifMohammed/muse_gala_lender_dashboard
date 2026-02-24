@@ -23,6 +23,7 @@ interface Conversation {
   timestamp: string
   participants: Participant[]
   name: string // 🆕 person you're chatting with
+  email: string // 🆕 person you're chatting with email
 }
 
 interface Message {
@@ -82,7 +83,10 @@ export default function ChatPage() {
 
       return {
         id: conv._id,
-        orderId: conv.bookingId,
+        orderId:
+          typeof conv.bookingId === 'object'
+            ? conv.bookingId?._id || JSON.stringify(conv.bookingId)
+            : conv.bookingId,
         preview: conv.lastMessage || 'No messages yet',
         timestamp: new Date(
           conv.lastMessageAt || conv.updatedAt
@@ -94,6 +98,7 @@ export default function ChatPage() {
         }),
         participants: conv.participants,
         name,
+        email: chatPartner?.email || '',
         status: conv.status, // ✅ add this
         flagged: conv.flagged || { status: false }, // ✅ add this
       }

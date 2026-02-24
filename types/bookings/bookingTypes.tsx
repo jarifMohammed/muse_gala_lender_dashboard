@@ -22,6 +22,7 @@ interface Booking {
   deliveryMethod: string;
   paymentStatus: string;
   deliveryStatus: string;
+  payoutStatus?: string;
   statusHistory: StatusHistory[];
   allocatedLender: {
     lenderId: string;

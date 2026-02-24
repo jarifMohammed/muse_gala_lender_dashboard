@@ -84,7 +84,6 @@ const PaymentsTable = ({ token }: Props) => {
                 Requested At
               </TableHead>
               <TableHead className="w-[100px] text-center">Status</TableHead>
-              <TableHead className="w-[100px] text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -92,7 +91,7 @@ const PaymentsTable = ({ token }: Props) => {
             {isLoading || isFetching ? (
               Array.from({ length: 10 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 8 }).map((_, j) => (
+                  {Array.from({ length: 7 }).map((_, j) => (
                     <TableCell key={j} className="text-center">
                       <Skeleton className="h-5 w-20 mx-auto" />
                     </TableCell>
@@ -120,27 +119,20 @@ const PaymentsTable = ({ token }: Props) => {
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${
-                        item.status === "pending" &&
+                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${item.status === "pending" &&
                         "text-orange-600 bg-orange-200"
-                      } ${
-                        item.status === "paid" && "text-green-600 bg-green-200"
-                      }`}
+                        } ${item.status === "paid" && "text-green-600 bg-green-200"
+                        }`}
                     >
                       {item.status}
                     </span>
-                  </TableCell>
-                  <TableCell className="text-center space-x-5">
-                    <Link href={`/payouts/${item._id}`}>
-                      <Button>View</Button>
-                    </Link>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={7}
                   className="text-center py-6 text-gray-500"
                 >
                   No payouts found

@@ -7,15 +7,18 @@ interface IBookingFilter {
   setDeliveryType: (value: string) => void;
   status: string;
   setStatus: (value: string) => void;
-  date: string;
-  setDate: (value: string) => void;
+  startDate: string;
+  setStartDate: (value: string) => void;
+  endDate: string;
+  setEndDate: (value: string) => void;
 }
 
 const initialStates = {
   search: "",
   deliveryType: "",
   status: "",
-  date: "",
+  startDate: "",
+  endDate: "",
 };
 
 export const useBookingsFilter = create<IBookingFilter>((set) => ({
@@ -23,5 +26,7 @@ export const useBookingsFilter = create<IBookingFilter>((set) => ({
   setSearch: (value: string) => set({ search: value }),
   setDeliveryType: (value: string) => set({ deliveryType: value }),
   setStatus: (value: string) => set({ status: value }),
-  setDate: (value: string) => set({ date: value }),
+  setStartDate: (value: string) => set({ startDate: value }),
+  setEndDate: (value: string) => set({ endDate: value }),
 }));
+

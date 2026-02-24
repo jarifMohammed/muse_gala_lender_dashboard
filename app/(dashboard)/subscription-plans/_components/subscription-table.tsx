@@ -10,13 +10,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { usePaymentsFilter } from "./states/usePaymentsFilter";
+import { toast } from "sonner";
 
 interface Props {
   token: string;
+  id: string;
 }
 
 type Subscription = {
@@ -41,10 +44,29 @@ type SubscriptionsResponse = {
   limit: number;
 };
 
-const SubscriptionTable = ({ token }: Props) => {
+const SubscriptionTable = ({ token, id }: Props) => {
   const [page, setPage] = React.useState(1);
 
   const { search } = usePaymentsFilter();
+
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+      return data?.data;
+    },
+    enabled: !!token && !!id,
+  });
 
   const { data, isLoading, isFetching } = useQuery<SubscriptionsResponse>({
     queryKey: ["subscriptions", page, search],
@@ -82,9 +104,8 @@ const SubscriptionTable = ({ token }: Props) => {
               <TableHead className="w-[100px] text-center">Price</TableHead>
               <TableHead className="w-[100px] text-center">Commission</TableHead>
               <TableHead className="w-[120px] text-center">Billing Cycle</TableHead>
-              <TableHead className="w-[120px] text-center">Duration</TableHead>
               <TableHead className="w-[100px] text-center">Status</TableHead>
-              <TableHead className="w-[100px] text-center">Action</TableHead>
+              <TableHead className="w-[150px] text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -92,7 +113,7 @@ const SubscriptionTable = ({ token }: Props) => {
             {isLoading || isFetching ? (
               Array.from({ length: 10 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 9 }).map((_, j) => (
+                  {Array.from({ length: 8 }).map((_, j) => (
                     <TableCell key={j} className="text-center">
                       <Skeleton className="h-5 w-20 mx-auto" />
                     </TableCell>
@@ -110,29 +131,33 @@ const SubscriptionTable = ({ token }: Props) => {
                   </TableCell>
                   <TableCell className="text-center">{item.commission}%</TableCell>
                   <TableCell className="text-center">{item.billingCycle}</TableCell>
-                  <TableCell className="text-center">{item.durationDays} days</TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${
-                        item.isActive
-                          ? "text-green-600 bg-green-200"
-                          : "text-red-600 bg-red-200"
-                      }`}
+                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${item.isActive
+                        ? "text-green-600 bg-green-200"
+                        : "text-red-600 bg-red-200"
+                        }`}
                     >
                       {item.isActive ? "Active" : "Inactive"}
                     </span>
                   </TableCell>
-                  <TableCell className="text-center space-x-5">
-                    <Link href={`/subscriptions/${item._id}`}>
-                      <Button>View</Button>
+                  <TableCell className="text-center flex justify-center gap-2">
+                    <Link href={`/subscription-plans/${item._id}`}>
+                      <Button variant="outline" size="sm">View</Button>
                     </Link>
+                    <SubscribeButton
+                      planId={item._id}
+                      token={token}
+                      isActive={item.isActive}
+                      isSubscribed={profile?.subscription?.planId?._id === item._id}
+                    />
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={9}
+                  colSpan={8}
                   className="text-center py-6 text-gray-500"
                 >
                   No subscriptions found
@@ -170,6 +195,93 @@ const SubscriptionTable = ({ token }: Props) => {
         </div>
       )}
     </div>
+  );
+};
+
+const SubscribeButton = ({
+  planId,
+  token,
+  isActive,
+  isSubscribed
+}: {
+  planId: string;
+  token: string;
+  isActive: boolean;
+  isSubscribed: boolean;
+}) => {
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: ["create-checkout-session", planId],
+    mutationFn: async (id: string) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/subscription/create-checkout-session/${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Checkout Session Error Response:", errorData);
+        throw new Error(errorData.message || "Failed to create checkout session");
+      }
+
+      const responseData = await res.json();
+      console.log("Checkout Session Success Response:", responseData);
+      return responseData;
+    },
+    onSuccess: (data) => {
+      console.log("Checkout Session Success Response:", data);
+
+      if (data.type === "FREE") {
+        toast.success(data.message || "Free subscription activated");
+        // Reload to update the UI with new subscription status
+        window.location.reload();
+        return;
+      }
+
+      // Check for checkoutUrl in the data object for PAID plans
+      const url = data.data?.checkoutUrl;
+      if (url) {
+        window.location.href = url;
+      } else {
+        toast.error("Checkout URL not found");
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleSubscribe = async () => {
+    try {
+      await mutateAsync(planId);
+    } catch (error) {
+      console.error("Subscription Action Error:", error);
+    }
+  };
+
+  return (
+    <Button
+      size="sm"
+      className="bg-primary hover:bg-primary/90 text-white min-w-[100px]"
+      disabled={!isActive || isPending || isSubscribed}
+      onClick={handleSubscribe}
+    >
+      {isPending ? (
+        <div className="flex items-center gap-2">
+          <LoaderCircle className="h-4 w-4 animate-spin" />
+          <span>Processing...</span>
+        </div>
+      ) : isSubscribed ? (
+        "Subscribed"
+      ) : (
+        "Subscribe"
+      )}
+    </Button>
   );
 };
 

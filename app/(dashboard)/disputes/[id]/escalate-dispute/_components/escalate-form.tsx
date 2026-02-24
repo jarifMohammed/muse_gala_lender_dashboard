@@ -55,16 +55,15 @@ const EscalateForm = () => {
   });
 
   const escalateMutation = useMutation({
-    mutationFn: async (data: EscalateData) => {
+    mutationFn: async (formData: FormData) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/disputes/${id}/escalate`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(data),
+          body: formData,
         }
       );
 
@@ -89,16 +88,25 @@ const EscalateForm = () => {
   });
 
   const onSubmit = (values: FormValues) => {
-    const escalateData: EscalateData = {
-      reason: values.reason,
-      description: values.description,
-      priority: values.priority,
-      confirmed: true,
-      scheduleCall: true,
-      evidence: values.evidence || [],
-    };
+    if (!id) {
+      toast.error("Dispute ID is missing");
+      return;
+    }
 
-    escalateMutation.mutate(escalateData);
+    const formData = new FormData();
+    formData.append("reason", values.reason);
+    formData.append("description", values.description);
+    formData.append("priority", values.priority);
+    // FormData sends everything as strings. 
+    // We send them as strings, backend must handle the conversion or use these string values.
+    formData.append("confirmed", "true");
+    formData.append("scheduleCall", "true");
+
+    if (image) {
+      formData.append("filename", image);
+    }
+
+    escalateMutation.mutate(formData);
   };
 
   return (
@@ -250,12 +258,6 @@ const EscalateForm = () => {
                   ) : (
                     "Escalate Dispute"
                   )}
-                </Button>
-                <Button type="button" variant="outline">
-                  Contact Support
-                </Button>
-                <Button type="button" variant="outline">
-                  Close
                 </Button>
               </div>
             </Card>

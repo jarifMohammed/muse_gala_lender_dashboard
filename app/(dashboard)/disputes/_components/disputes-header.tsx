@@ -46,17 +46,6 @@ const DisputeHeader = ({ token }: { token: string }) => {
         </h1>
 
         <div className="flex items-center gap-5">
-          <Select>
-            <SelectTrigger className="w-[180px] bg-primary text-white">
-              <SelectValue placeholder="This Month" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
-            </SelectContent>
-          </Select>
-
           <Button
             onClick={() => setOpen(true)}
             className="flex items-center gap-2"
@@ -67,14 +56,14 @@ const DisputeHeader = ({ token }: { token: string }) => {
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-4 gap-8">
+      <div className="mt-8 grid grid-cols-3 gap-8">
         {isLoading ? (
-          Array.from({ length: 4 }).map((_, i) => (
+          Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
               className="p-5 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg cursor-pointer"
             >
-              <Skeleton className="h-5 w-1/2" /> 
+              <Skeleton className="h-5 w-1/2" />
               <div className="mt-8">
                 <Skeleton className="h-6 w-1/3" />
               </div>
@@ -83,7 +72,6 @@ const DisputeHeader = ({ token }: { token: string }) => {
         ) : (
           <>
             <DisputeCard title="Total Disputes" value={data?.totalDisputes} />
-            <DisputeCard title="Resolution Rate" value={data?.resolutionRate} />
             <DisputeCard
               title="Pending Disputes"
               value={data?.pendingDisputes}

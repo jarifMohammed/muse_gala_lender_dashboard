@@ -25,13 +25,13 @@ interface Props {
 const BookingsTable = ({ token }: Props) => {
   const [page, setPage] = React.useState(1);
 
-  const { search, date, deliveryType, status } = useBookingsFilter();
+  const { search, startDate, endDate, deliveryType, status } = useBookingsFilter();
 
   const { data, isLoading, isFetching } = useQuery<BookingsResponse>({
-    queryKey: ["all-bookings", page, search, date, deliveryType, status],
+    queryKey: ["all-bookings", page, search, startDate, endDate, deliveryType, status],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/allocated?page=${page}&search=${search}&date=${date}&status=${status}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/allocated?page=${page}&search=${search}&startDate=${startDate}&endDate=${endDate}&status=${status}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -146,22 +146,20 @@ const BookingsTable = ({ token }: Props) => {
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        item?.deliveryMethod === "Shipping"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${item?.deliveryMethod === "Shipping"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-green-100 text-green-800"
+                        }`}
                     >
                       {item?.deliveryMethod}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        item?.paymentStatus === "Paid"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-orange-100 text-orange-800"
-                      }`}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${item?.paymentStatus === "Paid"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-orange-100 text-orange-800"
+                        }`}
                     >
                       {item?.paymentStatus}
                     </span>
@@ -180,18 +178,6 @@ const BookingsTable = ({ token }: Props) => {
                       <Link href={`/bookings/${item?._id}`}>
                         <Button size="sm">View</Button>
                       </Link>
-                       <PayoutButton
-                          paymentStatus={item?.paymentStatus}
-                          id={item?._id}
-                          token={token}
-                        />
-                      {item?.deliveryStatus === "Pending" && (
-                        <AcceptRejectButton
-                          bookingId={item?._id}
-                          lenderId={item?.allocatedLender?.lenderId}
-                          token={token}
-                        />
-                      )}
                     </div>
                   </TableCell>
                 </TableRow>

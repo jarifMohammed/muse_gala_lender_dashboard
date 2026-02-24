@@ -1,5 +1,5 @@
 import React from "react";
-import BookingsDetails from "./_components/BookingsDetails";
+import SubscriptionPlanDetails from "./_components/SubscriptionPlanDetails";
 import { auth } from "@/auth";
 
 const page = async () => {
@@ -9,7 +9,7 @@ const page = async () => {
 
   return (
     <div className="p-10">
-      <BookingsDetails token={token as string} />
+      <SubscriptionPlanDetails token={token as string} />
     </div>
   );
 };

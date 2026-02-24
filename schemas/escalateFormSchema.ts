@@ -12,8 +12,8 @@ export const escalateFormSchema = z.object({
     .array(
       z.object({
         filename: z.string().min(1, { message: "Filename is required" }),
-        url: z.string().url({ message: "Evidence URL must be a valid URL" }),
+        url: z.string().optional(),
       })
     )
-    .nonempty({ message: "At least one evidence file is required" }),
+    .optional(),
 });

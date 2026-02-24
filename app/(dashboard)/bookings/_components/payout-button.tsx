@@ -10,10 +10,12 @@ const PayoutButton = ({
   id,
   token,
   paymentStatus,
+  payoutStatus,
 }: {
   id: string;
   token: string;
   paymentStatus: string;
+  payoutStatus?: string;
 }) => {
   const { mutateAsync, isPending } = useMutation({
     mutationKey: ["create-payout"],
@@ -57,16 +59,23 @@ const PayoutButton = ({
       disabled={
         paymentStatus === "Pending" ||
         paymentStatus === "NotCharged" ||
-        isPending
+        isPending ||
+        (!!payoutStatus && payoutStatus !== "pending")
       }
       onClick={() => handlePayout(id)}
-      className="bg-black hover:bg-[#000000ce] disabled:bg-[#000000ce] disabled:cursor-not-allowed"
+      className="bg-black hover:bg-[#000000ce] disabled:bg-[#000000ce] disabled:cursor-not-allowed min-w-[100px]"
     >
       {isPending ? (
         <h1 className="flex items-center gap-2">
           <LoaderCircle className="animate-spin h-4 w-4" />
-          <span>Payout</span>
+          <span>Processing...</span>
         </h1>
+      ) : payoutStatus && payoutStatus !== "pending" ? (
+        <span>
+          {payoutStatus === "requested"
+            ? "Payout requested"
+            : payoutStatus.charAt(0).toUpperCase() + payoutStatus.slice(1)}
+        </span>
       ) : (
         "Payout"
       )}
