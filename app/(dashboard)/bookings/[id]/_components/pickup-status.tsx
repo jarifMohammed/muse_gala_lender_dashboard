@@ -57,6 +57,7 @@ const PickupStatus = ({ deliveryStatus, token }: Props) => {
         btnName="Return Due"
         title="Return Due"
         token={token}
+        isActive={deliveryStatus === "Return Due" || deliveryStatus === "ReturnLinkSent"}
       />
 
       {/* dress returned */}

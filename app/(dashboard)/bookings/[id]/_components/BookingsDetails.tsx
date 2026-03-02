@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import AboutBooking from "./about-booking";
 import AboutPayment from "./about-payment";
+import AboutReturn from "./about-return";
 import DisputeForm from "./dispute-form";
 import DeliveryStatus from "./delivery-status";
 import PayoutButton from "../../_components/payout-button";
@@ -71,6 +72,7 @@ const BookingsDetails = ({ token }: Props) => {
       <div className="grid grid-cols-2 gap-8">
         <AboutBooking bookingDetails={bookingDetails} isLoading={isLoading} />
         <AboutPayment bookingDetails={bookingDetails} isLoading={isLoading} />
+        <AboutReturn bookingDetails={bookingDetails} isLoading={isLoading} />
       </div>
 
       <div>

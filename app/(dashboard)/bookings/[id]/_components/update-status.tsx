@@ -13,6 +13,7 @@ interface Props {
   title: string;
   token: string;
   bookingId: string;
+  isActive?: boolean;
 }
 
 const UpdateStatus = ({
@@ -23,7 +24,9 @@ const UpdateStatus = ({
   title,
   token,
   bookingId,
+  isActive,
 }: Props) => {
+  const active = isActive ?? deliveryStatus === statusValue;
   const queryClient = useQueryClient();
 
   const { mutateAsync, isPending } = useMutation({
@@ -63,23 +66,18 @@ const UpdateStatus = ({
     <div className="w-full">
       <div className="flex items-center  gap-8">
         <div
-          className={`p-5 rounded-full  flex flex-col justify-center items-center ${
-            deliveryStatus === statusValue
-              ? "bg-primary text-white"
-              : "bg-white"
-          }`}
+          className={`p-5 rounded-full  flex flex-col justify-center items-center ${active ? "bg-primary text-white" : "bg-white"
+            }`}
         >
           <IconName
-            className={`h-8 w-8 font-bold ${
-              deliveryStatus === statusValue ? "text-white" : "text-primary"
-            }`}
+            className={`h-8 w-8 font-bold ${active ? "text-white" : "text-primary"
+              }`}
           />
         </div>
 
         <div
-          className={`h-2 w-full rounded-3xl ${
-            deliveryStatus === statusValue ? "bg-primary" : "bg-[#d9d9d9]"
-          } ${statusValue === "Dress Returned" ? "hidden" : "block"}`}
+          className={`h-2 w-full rounded-3xl ${active ? "bg-primary" : "bg-[#d9d9d9]"
+            } ${statusValue === "Dress Returned" ? "hidden" : "block"}`}
         ></div>
       </div>
 
@@ -87,7 +85,7 @@ const UpdateStatus = ({
 
       <Button
         onClick={handleConfirm}
-        variant={deliveryStatus === statusValue ? "default" : "outline"}
+        variant={active ? "default" : "outline"}
         className={`border border-primary disabled:border-gray-500 disabled:cursor-not-allowed`}
       >
         {isPending ? `${btnName}...` : `${btnName}`}
