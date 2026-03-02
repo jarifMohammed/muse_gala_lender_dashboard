@@ -11,6 +11,7 @@ type StatusHistory = {
 type BookingDetails = {
   id?: string;
   statusHistory?: StatusHistory[];
+  paymentStatus?: string;
   customer?: { _id?: string };
   listing?: { dressName?: string };
   deliveryMethod?: string;
@@ -40,9 +41,9 @@ const AboutPayment: React.FC<AboutBookingProps> = ({
       <div className="mt-4 space-y-2 text-sm">
         <div>
           Status:{" "}
-          {bookingDetails?.statusHistory?.map((status) => (
-            <span key={status?._id}>{status?.status}</span>
-          ))}
+          <span className="font-semibold capitalize">
+            {bookingDetails?.paymentStatus ?? "Pending"}
+          </span>
         </div>
 
         <h1>Method: {bookingDetails?.deliveryMethod ?? "N/A"}</h1>

@@ -11,6 +11,7 @@ type StatusHistory = {
 export type BookingDetails = {
   id?: string;
   statusHistory?: StatusHistory[];
+  deliveryStatus?: string;
   customer?: { _id?: string };
   dressName?: string;
   rentalStartDate?: string;
@@ -34,31 +35,19 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
 
   return (
     <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
-      <div className="flex items-center justify-between">
+      <div>
         <h1 className="text-xl font-medium">
           Booking ID: {bookingDetails?.id}
         </h1>
-        <button>
-          {bookingDetails?.statusHistory?.map((status) => (
-            <span
-              key={status?._id}
-              className={`px-2 rounded-3xl font-semibold text-xs py-1 ${
-                status?.status === "Pending"
-                  ? "text-orange-600 bg-orange-200"
-                  : status?.status === "Approved"
-                  ? "text-green-600 bg-green-200"
-                  : status?.status === "Rejected"
-                  ? "text-red-600 bg-red-200"
-                  : "text-gray-600 bg-gray-200"
-              }`}
-            >
-              {status?.status}
-            </span>
-          ))}
-        </button>
       </div>
 
       <div className="mt-4 space-y-2 text-sm">
+        <div>
+          Delivery Status:{" "}
+          <span className="font-semibold">
+            {bookingDetails?.deliveryStatus ?? "Pending"}
+          </span>
+        </div>
         <h1>Customer ID: {bookingDetails?.customer?._id ?? "N/A"}</h1>
         <h1>Dress: {bookingDetails?.dressName ?? "N/A"}</h1>
         <h1>
