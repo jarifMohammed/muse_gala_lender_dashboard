@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Filter } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useListingFilterStrate } from "./listing-searchbar-state";
@@ -60,15 +60,15 @@ const ListingSearchHeader: FC = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg mb-8 shadow-[0px_4px_10px_0px_#0000001A]">
-      <div className="flex flex-wrap gap-4 justify-between">
+      <div className="flex flex-wrap gap-4 justify-between items-center">
         {/* Search Input */}
-        <div className="w-[500px] relative">
+        <div className="flex-1 min-w-[300px] relative">
           <Input
             type="text"
-            placeholder="Search..."
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 h-10"
           />
           <svg
             className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
@@ -86,27 +86,13 @@ const ListingSearchHeader: FC = () => {
           </svg>
         </div>
 
-        {/* Status Filter */}
-        <div className="w-[200px]">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Status" />
-            </SelectTrigger>
-            <SelectContent>
-              {statusOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Size Filter */}
-        <div className="w-[200px]">
+        <div className="w-[180px]">
           <Select value={sizeFilter} onValueChange={setSizeFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Size" />
+            <SelectTrigger className="h-10">
+              <SelectValue>
+                {sizeFilter === "All" ? "Sizes" : sizeFilter}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {sizeOptions.map((option) => (
@@ -118,27 +104,13 @@ const ListingSearchHeader: FC = () => {
           </Select>
         </div>
 
-        {/* Condition Filter */}
-        <div className="w-[200px]">
-          <Select value={conditionFilter} onValueChange={setConditionFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Condition" />
-            </SelectTrigger>
-            <SelectContent>
-              {conditionOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Delivery Filter */}
         <div className="w-[200px]">
           <Select value={pickupFilter} onValueChange={setPickupOption}>
-            <SelectTrigger>
-              <SelectValue placeholder="Pickup Option" />
+            <SelectTrigger className="h-10">
+              <SelectValue>
+                {pickupFilter === "All" ? "Delivery Method" : pickupFilter}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {deliveryOptions.map((option) => (
@@ -152,14 +124,15 @@ const ListingSearchHeader: FC = () => {
 
         <div className="flex items-center">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => {
               resetFilters();
               router.refresh();
             }}
-            className="p-2.5 border rounded-full hover:bg-gray-50"
+            className="flex items-center gap-2 text-gray-400 hover:text-[#891d33] hover:bg-red-50 transition-all duration-300 px-4 h-10 rounded-lg group"
           >
-            <Filter className="h-5 w-5 text-red-800" />
+            <RotateCcw className="h-4 w-4 transition-transform group-hover:rotate-[-180deg] duration-500" />
+            <span className="text-sm font-medium">Reset Filters</span>
           </Button>
         </div>
       </div>

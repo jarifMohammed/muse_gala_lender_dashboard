@@ -18,8 +18,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DisputeHeader = ({ token }: { token: string }) => {
-  const { setSearch } = useDisputesFilter();
+  const { setSearch, status, setStatus } = useDisputesFilter();
   const [open, setOpen] = useState(false);
+
+  const statusOptions = [
+    "All",
+    "Pending",
+    "In Progress",
+    "In Review",
+    "Escalated",
+    "Resolved",
+    "Closed",
+  ];
 
   const { data, isLoading } = useQuery<any>({
     queryKey: ["states-disputes"],
@@ -84,24 +94,28 @@ const DisputeHeader = ({ token }: { token: string }) => {
         )}
       </div>
 
-      <div className="flex justify-between items-center bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8">
-        <div className="relative">
+      <div className="flex items-center gap-10 bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8">
+        <div className="relative flex-1">
           <Input
-            className="pl-7 w-[220px]"
-            placeholder="Search...."
+            className="pl-7 w-full"
+            placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Search className="h-4 w-4 text-gray-500 absolute top-1/3 left-2" />
+          <Search className="h-4 w-4 text-gray-500 absolute top-1/2 -translate-y-1/2 left-2" />
         </div>
 
-        <Select>
+        <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-[220px]">
-            <SelectValue placeholder="All" />
+            <SelectValue>
+              {status === "All" ? "Status" : status}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="disputed">Disputed</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
+            {statusOptions.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

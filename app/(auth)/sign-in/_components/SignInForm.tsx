@@ -44,8 +44,10 @@ export default function SignInForm() {
           return;
         }
 
-        router.push("/");
         toast.success(res.message || "Login successful");
+        // Use window.location.href instead of router.push to force a hard reset
+        // This ensures the SessionProvider fetches the newly set authentication cookies!
+        window.location.href = "/";
       });
     });
   }

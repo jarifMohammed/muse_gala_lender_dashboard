@@ -273,7 +273,7 @@ const Calendar = ({ token }: { token: string }) => {
           {/* Dress Filter */}
           <div className="relative group">
             <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
-              {selectedDress}
+              {selectedDress === "All" ? "Dresses" : selectedDress}
               <ChevronDown className="ml-2 h-4 w-4" />
             </button>
             <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
@@ -281,11 +281,10 @@ const Calendar = ({ token }: { token: string }) => {
                 <button
                   key={dress}
                   onClick={() => setSelectedDress(dress)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${
-                    selectedDress === dress
-                      ? "bg-gray-50 text-[#891d33] font-medium"
-                      : "text-gray-700"
-                  }`}
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${selectedDress === dress
+                    ? "bg-gray-50 text-[#891d33] font-medium"
+                    : "text-gray-700"
+                    }`}
                 >
                   {dress}
                 </button>
@@ -296,7 +295,7 @@ const Calendar = ({ token }: { token: string }) => {
           {/* Month Filter */}
           <div className="relative group">
             <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
-              {getMonthName(selectedMonth)}
+              Month
               <ChevronDown className="ml-2 h-4 w-4" />
             </button>
             <div className="absolute top-full left-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
@@ -304,11 +303,10 @@ const Calendar = ({ token }: { token: string }) => {
                 <button
                   key={month}
                   onClick={() => setSelectedMonth(month)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${
-                    selectedMonth === month
-                      ? "bg-gray-50 text-[#891d33] font-medium"
-                      : "text-gray-700"
-                  }`}
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${selectedMonth === month
+                    ? "bg-gray-50 text-[#891d33] font-medium"
+                    : "text-gray-700"
+                    }`}
                 >
                   {getMonthName(month)}
                 </button>
@@ -319,7 +317,7 @@ const Calendar = ({ token }: { token: string }) => {
           {/* Year Filter */}
           <div className="relative group">
             <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
-              {selectedYear}
+              Year
               <ChevronDown className="ml-2 h-4 w-4" />
             </button>
             <div className="absolute top-full left-0 mt-1 w-24 bg-white border border-gray-200 rounded-md shadow-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
@@ -327,11 +325,10 @@ const Calendar = ({ token }: { token: string }) => {
                 <button
                   key={year}
                   onClick={() => setSelectedYear(year)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${
-                    selectedYear === year
-                      ? "bg-gray-50 text-[#891d33] font-medium"
-                      : "text-gray-700"
-                  }`}
+                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${selectedYear === year
+                    ? "bg-gray-50 text-[#891d33] font-medium"
+                    : "text-gray-700"
+                    }`}
                 >
                   {year}
                 </button>
@@ -355,17 +352,15 @@ const Calendar = ({ token }: { token: string }) => {
         {calendarDays.map((date, index) => (
           <div
             key={index}
-            className={`min-h-[80px] p-2 border border-gray-100 rounded-lg transition-all duration-200 ${
-              date.month !== "current"
-                ? "bg-gray-50 text-gray-400"
-                : "bg-white hover:bg-gray-50 hover:shadow-sm cursor-pointer"
-            } ${date.events.length > 0 ? "border-l-4 border-l-[#891d33]" : ""}`}
+            className={`min-h-[80px] p-2 border border-gray-100 rounded-lg transition-all duration-200 ${date.month !== "current"
+              ? "bg-gray-50 text-gray-400"
+              : "bg-white hover:bg-gray-50 hover:shadow-sm cursor-pointer"
+              } ${date.events.length > 0 ? "border-l-4 border-l-[#891d33]" : ""}`}
             onMouseEnter={(e) => handleDateHover(date, e)}
           >
             <div
-              className={`text-sm font-medium mb-1 ${
-                date.month === "current" ? "text-gray-900" : "text-gray-400"
-              }`}
+              className={`text-sm font-medium mb-1 ${date.month === "current" ? "text-gray-900" : "text-gray-400"
+                }`}
             >
               {date.day}
             </div>
@@ -416,11 +411,10 @@ const Calendar = ({ token }: { token: string }) => {
                       {new Date(event.rentalEndDate).toLocaleDateString()}
                     </span>
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        event.status === "Paid"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${event.status === "Paid"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                        }`}
                     >
                       {event.status}
                     </span>

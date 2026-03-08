@@ -1,9 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import React from "react";
-import PaymentsCard from "./payments-card";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
@@ -42,45 +40,6 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
     enabled: !!token && !!profile?.stripeOnboardingCompleted,
   });
 
-  const setupStripe = useMutation({
-    mutationKey: ["setup-stripe"],
-    mutationFn: async (email: string) => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/onboard`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to onboard Stripe");
-      }
-
-      const json = await res.json();
-      return json;
-    },
-    onSuccess: (res) => {
-      toast.success("Redirecting to Stripe...");
-      window.location.href = res.data.url;
-    },
-    onError: (error: any) => {
-      toast.error(error?.message || "Something went wrong");
-    },
-  });
-
-  const handleSetupStripe = () => {
-    if (profile?.email) {
-      setupStripe.mutate(profile.email);
-    } else {
-      toast.error("User email not found");
-    }
-  };
-
   const isOnboarded = profile?.stripeOnboardingCompleted;
   const dashboardUrl = goToDashboard?.data?.url;
 
@@ -110,25 +69,11 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
               </a>
             </Button>
           ) : (
-            <Button
-              onClick={handleSetupStripe}
-              disabled={setupStripe.isPending}
-            >
-              {setupStripe.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                "Add payment method"
-              )}
-            </Button>
+            <div className="text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
+              Complete Payout Onboarding in Account Settings to access your dashboard.
+            </div>
           )}
         </div>
-      </div>
-
-      <div className="mt-8">
-        <PaymentsCard profile={profile} />
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ type LiveListingType = {
   masterDressId: string;
   brand: string;
   price: string;
+  dressName?: string;
 };
 
 type liveListingsProps = {
@@ -59,7 +60,7 @@ const LiveListings = ({ liveListings, isLoading }: liveListingsProps) => {
                 />
               </div>
               <div className="px-4 pt-2 rounded-r-[8px]">
-                <p className="font-medium">DRESS ID : {dress?.masterDressId}</p>
+                <p className="font-medium">{dress?.dressName || `DRESS ID : ${dress?.masterDressId}`}</p>
                 <p className="text-sm">
                   Brand: {dress?.brand || "Non vel ad officia d"}
                 </p>

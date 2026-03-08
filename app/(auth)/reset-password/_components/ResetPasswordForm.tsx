@@ -4,7 +4,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import AuthHeader from "@/components/shared/Auth/AuthHeader";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { resetPasswordAction } from "@/actions/auth/reset-password";
 
 // Password validation schema
 const passwordSchema = z
@@ -39,9 +43,13 @@ const passwordSchema = z
 type PasswordFormValues = z.infer<typeof passwordSchema>;
 
 export default function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Initialize form with React Hook Form and Zod validation
   const form = useForm<PasswordFormValues>({
@@ -54,8 +62,21 @@ export default function ResetPasswordForm() {
 
   // Form submission handler
   async function onSubmit(values: PasswordFormValues) {
-    console.log(values);
-    // Handle login logic here
+    if (!email) {
+      toast.error("Email not found. Please restart the reset process.");
+      return;
+    }
+
+    startTransition(() => {
+      resetPasswordAction(email, values.password).then((res) => {
+        if (!res.success) {
+          toast.error(res.message || "Failed to reset password.");
+          return;
+        }
+        toast.success(res.message || "Password reset successfully!");
+        router.push("/sign-in");
+      });
+    });
   }
 
   return (
@@ -63,7 +84,7 @@ export default function ResetPasswordForm() {
       <AuthHeader
         title1="Reset"
         title2="Password"
-        desc="Reset and remember your password "
+        desc="Reset and remember your password"
       />
 
       {/* Form */}
@@ -80,13 +101,13 @@ export default function ResetPasswordForm() {
               <FormItem>
                 <FormControl>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                      <Lock className="w-6 h-6 text-[#999999]" />
                     </div>
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="New Password"
-                      className="font-poppins w-full  h-[50px] bg-white border border-black text-base placeholder:text-base placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[42px] pr-4 py-[15px] rounded-[8px]"
+                      className="font-avenir w-full md:w-[400px] h-[40px] bg-transparent border-t-0 border-l-0 border-r-0 border-b border-black text-[12px] placeholder:text-[12px] placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[52px] pr-4 py-[15px] rounded-none focus-visible:ring-0 focus-visible:border-b-2"
                       {...field}
                     />
                     <button
@@ -107,51 +128,59 @@ export default function ResetPasswordForm() {
             )}
           />
 
-          {/* Confirm Password Field */}
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400" />
+          <div className="mt-6 mb-4">
+            {/* Confirm Password Field */}
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                        <Lock className="w-6 h-6 text-[#999999]" />
+                      </div>
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm Password"
+                        className="font-avenir w-full md:w-[400px] h-[40px] bg-transparent border-t-0 border-l-0 border-r-0 border-b border-black text-[12px] placeholder:text-[12px] placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[52px] pr-4 py-[15px] rounded-none focus-visible:ring-0 focus-visible:border-b-2"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-3 flex items-center"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-gray-400" />
+                        )}
+                      </button>
                     </div>
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm Password"
-                      className="font-poppins w-full h-[50px] bg-white border border-black text-base placeholder:text-base placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[42px] pr-4 py-[15px] rounded-[8px]"
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      className="absolute inset-y-0 right-3 flex items-center"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                </FormControl>
-                <FormMessage className="text-xs mt-1" />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage className="text-xs mt-1" />
+                </FormItem>
+              )}
+            />
+          </div>
 
           {/* Continue Button */}
-          <Button
-            type="submit"
-            className="font-poppins h-[52px] w-full bg-black text-lg font-semibold leading-[120%] tracking-[0%] rounded-[8px] text-[#F4F4F4] py-[15px]"
-            disabled={isLoading}
-          >
-            {isLoading ? "Processing..." : "Continue"}
-          </Button>
+          <div className="flex justify-end mt-8">
+            <Button
+              type="submit"
+              variant="ghost"
+              className="group p-0 h-auto hover:bg-transparent flex items-center gap-2"
+              disabled={isPending}
+            >
+              <span className="font-avenir text-lg font-medium text-black">
+                {isPending ? "Resetting" : ""}
+              </span>
+              <ArrowRight className="w-12 h-12 text-black group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

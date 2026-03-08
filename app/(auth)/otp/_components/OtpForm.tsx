@@ -7,12 +7,20 @@ import {
   type KeyboardEvent,
   type ClipboardEvent,
 } from "react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AuthHeader from "@/components/shared/Auth/AuthHeader";
 import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import { verifyOtpAction } from "@/actions/auth/verify-otp";
+import { forgotPasswordAction } from "@/actions/auth/forgot-password";
 
 export default function OtpForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
+
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [loading, setLoading] = useState<boolean>(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -77,20 +85,22 @@ export default function OtpForm() {
   };
 
   const handleResendOtp = async () => {
+    if (!email) {
+      toast.error("Email not found. Please go back and try again.");
+      return;
+    }
+
     setLoading(true);
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast.success("OTP resent successfully!");
-
-      // Clear the current OTP
-      setOtp(Array(6).fill(""));
-
-      // Focus the first input
-      if (inputRefs.current[0]) {
-        inputRefs.current[0].focus();
+      const res = await forgotPasswordAction(email);
+      if (!res.success) {
+        toast.error(res.message || "Failed to resend OTP.");
+      } else {
+        toast.success("OTP resent successfully!");
+        setOtp(Array(6).fill(""));
+        if (inputRefs.current[0]) {
+          inputRefs.current[0].focus();
+        }
       }
     } catch {
       toast.error("Failed to resend OTP. Please try again.");
@@ -108,9 +118,26 @@ export default function OtpForm() {
       return;
     }
 
+    if (!email) {
+      toast.error("Email not found. Please go back and try again.");
+      return;
+    }
+
     setLoading(true);
 
-    console.log("OTP Verified:", otpValue);
+    try {
+      const res = await verifyOtpAction(email, otpValue);
+      if (!res.success) {
+        toast.error(res.message || "Invalid OTP. Please try again.");
+      } else {
+        toast.success(res.message || "OTP verified successfully.");
+        router.push(`/reset-password?email=${encodeURIComponent(email)}`);
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -118,7 +145,7 @@ export default function OtpForm() {
       <AuthHeader
         title1="Enter"
         title2="OTP"
-        desc="Enter your email to receive the OTP"
+        desc={email ? `OTP sent to ${email}` : "Enter your OTP below"}
       />
 
       <div className="py-6 md:py-7 lg:py-8 px-4 md:px-5 lg:px-6 w-full">
@@ -137,9 +164,8 @@ export default function OtpForm() {
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
-              className={`font-poppins w-[52px] h-[58px] bg-white text-[#999999] text-center text-lg font-medium leading-[120%] border rounded-md focus:outline-none ${
-                digit ? "border-[#891D33]" : "border-[#595959]"
-              }`}
+              className={`font-avenir w-[52px] h-[58px] bg-transparent text-black text-center text-2xl font-medium leading-[120%] border-t-0 border-l-0 border-r-0 border-b border-black rounded-none focus:outline-none focus-visible:ring-0 focus-visible:border-b-2 transition-colors ${digit ? "border-[#891D33] border-b-2" : "border-black"
+                }`}
               aria-label={`OTP digit ${index + 1}`}
             />
           ))}
@@ -158,13 +184,19 @@ export default function OtpForm() {
         </div>
 
         {/* Verify Button */}
-        <Button
-          onClick={handleVerify}
-          disabled={loading}
-          className="font-poppins h-[52px] w-full bg-black text-lg font-semibold leading-[120%] tracking-[0%] rounded-[8px] text-[#F4F4F4] py-[15px]"
-        >
-          {loading ? "Verifying..." : "Verify Now"}
-        </Button>
+        <div className="flex justify-end mt-8">
+          <Button
+            onClick={handleVerify}
+            disabled={loading}
+            variant="ghost"
+            className="group p-0 h-auto hover:bg-transparent flex items-center gap-2"
+          >
+            <span className="font-avenir text-lg font-medium text-black">
+              {loading ? "Verifying" : ""}
+            </span>
+            <ArrowRight className="w-12 h-12 text-black group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -22,13 +22,14 @@ interface Props {
 
 const DisputesTable = ({ token }: Props) => {
   const [page, setPage] = React.useState(1);
-  const { search } = useDisputesFilter();
+  const { search, status } = useDisputesFilter();
 
   const { data, isLoading, isFetching } = useQuery<DisputesResponse>({
-    queryKey: ["all-disputes", page, search],
+    queryKey: ["all-disputes", page, search, status],
     queryFn: async () => {
+      const statusParam = status !== "All" ? `&status=${status}` : "";
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/disputes/my-disputes?page=${page}&search=${search}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/disputes/my-disputes?page=${page}&search=${search}${statusParam}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -48,6 +49,25 @@ const DisputesTable = ({ token }: Props) => {
     totalData: data?.total ?? 0,
     hasPrevPage: (data?.page ?? 1) > 1,
     hasNextPage: (data?.page ?? 1) < (data?.pages ?? 1),
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "text-orange-600 bg-orange-100";
+      case "In Progress":
+        return "text-blue-600 bg-blue-100";
+      case "In Review":
+        return "text-purple-600 bg-purple-100";
+      case "Escalated":
+        return "text-red-600 bg-red-100";
+      case "Resolved":
+        return "text-green-600 bg-green-100";
+      case "Closed":
+        return "text-gray-600 bg-gray-100";
+      default:
+        return "text-blue-600 bg-blue-100";
+    }
   };
 
   return (
@@ -101,12 +121,7 @@ const DisputesTable = ({ token }: Props) => {
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`px-2 rounded-3xl font-semibold text-xs py-1 ${dispute?.status === "Pending"
-                          ? "text-orange-600 bg-orange-200"
-                          : dispute.status === "Resolved"
-                            ? "text-green-600 bg-green-200"
-                            : "text-blue-600 bg-blue-200"
-                        }`}
+                      className={`px-3 py-1 rounded-full font-medium text-xs ${getStatusColor(dispute?.status)}`}
                     >
                       {dispute?.status}
                     </span>

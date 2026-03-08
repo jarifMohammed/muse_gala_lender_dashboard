@@ -47,42 +47,11 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
     enabled: !!token && !!id,
   });
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ["add-card"],
-    mutationFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/savePaymentInfo`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${token}`,
-          },
-        }
-      );
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      router.push(data?.data?.url);
-    },
-    onError: (error) => {
-      toast.success(error.message);
-    },
-  });
-
-  const handleCard = async () => {
-    try {
-      await mutateAsync();
-    } catch (error) {
-      console.log(`error: ${error}`);
-    }
-  };
-
   useEffect(() => {
     setIsDisabled(
       !profile?.stripeCustomerId || !profile?.defaultPaymentMethodId
     );
-  });
+  }, [profile]);
 
   return (
     <div>
@@ -96,29 +65,6 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  disabled={
-                    isPending ||
-                    (profile?.stripeCustomerId &&
-                      profile?.defaultPaymentMethodId)
-                  }
-                  onClick={handleCard}
-                  className="bg-black hover:bg-black disabled:cursor-not-allowed"
-                >
-                  {isPending ? "Add Payment Method..." : "Add Payment Method"}
-                </Button>
-              </TooltipTrigger>
-              {profile?.stripeCustomerId && profile?.defaultPaymentMethodId && (
-                <TooltipContent>
-                  <p>Payment method already added.</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </div>
-
-          <div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
                   disabled={isDisabled}
                   onClick={() => setIsOpen(true)}
                   className="disabled:cursor-not-allowed"
@@ -128,7 +74,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
               </TooltipTrigger>
               {isDisabled && (
                 <TooltipContent>
-                  <p>Please add payment method first</p>
+                  <p>Please add payment method in Account Settings first</p>
                 </TooltipContent>
               )}
             </Tooltip>
@@ -136,20 +82,20 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-10 bg-white p-5  rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8">
-        <div className="relative">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-end gap-6 bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8 w-full">
+        <div className="relative w-full">
           <Input
-            className="pl-7 w-[220px]"
-            placeholder="Search...."
+            className="pl-7 w-full h-10"
+            placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <Search className="h-4 w-4 text-gray-500 absolute top-1/3 left-2" />
+          <Search className="h-4 w-4 text-gray-500 absolute top-1/2 -translate-y-1/2 left-2" />
         </div>
 
-        <div>
+        <div className="w-full">
           <Select>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full h-10">
               <SelectValue placeholder="Delivery type" />
             </SelectTrigger>
             <SelectContent>
@@ -159,9 +105,9 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
           </Select>
         </div>
 
-        <div>
+        <div className="w-full">
           <Select>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full h-10">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -172,20 +118,20 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
           </Select>
         </div>
 
-        <div className="flex items-center gap-5">
-          <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-3 w-full">
+          <div className="flex flex-col gap-1 flex-1">
             <span className="text-[10px] text-gray-500 uppercase ml-1">Start Date</span>
             <input
               type="date"
-              className="w-[160px] focus-visible:ring-0 border border-input h-9 rounded-md text-sm shadow-sm px-3 py-1"
+              className="w-full focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 outline-none"
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 flex-1">
             <span className="text-[10px] text-gray-500 uppercase ml-1">End Date</span>
             <input
               type="date"
-              className="w-[160px] focus-visible:ring-0 border border-input h-9 rounded-md text-sm shadow-sm px-3 py-1"
+              className="w-full focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 outline-none"
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>

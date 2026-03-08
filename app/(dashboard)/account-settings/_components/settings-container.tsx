@@ -2,8 +2,11 @@
 
 import React from "react";
 import ContactInformation from "./contact-information";
+import LocationSettings from "./location-settings";
 import PasswordSecurity from "./password-security";
 import NotificationPreference from "./notification-preference";
+import PaymentMethods from "./payment-methods";
+import PayoutSettings from "./payout-settings";
 import { useQuery } from "@tanstack/react-query";
 import SettingsAction from "./settings-action";
 
@@ -31,8 +34,11 @@ const SettingContainer = ({ token, userID }: Props) => {
   });
 
   return (
-    <div className="mt-8 space-y-8">
+    <div className="mt-8 space-y-8 pb-10">
       <ContactInformation userInfo={userInfo} token={token} userID={userID} />
+      <LocationSettings userInfo={userInfo} token={token} userID={userID} />
+      <PaymentMethods userInfo={userInfo} token={token} userID={userID} />
+      <PayoutSettings userInfo={userInfo} token={token} userID={userID} />
       <PasswordSecurity token={token} userID={userID} />
       {/* <NotificationPreference /> */}
       <SettingsAction />

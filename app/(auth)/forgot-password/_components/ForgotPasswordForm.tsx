@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail } from "lucide-react";
+import { Mail, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -14,6 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import AuthHeader from "@/components/shared/Auth/AuthHeader";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { forgotPasswordAction } from "@/actions/auth/forgot-password";
 
 // Define form schema with Zod
 const formSchema = z.object({
@@ -23,6 +27,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function ForgotPasswordForm() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   // Initialize form with React Hook Form and Zod validation
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -33,8 +40,16 @@ export default function ForgotPasswordForm() {
 
   // Form submission handler
   function onSubmit(values: FormValues) {
-    console.log(values);
-    // Handle login logic here
+    startTransition(() => {
+      forgotPasswordAction(values.email).then((res) => {
+        if (!res.success) {
+          toast.error(res.message || "Failed to send OTP.");
+          return;
+        }
+        toast.success(res.message || "OTP sent to your email.");
+        router.push(`/otp?email=${encodeURIComponent(values.email)}`);
+      });
+    });
   }
 
   return (
@@ -49,10 +64,10 @@ export default function ForgotPasswordForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full p-4"
+          className="w-full py-6 md:py-7 lg:py-8 px-4 md:px-5 lg:px-6"
         >
           {/* Email Field */}
-          <div className="mb-[15px]">
+          <div className="mb-6">
             <FormField
               control={form.control}
               name="email"
@@ -65,7 +80,7 @@ export default function ForgotPasswordForm() {
                       </div>
                       <Input
                         placeholder="Enter your email"
-                        className="font-poppins w-full md:w-[415px] h-[50px] bg-white border border-black text-base placeholder:text-base placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[52px] pr-4 py-[15px] rounded-[8px]"
+                        className="font-avenir w-full md:w-[400px] h-[40px] bg-transparent border-t-0 border-l-0 border-r-0 border-b border-black text-[12px] placeholder:text-[12px] placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[52px] pr-4 py-[15px] rounded-none focus-visible:ring-0 focus-visible:border-b-2"
                         {...field}
                       />
                     </div>
@@ -76,13 +91,20 @@ export default function ForgotPasswordForm() {
             />
           </div>
 
-          {/* Sign In Button */}
-          <Button
-            type="submit"
-            className="font-poppins h-[52px] w-full bg-black text-lg font-semibold leading-[120%] tracking-[0%] rounded-[8px] text-[#F4F4F4] py-[15px]"
-          >
-            Send OTP
-          </Button>
+          {/* Send OTP Button */}
+          <div className="flex justify-end mt-8">
+            <Button
+              type="submit"
+              variant="ghost"
+              disabled={isPending}
+              className="group p-0 h-auto hover:bg-transparent flex items-center gap-2"
+            >
+              <span className="font-avenir text-lg font-medium  text-black">
+                {isPending ? "Sending" : ""}
+              </span>
+              <ArrowRight className="w-8 h-8 text-black group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

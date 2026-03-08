@@ -3,6 +3,7 @@ import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  debug: true,
   secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({

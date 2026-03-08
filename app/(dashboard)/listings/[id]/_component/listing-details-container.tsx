@@ -94,7 +94,7 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
       )}
 
       <SkeletonWrapper isLoading={isLoading || isRefetching}>
-        <Card className="grid grid-cols-1 lg:grid-cols-12 ">
+        <Card className="grid grid-cols-1 lg:grid-cols-12 rounded-none border-none shadow-sm">
           <div className="lg:col-span-2">
             <div className="relative w-full h-[400px] ">
               <Image
@@ -104,13 +104,13 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
                 }
                 alt={data?.data.dressName ?? ""}
                 fill
-                className="object-cover rounded-l-[15px]"
+                className="object-cover rounded-none"
                 sizes="(max-width: 768px) 100vw, 300px"
               />
             </div>
           </div>
 
-          <div className="lg:col-span-10 bg-white p-6 rounded-r-[15px] shadow-sm">
+          <div className="lg:col-span-10 bg-white p-6 rounded-none">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-xl font-bold">
@@ -178,11 +178,10 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
               <div className="flex items-center gap-2">
                 <span className="font-medium">Status:</span>
                 <span
-                  className={`inline-flex items-center gap-1 px-4 py-1 rounded-2xl text-sm font-medium ${
-                    isApproved
+                  className={`inline-flex items-center gap-1 px-4 py-1 rounded-2xl text-sm font-medium ${isApproved
                       ? "bg-green-100 text-green-700"
                       : "bg-red-100 text-red-700"
-                  }`}
+                    }`}
                 >
                   {isApproved ? "Active" : "Inactive"}
                   {isApproved ? (
@@ -201,7 +200,7 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
       </SkeletonWrapper>
 
       <SkeletonWrapper isLoading={isLoading || isRefetching}>
-        <Card className="bg-white p-6 rounded-[15px] ">
+        <Card className="bg-white p-6 rounded-none border-none shadow-sm">
           <h3 className="text-2xl font-normal mb-4">Description & Details</h3>
 
           <div className="space-y-4">

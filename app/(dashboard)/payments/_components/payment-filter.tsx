@@ -17,32 +17,21 @@ const PaymentFilter = () => {
 
   return (
     <div>
-      <div className="flex items-center gap-10 bg-white p-5  rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8">
-        <div className="relative">
+      <div className="flex items-center gap-6 bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8 w-full">
+        <div className="relative flex-1">
           <Input
-            className="pl-7 w-[220px]"
-            placeholder="Search...."
+            className="pl-9 w-full"
+            placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
-
-          <Search className="h-4 w-4 text-gray-500 absolute top-1/3 left-2" />
+          <Search className="h-4 w-4 text-gray-400 absolute top-1/2 -translate-y-1/2 left-3" />
         </div>
 
-        <div>
-          <Select>
-            <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="Delivery type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Shipping</SelectItem>
-              <SelectItem value="dark">Local Pickup</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
-        <div>
+
+        <div className="w-[200px]">
           <Select>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -53,14 +42,12 @@ const PaymentFilter = () => {
           </Select>
         </div>
 
-        <div className="flex items-center gap-5">
-          <div>
-            <input
-              type="date"
-              className="w-[180px] focus-visible:ring-0 border border-input h-9 rounded-md text-base shadow-sm px-3 py-1"
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
+        <div className="flex items-center">
+          <input
+            type="date"
+            className="w-[180px] focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 cursor-pointer hover:border-gray-300 transition-colors"
+            onChange={(e) => setDate(e.target.value)}
+          />
         </div>
       </div>
     </div>
