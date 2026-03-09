@@ -12,8 +12,15 @@ export type BookingDetails = {
   id?: string;
   statusHistory?: StatusHistory[];
   deliveryStatus?: string;
-  customer?: { _id?: string };
+  customer?: {
+    _id?: string;
+    firstName?: string;
+    lastName?: string;
+  };
   dressName?: string;
+  brand?: string;
+  size?: string;
+  color?: string;
   rentalStartDate?: string;
   rentalEndDate?: string;
   totalAmount?: number;
@@ -33,6 +40,11 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
     return <BookingDetailsSkeleton />;
   }
 
+  const formatStatus = (status?: string) => {
+    if (!status) return "Pending";
+    return status.replace(/([A-Z])/g, " $1").trim();
+  };
+
   return (
     <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
       <div>
@@ -45,11 +57,15 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
         <div>
           Delivery Status:{" "}
           <span className="font-semibold">
-            {bookingDetails?.deliveryStatus ?? "Pending"}
+            {formatStatus(bookingDetails?.deliveryStatus)}
           </span>
         </div>
         <h1>Customer ID: {bookingDetails?.customer?._id ?? "N/A"}</h1>
+        <h1>Customer Name: {bookingDetails?.customer?.firstName} {bookingDetails?.customer?.lastName}</h1>
         <h1>Dress: {bookingDetails?.dressName ?? "N/A"}</h1>
+        <h1>Brand: {bookingDetails?.brand ?? "N/A"}</h1>
+        <h1>Size: {bookingDetails?.size ?? "N/A"}</h1>
+        <h1>Color: {bookingDetails?.color ?? "N/A"}</h1>
         <h1>
           Rental Period:{" "}
           {bookingDetails?.rentalStartDate

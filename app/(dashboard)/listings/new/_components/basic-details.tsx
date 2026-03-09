@@ -1,41 +1,106 @@
-import { Button } from '@/components/ui/button'
-import { ColorPicker } from '@/components/ui/color-picker'
+"use client";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { cn } from '@/lib/utils'
-import { ListingFormValues } from '@/types/listings/index'
-import { UseFormReturn } from 'react-hook-form'
+} from "@/components/ui/select";
+import { ListingFormValues } from "@/types/listings/index";
+import { X } from "lucide-react";
+import { useRef, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
 import {
   CATEGORY_OPTIONS,
   CONDITION_OPTIONS,
   SIZE_OPTIONS,
-} from './form-constants'
+} from "./form-constants";
 
 interface Props {
-  form: UseFormReturn<ListingFormValues>
+  form: UseFormReturn<ListingFormValues>;
+  /** Ref that the parent reads at submit-time to replace "Other" with the custom value */
+  otherCategoryRef: React.MutableRefObject<string>;
 }
-const BasicDetailsForm = ({ form }: Props) => {
-  const selectedColor = form.watch('colour')
+
+const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
+  const [colourInput, setColourInput] = useState("");
+  const colourInputRef = useRef<HTMLInputElement>(null);
+  const [otherCategoryInput, setOtherCategoryInput] = useState("");
+
+  const addColour = () => {
+    const val = colourInput.trim();
+    if (!val) return;
+    const current = form.getValues("colour") || [];
+    if (!current.includes(val)) {
+      form.setValue("colour", [...current, val] as [string, ...string[]], {
+        shouldValidate: true,
+      });
+    }
+    setColourInput("");
+    colourInputRef.current?.focus();
+  };
+
+  const removeColour = (c: string) => {
+    const current = form.getValues("colour") || [];
+    const updated = current.filter((x) => x !== c);
+    form.setValue("colour", updated as [string, ...string[]], {
+      shouldValidate: true,
+    });
+  };
+
+  const toggleSize = (
+    size: string,
+    current: ListingFormValues["size"]
+  ) => {
+    const updated = current.includes(size as ListingFormValues["size"][number])
+      ? current.filter((s) => s !== size)
+      : [...current, size];
+    form.setValue(
+      "size",
+      updated as ListingFormValues["size"],
+      { shouldValidate: true }
+    );
+  };
+
+  const toggleCategory = (
+    cat: string,
+    current: ListingFormValues["category"]
+  ) => {
+    const isRemoving = current.includes(cat as ListingFormValues["category"][number]);
+    if (isRemoving && cat === "Other") {
+      setOtherCategoryInput("");
+      otherCategoryRef.current = "";
+    }
+    const updated = isRemoving
+      ? current.filter((c) => c !== cat)
+      : [...current, cat];
+    form.setValue(
+      "category",
+      updated as ListingFormValues["category"],
+      { shouldValidate: true }
+    );
+  };
+
+  // When the custom input changes, only update local state.
+  // "Other" stays as a sentinel in the form array — substitution happens at submit time via otherCategoryRef.
+  const handleOtherCategoryChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setOtherCategoryInput(e.target.value);
+    otherCategoryRef.current = e.target.value;
+  };
+
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       {/* Name */}
       <FormField
         control={form.control}
@@ -66,67 +131,6 @@ const BasicDetailsForm = ({ form }: Props) => {
         )}
       />
 
-      {/* Size (Select) */}
-      <FormField
-        control={form.control}
-        name="size"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Size</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value || ''}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a size" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {SIZE_OPTIONS.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Color */}
-      <FormField
-        control={form.control}
-        name="colour"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Color</FormLabel>
-            <FormControl>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full">
-                    <div
-                      style={{ backgroundColor: selectedColor }}
-                      className={cn('h-5 w-5  rounded-md mr-3')}
-                    />{' '}
-                    Pick a color
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <ColorPicker
-                    initialColor={field.value}
-                    onChange={field.onChange}
-                    label="Choose a color"
-                  />
-                </PopoverContent>
-              </Popover>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
       {/* Condition (Select) */}
       <FormField
         control={form.control}
@@ -136,14 +140,11 @@ const BasicDetailsForm = ({ form }: Props) => {
             <FormLabel>Condition</FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value || ''}
+              defaultValue={field.value || ""}
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder="Select condition"
-                    className="text-black"
-                  />
+                  <SelectValue placeholder="Select condition" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -159,33 +160,182 @@ const BasicDetailsForm = ({ form }: Props) => {
         )}
       />
 
-      {/* Category (Select) */}
+      {/* Colour — tag input */}
+      <FormField
+        control={form.control}
+        name="colour"
+        render={({ field }) => (
+          <FormItem className="sm:col-span-2">
+            <FormLabel>Colours</FormLabel>
+            <div className="flex gap-2">
+              <Input
+                ref={colourInputRef}
+                placeholder="eg. Red, Sky Blue..."
+                value={colourInput}
+                onChange={(e) => setColourInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addColour();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={addColour}
+                className="shrink-0 px-4 py-2 bg-black text-white text-sm rounded-md hover:bg-neutral-800 transition-colors"
+              >
+                Add
+              </button>
+            </div>
+            {/* Tags */}
+            {(field.value?.length ?? 0) > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {(field.value as string[]).map((c) => (
+                  <span
+                    key={c}
+                    className="flex items-center gap-1 px-3 py-1 bg-neutral-100 border border-neutral-300 rounded-full text-sm"
+                  >
+                    {c}
+                    <button
+                      type="button"
+                      onClick={() => removeColour(c)}
+                      className="hover:text-red-500 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Size — checkbox grid */}
+      <FormField
+        control={form.control}
+        name="size"
+        render={({ field }) => (
+          <FormItem className="sm:col-span-2">
+            <FormLabel>Sizes</FormLabel>
+            <div className="flex flex-wrap gap-3 mt-1">
+              {SIZE_OPTIONS.map((s) => {
+                const selected = (field.value as string[]).includes(s);
+                return (
+                  <label
+                    key={s}
+                    className="flex items-center gap-2 cursor-pointer select-none"
+                  >
+                    <button
+                      type="button"
+                      role="checkbox"
+                      aria-checked={selected}
+                      onClick={() =>
+                        toggleSize(s, field.value)
+                      }
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0 ${selected
+                        ? "bg-black border-black"
+                        : "bg-white border-neutral-400"
+                        }`}
+                    >
+                      {selected && (
+                        <svg
+                          className="w-3 h-3 text-white"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                        >
+                          <path
+                            d="M2 6l3 3 5-5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                    <span className="text-sm font-medium">{s}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Category — checkbox grid */}
       <FormField
         control={form.control}
         name="category"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Category</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {CATEGORY_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <FormItem className="sm:col-span-2">
+            <FormLabel>Categories</FormLabel>
+            <div className="flex flex-wrap gap-3 mt-1">
+              {CATEGORY_OPTIONS.map((opt) => {
+                const isChecked = (field.value as string[]).includes(opt.value);
+                return (
+                  <label
+                    key={opt.value}
+                    className="flex items-center gap-2 cursor-pointer select-none"
+                  >
+                    <button
+                      type="button"
+                      role="checkbox"
+                      aria-checked={isChecked}
+                      onClick={() =>
+                        toggleCategory(opt.value, field.value)
+                      }
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0 ${isChecked
+                        ? "bg-black border-black"
+                        : "bg-white border-neutral-400"
+                        }`}
+                    >
+                      {isChecked && (
+                        <svg
+                          className="w-3 h-3 text-white"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                        >
+                          <path
+                            d="M2 6l3 3 5-5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                    <span className="text-sm font-medium">{opt.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Custom category input — only when Other is selected */}
+            {((field.value as string[]).includes("Other")) && (
+              <div className="mt-3">
+                <Input
+                  placeholder="e.g., Athleisure, Vintage, Resort"
+                  value={otherCategoryInput}
+                  onChange={(e) => handleOtherCategoryChange(e)}
+                  className="h-10 bg-neutral-50 border border-neutral-300 rounded-md text-sm px-3 placeholder:text-neutral-400"
+                />
+                <p className="text-[11px] text-neutral-400 mt-1">
+                  This custom category will be submitted instead of &quot;Other&quot;
+                </p>
+              </div>
+            )}
+
             <FormMessage />
           </FormItem>
         )}
       />
     </div>
-  )
-}
+  );
+};
 
-export default BasicDetailsForm
+export default BasicDetailsForm;

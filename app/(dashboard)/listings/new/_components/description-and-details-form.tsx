@@ -1,3 +1,4 @@
+"use client";
 import {
   FormControl,
   FormField,
@@ -14,8 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
 import { ListingFormValues } from "@/types/listings/index";
+import { FileText, Package, Truck } from "lucide-react";
 import type { UseFormReturn } from "react-hook-form";
 
 interface Props {
@@ -24,23 +25,30 @@ interface Props {
 
 const DescriptionAndDetailsForm = ({ form }: Props) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Description */}
       <FormField
         control={form.control}
         name="description"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Description</FormLabel>
+          <FormItem className="group">
+            <FormLabel className="flex items-center gap-2 text-sm font-semibold text-neutral-700 tracking-wide uppercase">
+              <FileText className="w-4 h-4 text-neutral-400" />
+              Description
+            </FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Describe the dress (style, fit, special details...)"
-                className="resize-none"
-                rows={4}
+                placeholder="Describe the dress (style, fit, special details)"
+                className="resize-none min-h-[120px] bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm"
+                rows={5}
                 {...field}
+                value={field.value ?? ""}
               />
             </FormControl>
-            <FormMessage />
+            <div className="text-[10px] text-neutral-400 text-right pr-1">
+              {(field.value?.length ?? 0)} / 1000
+            </div>
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
@@ -51,65 +59,46 @@ const DescriptionAndDetailsForm = ({ form }: Props) => {
         name="material"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Material</FormLabel>
+            <FormLabel className="flex items-center gap-2 text-sm font-semibold text-neutral-700 tracking-wide uppercase">
+              <Package className="w-4 h-4 text-neutral-400" />
+              Material
+            </FormLabel>
             <FormControl>
-              <Input placeholder="e.g., Silk, Cotton, Polyester" {...field} />
+              <Input
+                placeholder="e.g., Silk, Cotton, Polyester"
+                className="mt-1.5 bg-neutral-50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 placeholder:text-neutral-400 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm"
+                {...field}
+                value={field.value ?? ""}
+              />
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />
 
-      {/* Care Instructions */}
-      <FormField
-        control={form.control}
-        name="careInstructions"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Care Instructions</FormLabel>
-            <Select
-              value={field.value || ""} // ✅ controlled
-              onValueChange={field.onChange}
-            >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select care instructions" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="Dry Clean Only">Dry Clean Only</SelectItem>
-                <SelectItem value="Hand Wash">Hand Wash</SelectItem>
-                <SelectItem value="Machine Wash">Machine Wash</SelectItem>
-                <SelectItem value="Delicate Wash">Delicate Wash</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {/* Pickup Option */}
       <FormField
         control={form.control}
         name="pickupOption"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Pickup Option</FormLabel>
-            <Select
-              value={field.value || ""} // ✅ controlled
-              onValueChange={field.onChange}
-            >
+            <FormLabel className="flex items-center gap-2 text-sm font-semibold text-neutral-700 tracking-wide uppercase">
+              <Truck className="w-4 h-4 text-neutral-400" />
+              Delivery Method
+            </FormLabel>
+            <Select value={field.value || ""} onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select pickup option" />
+                <SelectTrigger className="mt-1.5 bg-neutral-50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm">
+                  <SelectValue placeholder="Select Pickup Option" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 <SelectItem value="Local-Pickup">Local Pickup</SelectItem>
-                <SelectItem value="Australia-wide">Australia-wide</SelectItem>
-                <SelectItem value="Both">Both</SelectItem>
+                <SelectItem value="Australia-wide">Shipping</SelectItem>
+                <SelectItem value="Both">Pickup and Shipping</SelectItem>
               </SelectContent>
             </Select>
-            <FormMessage />
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />

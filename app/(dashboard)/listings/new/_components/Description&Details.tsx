@@ -28,24 +28,12 @@ const DescriptionDetails = ({ form }: Props) => {
                 />
                 <FormField
                     control={form.control}
-                    name="materials"
+                    name="material"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className='text-[18px] text-[#891D33] mb-4'>Materials *</FormLabel>
                             <FormControl>
-                                <Input placeholder="eg. Classic Tee" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                /> <FormField
-                    control={form.control}
-                    name="careInstructions"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className='text-[18px] text-[#891D33] mb-4'>Care Instructions  *</FormLabel>
-                            <FormControl>
-                                <Input placeholder="eg. Classic Tee" {...field} />
+                                <Input placeholder="eg. Classic Tee" {...field} value={field.value as string} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

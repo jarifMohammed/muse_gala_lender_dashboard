@@ -73,6 +73,9 @@ const ListingTableContainer = ({ token }: Props) => {
     columns: listingColumn,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    meta: {
+      token,
+    },
   });
 
   let content;

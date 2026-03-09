@@ -10,9 +10,10 @@ interface Props {
   };
   token: string;
   isLoading: boolean;
+  lenderId: string;
 }
 
-const DeliveryStatus = ({ bookingDetails, token, isLoading }: Props) => {
+const DeliveryStatus = ({ bookingDetails, token, isLoading, lenderId }: Props) => {
   if (isLoading) {
     return (
       <div className="flex w-full gap-8">
@@ -22,9 +23,8 @@ const DeliveryStatus = ({ bookingDetails, token, isLoading }: Props) => {
               <Skeleton className="p-10 rounded-full" />
 
               <Skeleton
-                className={`h-2 w-full rounded-3xl ${
-                  index === 4 ? "hidden" : "block"
-                }`}
+                className={`h-2 w-full rounded-3xl ${index === 4 ? "hidden" : "block"
+                  }`}
               />
             </div>
 
@@ -43,11 +43,13 @@ const DeliveryStatus = ({ bookingDetails, token, isLoading }: Props) => {
         <ShippingStatus
           deliveryStatus={bookingDetails?.deliveryStatus}
           token={token}
+          lenderId={lenderId}
         />
       ) : (
         <PickupStatus
           deliveryStatus={bookingDetails?.deliveryStatus}
           token={token}
+          lenderId={lenderId}
         />
       )}
     </div>

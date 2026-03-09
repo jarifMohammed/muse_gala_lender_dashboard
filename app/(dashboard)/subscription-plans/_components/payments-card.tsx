@@ -30,14 +30,14 @@ const formatDate = (dateString?: string) => {
 
 const PaymentsCard = ({ profile }: Props) => {
   return (
-    <div className="grid grid-cols-2 gap-10">
+    <div className="grid grid-cols-2 gap-4">
       <div
-        className={`p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 cursor-pointer ${profile?.hasActiveSubscription
+        className={`p-4 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 cursor-pointer ${profile?.hasActiveSubscription
           ? "bg-primary text-white"
           : "bg-white hover:bg-primary hover:text-white"
           }`}
       >
-        <h1 className="text-sm mb-5">Subscription</h1>
+        <h1 className="text-sm mb-2">Subscription</h1>
         <h1 className="font-medium text-2xl">
           {profile?.subscription?.planId?.name || "Current plan"}
         </h1>
@@ -47,12 +47,12 @@ const PaymentsCard = ({ profile }: Props) => {
       </div>
 
       <div
-        className={`p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 cursor-pointer ${profile?.hasActiveSubscription
+        className={`p-4 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 cursor-pointer ${profile?.hasActiveSubscription
           ? "bg-primary text-white"
           : "bg-white hover:bg-primary hover:text-white"
           }`}
       >
-        <h1 className="text-sm mb-5">Subscription Period</h1>
+        <h1 className="text-sm mb-2">Subscription Period</h1>
         {profile?.hasActiveSubscription ? (
           <div className="space-y-1">
             <p className="text-sm">

@@ -1,37 +1,83 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LucideIcon } from "lucide-react";
-import React from "react";
+import { LucideIcon, XCircle } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Props {
   deliveryStatus: string;
   statusValue: string;
   IconName: LucideIcon;
   btnName: string;
-  title: string;
   token: string;
   bookingId: string;
-  isActive?: boolean;
+  isCompleted?: boolean;
+  isDisabled?: boolean;
+  negativeStatusValue?: string;
+  negativeBtnName?: string;
+  completedBtnName?: string;
 }
 
 const UpdateStatus = ({
   deliveryStatus,
   statusValue,
-  IconName,
+  IconName: StandardIcon,
   btnName,
-  title,
   token,
   bookingId,
-  isActive,
+  isCompleted,
+  isDisabled,
+  negativeStatusValue,
+  negativeBtnName,
+  completedBtnName,
 }: Props) => {
-  const active = isActive ?? deliveryStatus === statusValue;
   const queryClient = useQueryClient();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPickupOpen, setIsPickupOpen] = useState(false);
 
-  const { mutateAsync, isPending } = useMutation({
+  // Shipping states
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [shippingMethod, setShippingMethod] = useState("");
+
+  // Pickup states
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [pickupDate, setPickupDate] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
+
+  const isFailed = negativeStatusValue && deliveryStatus === negativeStatusValue;
+  const effectiveIsCompleted = isCompleted || isFailed;
+
+  const { mutateAsync, isPending } = useMutation<
+    any,
+    any,
+    {
+      deliveryStatus?: string;
+      trackingNumber?: string;
+      shippingMethod?: string;
+      pickupLocation?: string;
+      pickupDate?: string;
+      pickupTime?: string;
+    } | undefined
+  >({
     mutationKey: ["status"],
-    mutationFn: async () => {
+    mutationFn: async (payload) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/${bookingId}`,
         {
@@ -40,56 +86,239 @@ const UpdateStatus = ({
             "Content-Type": "application/json",
             Authorization: `bearer ${token}`,
           },
-          body: JSON.stringify({ deliveryStatus: statusValue }),
+          body: JSON.stringify({
+            deliveryStatus: payload?.deliveryStatus || statusValue,
+            ...payload,
+          }),
         }
       );
       return await res.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["all-bookings"] });
-      toast.success(data?.message);
+      toast.success(data?.message || "Status updated successfully");
+      setIsOpen(false);
+      setIsPickupOpen(false);
     },
     onError: (error) => {
-      toast.error(error?.message);
+      toast.error(error?.message || "Failed to update status");
     },
   });
 
   const handleConfirm = async () => {
+    if (statusValue === "ShippedToCustomer") {
+      setIsOpen(true);
+      return;
+    }
+
+    if (statusValue === "ReadyForPickup") {
+      setIsPickupOpen(true);
+      return;
+    }
+
     try {
-      await mutateAsync();
+      await mutateAsync(undefined);
+    } catch (error) {
+      console.log(`error ${error}`);
+    }
+  };
+
+  const handleNegativeConfirm = async () => {
+    try {
+      await mutateAsync({ deliveryStatus: negativeStatusValue });
+    } catch (error) {
+      console.log(`error ${error}`);
+    }
+  };
+
+  const handleShippingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!trackingNumber || !shippingMethod) {
+      toast.error("Please fill in all shipping details");
+      return;
+    }
+
+    try {
+      await mutateAsync({ trackingNumber, shippingMethod });
+    } catch (error) {
+      console.log(`error ${error}`);
+    }
+  };
+
+  const handlePickupSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pickupLocation || !pickupDate || !pickupTime) {
+      toast.error("Please fill in all pickup details");
+      return;
+    }
+
+    try {
+      // Combine date and time into ISO 8601 format
+      // pickupDate is "YYYY-MM-DD", pickupTime is "HH:mm"
+      const isoDateTime = new Date(`${pickupDate}T${pickupTime}:00Z`).toISOString();
+      await mutateAsync({ pickupLocation, pickupDate, pickupTime: isoDateTime });
     } catch (error) {
       console.log(`error ${error}`);
     }
   };
 
   return (
-    <div className="w-full">
-      <div className="flex items-center  gap-8">
+    <div className="w-full flex flex-col items-center group">
+      {/* Icon row with connecting line */}
+      <div className="relative flex justify-center items-center w-full mb-3">
+        {/* Progress Line extending right from center of icon */}
         <div
-          className={`p-5 rounded-full  flex flex-col justify-center items-center ${active ? "bg-primary text-white" : "bg-white"
+          className={`absolute top-1/2 -translate-y-1/2 h-[2px] transition-colors duration-500 ${effectiveIsCompleted ? (isFailed ? "bg-red-400" : "bg-primary") : "bg-neutral-200"
+            } ${statusValue === "Dress Returned" ? "hidden" : "block"}`}
+          style={{ left: "50%", right: "-3rem", zIndex: 0 }}
+        />
+
+        {/* Icon Circle - always centered */}
+        <div
+          className={`h-14 w-14 rounded-full flex items-center justify-center z-10 transition-all duration-300 border-2 shadow-sm flex-shrink-0 ${effectiveIsCompleted
+            ? isFailed
+              ? "bg-red-500 border-red-500 text-white scale-110 shadow-red-200"
+              : "bg-primary border-primary text-white scale-110 shadow-primary/20"
+            : "bg-white border-neutral-200 text-neutral-400"
             }`}
         >
-          <IconName
-            className={`h-8 w-8 font-bold ${active ? "text-white" : "text-primary"
-              }`}
-          />
+          {isFailed ? (
+            <XCircle className="h-6 w-6 transition-transform duration-300 scale-110" />
+          ) : (
+            <StandardIcon
+              className={`h-6 w-6 transition-transform duration-300 ${effectiveIsCompleted ? "scale-110" : ""
+                }`}
+            />
+          )}
         </div>
-
-        <div
-          className={`h-2 w-full rounded-3xl ${active ? "bg-primary" : "bg-[#d9d9d9]"
-            } ${statusValue === "Dress Returned" ? "hidden" : "block"}`}
-        ></div>
       </div>
 
-      <h3 className="font-medium my-3">{title}</h3>
+      {/* Action Buttons - centered below icon */}
+      <div className="flex flex-col gap-2 items-center">
+        <Button
+          onClick={handleConfirm}
+          variant={effectiveIsCompleted ? "secondary" : isDisabled ? "outline" : "default"}
+          disabled={isDisabled || effectiveIsCompleted || isPending}
+          className={`min-w-24 w-fit px-2 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg transition-all duration-300 ${effectiveIsCompleted
+            ? "bg-neutral-50 text-neutral-400 border-neutral-100 opacity-60 cursor-default"
+            : isDisabled
+              ? "border-neutral-200 text-neutral-300 bg-neutral-50/50"
+              : "shadow-md hover:shadow-primary/20 hover:-translate-y-0.5 active:scale-95 text-white"
+            }`}
+        >
+          {isPending ? (
+            <div className="flex items-center gap-1">
+              <div className="h-2 w-2 bg-current rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <div className="h-2 w-2 bg-current rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <div className="h-2 w-2 bg-current rounded-full animate-bounce" />
+            </div>
+          ) : effectiveIsCompleted ? (
+            isFailed ? (
+              "Failed"
+            ) : (
+              completedBtnName || "Confirmed"
+            )
+          ) : (
+            btnName
+          )}
+        </Button>
 
-      <Button
-        onClick={handleConfirm}
-        variant={active ? "default" : "outline"}
-        className={`border border-primary disabled:border-gray-500 disabled:cursor-not-allowed`}
-      >
-        {isPending ? `${btnName}...` : `${btnName}`}
-      </Button>
+        {negativeBtnName && !effectiveIsCompleted && !isDisabled && (
+          <Button
+            onClick={handleNegativeConfirm}
+            variant="outline"
+            disabled={isPending}
+            className="min-w-24 w-fit px-2 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg transition-all duration-300 border-neutral-200 text-neutral-400 hover:bg-neutral-50 hover:text-red-500 hover:border-red-100 shadow-sm active:scale-95"
+          >
+            {negativeBtnName}
+          </Button>
+        )}
+      </div>
+
+      {/* Shipping Details Dialog */}
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Shipping Details</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleShippingSubmit} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="courier">Courier</Label>
+              <Select onValueChange={setShippingMethod} value={shippingMethod}>
+                <SelectTrigger id="courier">
+                  <SelectValue placeholder="Select a courier" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AusPost">AusPost</SelectItem>
+                  <SelectItem value="StarTrack">StarTrack</SelectItem>
+                  <SelectItem value="Sendle">Sendle</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tracking">Tracking Number</Label>
+              <Input
+                id="tracking"
+                placeholder="Enter tracking number"
+                value={trackingNumber}
+                onChange={(e) => setTrackingNumber(e.target.value)}
+              />
+            </div>
+            <DialogFooter className="pt-4">
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Submitting..." : "Confirm Shipping"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {/* Ready for Pickup Dialog */}
+      <Dialog open={isPickupOpen} onOpenChange={setIsPickupOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Pickup Details</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePickupSubmit} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="location">Pickup Location</Label>
+              <Input
+                id="location"
+                placeholder="Enter pickup address"
+                value={pickupLocation}
+                onChange={(e) => setPickupLocation(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="date">Pickup Date</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={pickupDate}
+                  onChange={(e) => setPickupDate(e.target.value)}
+                  className="block w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="time">Pickup Time</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={pickupTime}
+                  onChange={(e) => setPickupTime(e.target.value)}
+                  className="block w-full"
+                />
+              </div>
+            </div>
+            <DialogFooter className="pt-4">
+              <Button type="submit" disabled={isPending} className="w-full">
+                {isPending ? "Submitting..." : "Confirm Ready Details"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

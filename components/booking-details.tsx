@@ -249,7 +249,7 @@ export function BookingDetails({ bookingId }: BookingDetailsProps) {
               className="px-4 py-2 text-sm bg-white border border-[#8c1c3a] text-[#8c1c3a] rounded-md"
               onClick={() => handleStatusAction("item_picked_up")}
             >
-              Item Successfully Picked Up
+              Picked Up By Customer
             </button>
             <button
               className="px-4 py-2 text-sm bg-white border border-[#8c1c3a] text-[#8c1c3a] rounded-md"

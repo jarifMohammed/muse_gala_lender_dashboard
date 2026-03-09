@@ -59,18 +59,18 @@ export const listingColumn: ColumnDef<Listing>[] = [
 
       const statusColor: Record<string, string> = {
         approved:
-          "bg-green-100 text-green-700 border border-green-300 hover:bg-green-200",
+          "bg-green-100 text-green-700 border border-green-300 hover:bg-green-200 capitalize",
         rejected:
-          "bg-red-100 text-red-700 border border-red-300 hover:bg-red-200",
+          "bg-red-100 text-red-700 border border-red-300 hover:bg-red-200 capitalize",
         pending:
-          "bg-yellow-100 text-yellow-700 border border-yellow-300 hover:bg-yellow-200",
+          "bg-yellow-100 text-yellow-700 border border-yellow-300 hover:bg-yellow-200 capitalize",
       };
 
       return (
         <Badge
           className={
             statusColor[status] ||
-            "bg-gray-100 text-gray-700 border border-gray-300"
+            "bg-gray-100 text-gray-700 border border-gray-300 capitalize"
           }
         >
           {status}
@@ -79,11 +79,11 @@ export const listingColumn: ColumnDef<Listing>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "Status",
     cell: ({ row }) => <StatusController data={row.original} />,
   },
   {
     header: "Action",
-    cell: ({ row }) => <ListingViewAction data={row.original} />,
+    cell: ({ row, table }) => <ListingViewAction data={row.original} table={table} />,
   },
 ];

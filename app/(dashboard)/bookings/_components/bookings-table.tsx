@@ -17,6 +17,13 @@ import { useBookingsFilter } from "./states/useBookingsFilter";
 import Link from "next/link";
 import PayoutButton from "./payout-button";
 import AcceptRejectButton from "./accept-reject-button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Eye } from "lucide-react";
 
 interface Props {
   token: string;
@@ -58,6 +65,11 @@ const BookingsTable = ({ token }: Props) => {
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
     return sorted[0].status;
+  };
+
+  const formatStatus = (status?: string) => {
+    if (!status) return "Pending";
+    return status.replace(/([A-Z])/g, " $1").trim();
   };
 
   // Helper function to get status badge styling
@@ -170,14 +182,30 @@ const BookingsTable = ({ token }: Props) => {
                         item?.deliveryStatus
                       )}`}
                     >
-                      {item?.deliveryStatus}
+                      {formatStatus(item?.deliveryStatus)}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center space-x-2">
-                      <Link href={`/bookings/${item?._id}`}>
-                        <Button size="sm">View</Button>
-                      </Link>
+                      <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-primary/5"
+                              asChild
+                            >
+                              <Link href={`/bookings/${item?._id}`}>
+                                <Eye className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p className="text-xs font-medium">View Booking Details</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 </TableRow>

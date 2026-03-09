@@ -3,73 +3,85 @@ import React, { useState } from "react";
 import { Box, Check, FileText, Truck, Undo2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import UpdateStatus from "./update-status";
+import AcceptStatus from "./accept-status";
 
 interface Props {
   deliveryStatus?: string;
   token: string;
+  lenderId: string;
 }
 
-const ShippingStatus = ({ deliveryStatus, token }: Props) => {
-
+const ShippingStatus = ({ deliveryStatus, token, lenderId }: Props) => {
   const params = useParams();
   const bookingId = params.id;
 
+  const statusOrder = [
+    "Pending",
+    "Confirmed",
+    "ShippedToCustomer",
+    "Return Due",
+    "Dress Returned",
+  ];
+
+  const getCurrentIndex = (status: string) => {
+    if (status === "ReturnLinkSent") return statusOrder.indexOf("Return Due");
+    const index = statusOrder.indexOf(status);
+    return index === -1 ? 0 : index;
+  };
+
+  const currentIndex = getCurrentIndex(deliveryStatus as string);
+
   return (
-    <div className="flex w-full gap-8">
-      {/* confirm order */}
-      <UpdateStatus
+    <div className="flex w-full gap-12 items-start py-6">
+      {/* accept/reject */}
+      <AcceptStatus
         deliveryStatus={deliveryStatus as string}
-        statusValue="Confirmed"
-        IconName={Check}
-        bookingId={bookingId as string}
-        btnName="Fulfil Order"
-        title="Order Confirmed"
         token={token}
+        bookingId={bookingId as string}
+        lenderId={lenderId}
       />
 
-      {/* fulfil order */}
-      <UpdateStatus
-        deliveryStatus={deliveryStatus as string}
-        statusValue="PreparingShipment"
-        IconName={FileText}
-        bookingId={bookingId as string}
-        btnName="Print Shipping Label"
-        title="Label Ready"
-        token={token}
-      />
+
 
       {/* mark as shipped */}
       <UpdateStatus
         deliveryStatus={deliveryStatus as string}
         statusValue="ShippedToCustomer"
+        negativeStatusValue="Cannot Fullfill"
+        negativeBtnName="Cannot Fulfill"
+        completedBtnName="Shipped"
         IconName={Truck}
         bookingId={bookingId as string}
-        btnName="Mark as Shipped"
-        title="Dress Shipped"
+        btnName="Dress Shipped"
         token={token}
+        isCompleted={currentIndex >= statusOrder.indexOf("ShippedToCustomer")}
+        isDisabled={currentIndex !== statusOrder.indexOf("Confirmed")}
       />
 
       {/* return due */}
       <UpdateStatus
         deliveryStatus={deliveryStatus as string}
         statusValue="Return Due"
+        completedBtnName="Handed Over"
         IconName={Undo2}
         bookingId={bookingId as string}
         btnName="Return Due"
-        title="Return Due"
         token={token}
-        isActive={deliveryStatus === "Return Due" || deliveryStatus === "ReturnLinkSent"}
+        isCompleted={currentIndex >= statusOrder.indexOf("Return Due")}
+        isDisabled={currentIndex !== statusOrder.indexOf("ShippedToCustomer")}
       />
 
       {/* dress returned */}
       <UpdateStatus
         deliveryStatus={deliveryStatus as string}
         statusValue="Dress Returned"
+        completedBtnName="Returned"
         IconName={Box}
         bookingId={bookingId as string}
-        btnName="Dress Returned"
-        title="Dress Returned"
+        btnName="Returned"
         token={token}
+        isCompleted={currentIndex >= statusOrder.indexOf("Dress Returned")}
+        isDisabled={currentIndex !== statusOrder.indexOf("Return Due")}
       />
     </div>
   );

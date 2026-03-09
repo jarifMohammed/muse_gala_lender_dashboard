@@ -90,22 +90,24 @@ const SubscriptionTable = ({ token, id }: Props) => {
     },
   });
 
-  const subscriptions = data?.data ?? [];
+  const subscriptions = (data?.data ?? []).filter(
+    (item) => item.price === 0
+  );
 
   return (
     <div className="bg-white p-5 rounded-lg mt-8 shadow-[0px_4px_10px_0px_#0000001A]">
       <div className="overflow-x-auto">
-        <Table className="min-w-[1000px]">
+        <Table>
           <TableHeader>
             <TableRow className="border-none">
-              <TableHead className="w-[100px] text-center">ID</TableHead>
-              <TableHead className="w-[150px] text-center">Name</TableHead>
-              <TableHead className="w-[200px] text-center">Description</TableHead>
-              <TableHead className="w-[100px] text-center">Price</TableHead>
-              <TableHead className="w-[100px] text-center">Commission</TableHead>
-              <TableHead className="w-[120px] text-center">Billing Cycle</TableHead>
-              <TableHead className="w-[100px] text-center">Status</TableHead>
-              <TableHead className="w-[150px] text-center">Action</TableHead>
+              <TableHead className="text-center">ID</TableHead>
+              <TableHead className="text-center">Name</TableHead>
+              <TableHead className="text-center">Description</TableHead>
+              <TableHead className="text-center">Price</TableHead>
+              <TableHead className="text-center">Commission</TableHead>
+              <TableHead className="text-center">Billing Cycle</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
 

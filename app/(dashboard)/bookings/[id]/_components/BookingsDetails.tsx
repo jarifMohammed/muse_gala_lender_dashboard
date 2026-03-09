@@ -10,12 +10,16 @@ import DisputeForm from "./dispute-form";
 import DeliveryStatus from "./delivery-status";
 import PayoutButton from "../../_components/payout-button";
 import AcceptRejectButton from "../../_components/accept-reject-button";
+import { Button } from "@/components/ui/button";
+import { MoveLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   token: string;
 }
 
 const BookingsDetails = ({ token }: Props) => {
+  const router = useRouter();
   const params = useParams();
   const id = params.id;
 
@@ -38,6 +42,19 @@ const BookingsDetails = ({ token }: Props) => {
 
   return (
     <div>
+      <div className="mb-4">
+        <Button
+          className="p-0 h-auto hover:bg-transparent"
+          effect="expandIcon"
+          icon={MoveLeft}
+          iconPlacement="left"
+          variant="link"
+          onClick={() => router.back()}
+        >
+          Back Now
+        </Button>
+      </div>
+
       <div className="flex items-center justify-between mb-8">
         <h1 className="uppercase text-2xl">Booking Details</h1>
         <div className="flex items-center gap-2">
@@ -49,13 +66,6 @@ const BookingsDetails = ({ token }: Props) => {
                 id={bookingDetails?._id}
                 token={token}
               />
-              {bookingDetails?.deliveryStatus === "Pending" && (
-                <AcceptRejectButton
-                  bookingId={bookingDetails?._id}
-                  lenderId={bookingDetails?.allocatedLender?.lenderId}
-                  token={token}
-                />
-              )}
             </>
           )}
         </div>
@@ -66,6 +76,7 @@ const BookingsDetails = ({ token }: Props) => {
           bookingDetails={bookingDetails}
           token={token}
           isLoading={isLoading}
+          lenderId={bookingDetails?.allocatedLender?.lenderId}
         />
       </div>
 

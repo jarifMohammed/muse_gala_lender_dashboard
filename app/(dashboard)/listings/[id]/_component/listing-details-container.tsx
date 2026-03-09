@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Listing } from "@/types/listings/index";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, MoveLeft, X } from "lucide-react";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -82,12 +82,25 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
 
   return (
     <div className="p-8 bg-[#fefaf6] space-y-8">
+      <div className="mb-4">
+        <Button
+          className="p-0 h-auto hover:bg-transparent"
+          effect="expandIcon"
+          icon={MoveLeft}
+          iconPlacement="left"
+          variant="link"
+          onClick={() => router.back()}
+        >
+          Back Now
+        </Button>
+      </div>
       <h2 className="text-[20px] font-normal uppercase  ">LISTINGS DETAILS</h2>
 
       {data?.data.approvalStatus === "rejected" && (
         <Alert className="mb-6 border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-primary" />
           <AlertDescription className="text-red-500 font-medium">
+            <span className="font-bold underline mr-1">Rejection Reason:</span>
             {data?.data.reasonsForRejection}
           </AlertDescription>
         </Alert>
@@ -152,14 +165,19 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
             <div className="mb-6">
               <p className="text-base mb-3">
                 <span className="font-medium">Size: </span>
-                {data?.data.size}
+                {Array.isArray(data?.data.size)
+                  ? data.data.size.join(", ")
+                  : data?.data.size}
               </p>
-              <div className="text-base mb-3 flex items-center">
-                <span className="font-medium">Color: </span>
-                <div
-                  style={{ backgroundColor: data?.data.colour }}
-                  className="h-5 w-5 rounded-full ml-3"
-                />
+              <div className="text-base mb-3 ">
+                <span className="font-medium  mr-2">Color: </span>
+                {Array.isArray(data?.data.colour) ? (
+                  data.data.colour.join(", ")
+                ) : data?.data.colour ? (
+                  data.data.colour
+                ) : (
+                  <span className="text-gray-400 italic text-sm">N/A</span>
+                )}
               </div>
               <p className="text-base mb-3">
                 <span className="font-medium">Condition:</span>{" "}
@@ -179,8 +197,8 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
                 <span className="font-medium">Status:</span>
                 <span
                   className={`inline-flex items-center gap-1 px-4 py-1 rounded-2xl text-sm font-medium ${isApproved
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
                     }`}
                 >
                   {isApproved ? "Active" : "Inactive"}
@@ -212,10 +230,7 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
               <span className="font-normal">Materials:</span>{" "}
               {data?.data.material}
             </p>
-            <p className="text-base">
-              <span className="font-normal">Care Instructions:</span>{" "}
-              {data?.data.careInstructions}
-            </p>
+
           </div>
         </Card>
       </SkeletonWrapper>

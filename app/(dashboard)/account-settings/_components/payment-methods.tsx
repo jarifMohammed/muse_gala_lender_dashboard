@@ -62,7 +62,7 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
                         {hasPaymentMethod && (
                             <span className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
                                 <CheckCircle2 className="h-3 w-3" />
-                                Verified
+                                Connected
                             </span>
                         )}
                     </div>

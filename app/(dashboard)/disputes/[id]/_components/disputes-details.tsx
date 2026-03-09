@@ -11,12 +11,16 @@ import DisputeDescription from "./dispute-description";
 import MediaEvidence from "./media-evidence";
 import DisputeTimeline from "./dispute-timeline";
 import DisputeAction from "./dispute-action";
+import { Button } from "@/components/ui/button";
+import { MoveLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   token: string;
 }
 
 const DisputesDetails = ({ token }: Props) => {
+  const router = useRouter();
   const params = useParams();
   const id = params.id;
 
@@ -39,6 +43,19 @@ const DisputesDetails = ({ token }: Props) => {
 
   return (
     <div>
+      <div className="mb-4">
+        <Button
+          className="p-0 h-auto hover:bg-transparent"
+          effect="expandIcon"
+          icon={MoveLeft}
+          iconPlacement="left"
+          variant="link"
+          onClick={() => router.back()}
+        >
+          Back Now
+        </Button>
+      </div>
+
       <div>
         <h1 className="tracking-widest uppercase font-medium text-xl mb-8">
           Dispute Details

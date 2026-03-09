@@ -18,6 +18,7 @@ import {
 } from "@/types/listings/index";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Loader2, MoveLeft } from "lucide-react";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import BasicDetailsForm from "./basic-details";
@@ -53,6 +54,8 @@ async function getListing(initialId: string, token: string) {
 
 export default function ListingForm({ token, initialId }: Props) {
   const router = useRouter();
+  /** Holds the custom text typed when "Other" category is selected */
+  const otherCategoryRef = useRef<string>("");
 
   const { data, isLoading } = useQuery<ApiProps>({
     queryKey: ["listing", initialId],
@@ -86,13 +89,13 @@ export default function ListingForm({ token, initialId }: Props) {
         {
           dressName: "",
           brand: "",
-          size: "S", // default size
-          colour: "",
+          size: [], // default sizes
+          colour: [], // default colours
           condition: "Like New", // default condition
-          category: "Formal", // default category
+          category: [], // default categories
           description: "",
           material: "",
-          careInstructions: undefined, // optional
+
           rentalPrice: {
             fourDays: 0,
             eightDays: 0,
@@ -141,13 +144,13 @@ export default function ListingForm({ token, initialId }: Props) {
         {
           dressName: "",
           brand: "",
-          size: "S", // default size
-          colour: "",
+          size: [], // default sizes
+          colour: [], // default colours
           condition: "Like New", // default condition
-          category: "Formal", // default category
+          category: [], // default categories
           description: "",
           material: "",
-          careInstructions: undefined, // optional
+
           rentalPrice: {
             fourDays: 0,
             eightDays: 0,
@@ -172,31 +175,40 @@ export default function ListingForm({ token, initialId }: Props) {
     defaultValues: {
       dressName: data?.data.dressName ?? "",
       brand: data?.data.brand ?? "",
-      size: data?.data.size ?? undefined, // you can pick a reasonable default size
-      colour: data?.data.colour ?? undefined,
-      condition: data?.data.condition ?? undefined, // default condition
-      category: data?.data.category ?? undefined, // default category
+      size: data?.data.size ?? [],
+      colour: data?.data.colour ?? [],
+      condition: data?.data.condition ?? undefined,
+      category: data?.data.category ?? [],
       description: data?.data.description ?? "",
-      material: data?.data.material ?? undefined,
-      careInstructions: data?.data.careInstructions ?? undefined, // optional
+      material: data?.data.material ?? "",
+
       rentalPrice: {
-        fourDays: data?.data.rentalPrice.fourDays ?? 0,
-        eightDays: data?.data.rentalPrice.eightDays ?? 0,
+        fourDays: data?.data.rentalPrice?.fourDays ?? 0,
+        eightDays: data?.data.rentalPrice?.eightDays ?? 0,
       },
       media: data?.data.media ?? [],
-      pickupOption: data?.data.pickupOption ?? undefined, // default pickup option
+      pickupOption: data?.data.pickupOption ?? undefined,
     },
   });
 
   function onSubmit(values: ListingFormValues) {
+    // If "Other" is in the category array, replace it with the custom typed value
+    const customCat = otherCategoryRef.current.trim();
+    const finalValues: ListingFormValues = {
+      ...values,
+      category: (customCat && values.category.includes("Other")
+        ? [...new Set(values.category.map((c) => (c === "Other" ? customCat : c)))]
+        : values.category) as ListingFormValues["category"],
+    };
+
     if (initialId) {
       editListing({
-        ...values,
+        ...finalValues,
         approvalStatus: "pending",
         isActive: false,
       });
     } else {
-      createListing(values);
+      createListing(finalValues);
     }
   }
 
@@ -228,7 +240,7 @@ export default function ListingForm({ token, initialId }: Props) {
                 <CardTitle>Basic Details</CardTitle>
               </CardHeader>
               <CardContent>
-                <BasicDetailsForm form={form} />
+                <BasicDetailsForm form={form} otherCategoryRef={otherCategoryRef} />
               </CardContent>
             </Card>
             <Card className="shadow-none">

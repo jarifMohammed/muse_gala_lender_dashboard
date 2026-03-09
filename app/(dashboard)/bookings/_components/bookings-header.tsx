@@ -82,7 +82,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-end gap-6 bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 items-end gap-6 bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] mt-8 w-full">
         <div className="relative w-full">
           <Input
             className="pl-7 w-full h-10"
@@ -118,23 +118,26 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
           </Select>
         </div>
 
-        <div className="flex items-center gap-3 w-full">
-          <div className="flex flex-col gap-1 flex-1">
-            <span className="text-[10px] text-gray-500 uppercase ml-1">Start Date</span>
-            <input
-              type="date"
-              className="w-full focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 outline-none"
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col gap-1 flex-1">
-            <span className="text-[10px] text-gray-500 uppercase ml-1">End Date</span>
-            <input
-              type="date"
-              className="w-full focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 outline-none"
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
+        <div className="flex flex-col gap-1 w-full">
+          <span className="text-[10px] text-gray-500 uppercase ml-1">
+            Start Date
+          </span>
+          <input
+            type="date"
+            className="w-full focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 outline-none"
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1 w-full">
+          <span className="text-[10px] text-gray-500 uppercase ml-1">
+            End Date
+          </span>
+          <input
+            type="date"
+            className="w-full focus-visible:ring-0 border border-input h-10 rounded-md text-sm shadow-sm px-3 py-1 outline-none"
+            onChange={(e) => setEndDate(e.target.value)}
+          />
         </div>
       </div>
 
