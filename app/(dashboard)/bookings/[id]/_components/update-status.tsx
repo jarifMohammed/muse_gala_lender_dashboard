@@ -257,10 +257,10 @@ const UpdateStatus = ({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tracking">Tracking Number</Label>
+              <Label htmlFor="tracking">Tracking Number/Tracking Link</Label>
               <Input
                 id="tracking"
-                placeholder="Enter tracking number"
+                placeholder="Enter tracking number/tracking link"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
               />
