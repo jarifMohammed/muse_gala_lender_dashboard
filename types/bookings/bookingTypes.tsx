@@ -10,7 +10,7 @@ interface StatusHistory {
   updatedBy: string;
 }
 
-interface Booking {
+export interface Booking {
   _id: string;
   customer: Customer;
   dressId: string;

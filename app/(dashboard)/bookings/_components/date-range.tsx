@@ -92,11 +92,10 @@ const DateRange = ({
                 key={option.id}
                 type="button"
                 onClick={() => handleRentalDurationChange(option.days)}
-                className={`px-4 py-2 rounded-md border ${
-                  rentalDuration === option.days
+                className={`px-4 py-2 rounded-md border ${rentalDuration === option.days
                     ? "bg-primary text-white border-primary"
                     : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                } transition-colors`}
+                  } transition-colors`}
               >
                 {option.label}
               </button>
@@ -104,33 +103,33 @@ const DateRange = ({
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-5">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="w-full">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-5 w-full">
               {/* Start Date */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 w-full md:w-auto">
                 <label className="text-sm text-gray-600">Start Date</label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={handleStartDateChange}
-                  className="w-[180px] focus-visible:ring-0 border border-input h-9 rounded-md text-base shadow-sm px-3 py-1 bg-inherit"
+                  className="w-full md:w-[180px] focus-visible:ring-0 border border-input h-10 md:h-9 rounded-md text-base shadow-sm px-3 py-1 bg-inherit"
                 />
               </div>
 
               {/* Separator */}
-              <div className="mt-5">
+              <div className="hidden md:block mt-5">
                 <div className="w-5 h-1 border-b-2 border-black"></div>
               </div>
 
               {/* End Date (Read-only) */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 w-full md:w-auto">
                 <label className="text-sm text-gray-600">End Date</label>
                 <input
                   type="date"
                   value={endDate}
                   readOnly
-                  className="w-[180px] focus-visible:ring-0 border border-input h-9 rounded-md text-base shadow-sm px-3 py-1 bg-inherit bg-gray-50 cursor-not-allowed"
+                  className="w-full md:w-[180px] focus-visible:ring-0 border border-input h-10 md:h-9 rounded-md text-base shadow-sm px-3 py-1 bg-inherit bg-gray-50 cursor-not-allowed"
                 />
               </div>
             </div>

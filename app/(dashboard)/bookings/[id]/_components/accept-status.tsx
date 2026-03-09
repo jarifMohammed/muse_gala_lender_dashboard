@@ -15,7 +15,7 @@ interface Props {
 const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => {
     const queryClient = useQueryClient();
     const isCompleted = deliveryStatus !== "Pending";
-    const isRejected = deliveryStatus === "Rejected";
+    const isRejected = deliveryStatus.includes("Rejected");
     const isAccepted = isCompleted && !isRejected;
 
     const { mutateAsync: handleAction, isPending } = useMutation({
@@ -32,11 +32,15 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => 
                     body: JSON.stringify({ bookingId, lenderId, action }),
                 }
             );
-            return await res.json();
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data?.message || "Something went wrong");
+            }
+            return data;
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["all-bookings"] });
-            toast.success(data?.message);
+            toast.success(data?.message || "Operation successful");
         },
         onError: (error: any) => {
             toast.error(error?.message || "Something went wrong");

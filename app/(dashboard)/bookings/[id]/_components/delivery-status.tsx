@@ -16,11 +16,11 @@ interface Props {
 const DeliveryStatus = ({ bookingDetails, token, isLoading, lenderId }: Props) => {
   if (isLoading) {
     return (
-      <div className="flex w-full gap-8">
+      <div className="flex flex-col md:flex-row w-full gap-4 md:gap-8">
         {[...Array(5)].map((_, index) => (
           <div key={index} className="w-full">
-            <div className="flex items-center gap-8">
-              <Skeleton className="p-10 rounded-full" />
+            <div className="flex items-center gap-4 md:gap-8">
+              <Skeleton className="size-10 md:p-10 rounded-full shrink-0" />
 
               <Skeleton
                 className={`h-2 w-full rounded-3xl ${index === 4 ? "hidden" : "block"
@@ -30,7 +30,7 @@ const DeliveryStatus = ({ bookingDetails, token, isLoading, lenderId }: Props) =
 
             <Skeleton className="h-4 w-3/4 my-3" />
 
-            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-8 md:h-10 w-full" />
           </div>
         ))}
       </div>

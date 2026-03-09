@@ -78,9 +78,16 @@
   }
 }
 
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   background-color: #fefaf6;
   color: #000000;
+  width: 100%;
 }
 
 .sidebar {

@@ -202,9 +202,9 @@ const Calendar = ({ token }: { token: string }) => {
   // Calendar Skeleton Component
   const CalendarSkeleton = () => (
     <div className="lg:col-span-2 bg-white p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A]">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div className="h-7 w-40 bg-gray-200 rounded-md animate-pulse"></div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           {/* Dress Filter Skeleton */}
           <div className="h-9 w-24 bg-gray-200 rounded-md animate-pulse"></div>
           {/* Month Filter Skeleton */}
@@ -260,16 +260,16 @@ const Calendar = ({ token }: { token: string }) => {
   return (
     <div
       ref={calendarRef}
-      className="lg:col-span-2 bg-white p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A] relative"
+      className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A] relative"
       onMouseLeave={handleCalendarMouseLeave}
     >
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h3 className="text-lg font-semibold text-gray-800">
           {data?.data
             ? `${getMonthName(data.data.month)} ${data.data.year}`
             : "Calendar"}
         </h3>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           {/* Dress Filter */}
           <div className="relative group">
             <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
@@ -339,42 +339,44 @@ const Calendar = ({ token }: { token: string }) => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1 mb-4">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div
-            key={day}
-            className="text-center font-semibold text-gray-600 text-sm py-2"
-          >
-            {day}
-          </div>
-        ))}
-
-        {calendarDays.map((date, index) => (
-          <div
-            key={index}
-            className={`min-h-[80px] p-2 border border-gray-100 rounded-lg transition-all duration-200 ${date.month !== "current"
-              ? "bg-gray-50 text-gray-400"
-              : "bg-white hover:bg-gray-50 hover:shadow-sm cursor-pointer"
-              } ${date.events.length > 0 ? "border-l-4 border-l-[#891d33]" : ""}`}
-            onMouseEnter={(e) => handleDateHover(date, e)}
-          >
+      <div className="max-w-full overflow-x-auto pb-4 -mb-4 scrollbar-hide">
+        <div className="grid grid-cols-7 gap-1 mb-4 min-w-[600px] md:min-w-0">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <div
-              className={`text-sm font-medium mb-1 ${date.month === "current" ? "text-gray-900" : "text-gray-400"
-                }`}
+              key={day}
+              className="text-center font-semibold text-gray-600 text-sm py-2"
             >
-              {date.day}
+              {day}
             </div>
+          ))}
 
-            {/* Event Count Badge */}
-            {date.events.length > 0 && (
-              <div className="flex justify-center">
-                <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold bg-[#891d33] text-white rounded-full min-w-[20px]">
-                  {date.events.length}
-                </span>
+          {calendarDays.map((date, index) => (
+            <div
+              key={index}
+              className={`min-h-[80px] p-2 border border-gray-100 rounded-lg transition-all duration-200 ${date.month !== "current"
+                ? "bg-gray-50 text-gray-400"
+                : "bg-white hover:bg-gray-50 hover:shadow-sm cursor-pointer"
+                } ${date.events.length > 0 ? "border-l-4 border-l-[#891d33]" : ""}`}
+              onMouseEnter={(e) => handleDateHover(date, e)}
+            >
+              <div
+                className={`text-sm font-medium mb-1 ${date.month === "current" ? "text-gray-900" : "text-gray-400"
+                  }`}
+              >
+                {date.day}
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* Event Count Badge */}
+              {date.events.length > 0 && (
+                <div className="flex justify-center">
+                  <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold bg-[#891d33] text-white rounded-full min-w-[20px]">
+                    {date.events.length}
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Hover Tooltip - Fixed Position */}

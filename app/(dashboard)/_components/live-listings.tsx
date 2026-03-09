@@ -31,7 +31,7 @@ const LiveListings = ({ liveListings, isLoading }: liveListingsProps) => {
   );
 
   return (
-    <div className="bg-white p-7 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A] mb-8">
+    <div className="bg-white p-4 sm:p-7 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A] mb-8">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium">Live Listings</h3>
         <Link
@@ -59,12 +59,12 @@ const LiveListings = ({ liveListings, isLoading }: liveListingsProps) => {
                   className="object-cover w-full h-full rounded-l-[8px]"
                 />
               </div>
-              <div className="px-4 pt-2 rounded-r-[8px]">
-                <p className="font-medium">{dress?.dressName || `DRESS ID : ${dress?.masterDressId}`}</p>
-                <p className="text-sm">
+              <div className="px-4 pt-2 rounded-r-[8px] flex-1 min-w-0">
+                <p className="font-medium truncate break-all">{dress?.dressName || `DRESS ID : ${dress?.masterDressId}`}</p>
+                <p className="text-sm truncate">
                   Brand: {dress?.brand || "Non vel ad officia d"}
                 </p>
-                <p className="text-sm">Price: {dress?.price || "132"}</p>
+                <p className="text-sm truncate">Price: {dress?.price || "132"}</p>
               </div>
             </div>
           ))

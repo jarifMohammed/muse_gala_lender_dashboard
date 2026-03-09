@@ -130,9 +130,9 @@ const ManualBookings = ({ isOpen, setIsOpen }: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={() => setIsOpen(false)}>
-      <DialogContent className="lg:max-w-[800px]">
+      <DialogContent className="w-[95%] md:max-w-[800px] p-4 md:p-6 overflow-y-auto max-h-[90vh]">
         <DialogHeader className="mb-4">
-          <DialogTitle className="text-xl">Manual Booking</DialogTitle>
+          <DialogTitle className="text-lg md:text-xl">Manual Booking</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleManualBooking}>

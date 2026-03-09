@@ -6,7 +6,7 @@ export default async function OverviewPage() {
   const token = cu?.user?.accessToken;
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <Overview token={token as string} />
     </div>
   );

@@ -33,7 +33,7 @@ export default function RootLayout({
       className={cn(raleway.className, 'font-light')}
     >
       <body suppressHydrationWarning className="bg-[#f7f2ee]">
-        <Toaster position="bottom-right" richColors closeButton />
+        <Toaster position="top-right" richColors closeButton />
         <AuthProvider>
           <QueryProvider>
             <EdgeStoreProvider>{children}</EdgeStoreProvider>

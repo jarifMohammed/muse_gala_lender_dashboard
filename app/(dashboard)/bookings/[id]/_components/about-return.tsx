@@ -32,7 +32,7 @@ const AboutReturn: React.FC<AboutReturnProps> = ({
     return (
         <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
             <div>
-                <h1 className="text-xl font-medium">Return Details</h1>
+                <h1 className="text-xl font-medium break-all">Return Details</h1>
             </div>
 
             <div className="mt-4 space-y-2 text-sm">
@@ -40,7 +40,7 @@ const AboutReturn: React.FC<AboutReturnProps> = ({
                     Method: <span className="font-semibold">{bookingDetails?.returnMethod ?? "N/A"}</span>
                 </h1>
 
-                <h1>
+                <h1 className="break-all">
                     Confirmed At:{" "}
                     <span className="font-semibold">
                         {bookingDetails?.returnConfirmedAt
@@ -49,7 +49,7 @@ const AboutReturn: React.FC<AboutReturnProps> = ({
                     </span>
                 </h1>
 
-                <h1>
+                <h1 className="break-all">
                     Tracking Number: <span className="font-semibold">{bookingDetails?.returnTrackingNumber ?? "N/A"}</span>
                 </h1>
 

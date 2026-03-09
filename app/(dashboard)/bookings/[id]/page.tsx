@@ -8,7 +8,7 @@ const page = async () => {
   const token = cu?.user.accessToken;
 
   return (
-    <div className="p-10">
+    <div className="p-4 sm:p-6 md:p-10">
       <BookingsDetails token={token as string} />
     </div>
   );

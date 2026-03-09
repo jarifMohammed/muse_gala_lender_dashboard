@@ -61,7 +61,7 @@ const DressName = ({
             Select Dress
           </label>
           <Select value={selectedDressId} onValueChange={handleDressChange}>
-            <SelectTrigger className="w-full h-[60px]">
+            <SelectTrigger className="w-full h-12 md:h-[60px]">
               <SelectValue placeholder="Choose a dress" />
             </SelectTrigger>
             <SelectContent>
@@ -75,9 +75,9 @@ const DressName = ({
                       height={40}
                       className="h-10 w-10 rounded-md object-cover"
                     />
-                    <div>
-                      <p className="font-medium">{item?.dressName}</p>
-                      <p className="text-xs text-gray-500">
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{item?.dressName}</p>
+                      <p className="text-[10px] text-gray-500">
                         Sizes: {item?.size?.join(", ")}
                       </p>
                     </div>
@@ -98,14 +98,14 @@ const DressName = ({
             onValueChange={handleSizeChange}
             disabled={!selectedDressId || availableSizes.length === 0}
           >
-            <SelectTrigger className="w-full h-[60px]">
+            <SelectTrigger className="w-full h-12 md:h-[60px]">
               <SelectValue
                 placeholder={
                   !selectedDressId
                     ? "Select dress first"
                     : availableSizes.length === 0
-                    ? "No sizes available"
-                    : "Choose size"
+                      ? "No sizes available"
+                      : "Choose size"
                 }
               />
             </SelectTrigger>

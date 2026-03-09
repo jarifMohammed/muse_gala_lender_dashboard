@@ -32,11 +32,18 @@ const AcceptRejectButton = ({ token, bookingId, lenderId }: Props) => {
           body: JSON.stringify(payload),
         }
       );
-      return await res.json();
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.message || "Something went wrong");
+      }
+      return data;
     },
     onSuccess: (data) => {
-      toast.success(data?.message);
+      toast.success(data?.message || "Operation successful");
       queryClient.invalidateQueries({ queryKey: ["all-bookings"] });
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "Something went wrong");
     },
   });
 
@@ -67,16 +74,21 @@ const AcceptRejectButton = ({ token, bookingId, lenderId }: Props) => {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="grid grid-cols-2 gap-3 w-full">
       <Button
         onClick={handleAccept}
         disabled={isPending}
-        className="bg-black hover:bg-black"
+        className="w-full h-9 text-xs py-1"
       >
         {isPending ? "Accept..." : "Accept"}
       </Button>
 
-      <Button onClick={handleReject} disabled={isPending}>
+      <Button
+        onClick={handleReject}
+        disabled={isPending}
+        variant="outline"
+        className="w-full h-9 text-xs py-1 border-gray-300"
+      >
         {isPending ? "Reject..." : "Reject"}
       </Button>
     </div>

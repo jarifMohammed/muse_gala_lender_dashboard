@@ -43,7 +43,7 @@ const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
   );
 
   return (
-    <div className="bg-white p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A]">
+    <div className="bg-white p-4 sm:p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A]">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium">Upcoming Orders</h3>
         <Link
@@ -75,22 +75,22 @@ const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
                 />
               </div>
 
-              <div className="flex-1 pt-2 px-4 space-y-1 h-28">
-                <p className="text-sm font-medium">BOOKING ID: {order?._id}</p>
-                <p className="text-sm text-gray-500">
+              <div className="flex-1 pt-2 px-4 space-y-1 h-28 min-w-0 overflow-hidden">
+                <p className="text-sm font-medium truncate break-all">BOOKING ID: {order?._id}</p>
+                <p className="text-sm text-gray-500 truncate break-all">
                   Dress Id: {order?.masterdressId?._id}
                 </p>
-                <p className="text-sm text-gray-500 flex items-center gap-2">
-                  <span>Rental Period : </span>
-                  <span>
+                <div className="text-[11px] text-gray-500 flex flex-wrap items-center gap-1">
+                  <span className="whitespace-nowrap">Rental Period : </span>
+                  <span className="whitespace-nowrap">
                     {new Date(order?.rentalStartDate).toLocaleDateString()}
                   </span>
                   <span>-</span>
-                  <span>
+                  <span className="whitespace-nowrap">
                     {new Date(order?.rentalEndDate).toLocaleDateString()}
                   </span>
-                </p>
-                <p className="text-sm text-gray-500">
+                </div>
+                <p className="text-sm text-gray-500 truncate break-all">
                   Customer ID: {order?.customer?._id}
                 </p>
               </div>

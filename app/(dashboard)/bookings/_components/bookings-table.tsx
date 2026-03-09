@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Eye } from "lucide-react";
 
+import BookingCard from "./booking-card";
+
 interface Props {
   token: string;
 }
@@ -82,150 +84,190 @@ const BookingsTable = ({ token }: Props) => {
       case "Paid":
         return "text-green-600 bg-green-200";
       default:
+        if (status.includes("Rejected")) {
+          return "text-red-600 bg-red-200";
+        }
         return "text-gray-600 bg-gray-200";
     }
   };
 
   return (
-    <div className="bg-white p-5 rounded-lg mt-8 shadow-[0px_4px_10px_0px_#0000001A]">
-      <div className="overflow-x-auto">
-        <Table className="min-w-[1000px]">
-          <TableHeader>
-            <TableRow className="border-none">
-              <TableHead className="w-[100px] text-center">Order ID</TableHead>
-              <TableHead className="w-[100px] text-center">
-                Dress Name
-              </TableHead>
-              <TableHead className="w-[100px] text-center">
-                Customer Email
-              </TableHead>
-              <TableHead className="w-[100px] text-center">Price</TableHead>
-              <TableHead className="w-[100px] text-center">
-                Rental Period
-              </TableHead>
-              <TableHead className="w-[100px] text-center">
-                Delivery Type
-              </TableHead>
-              <TableHead className="w-[100px] text-center">
-                Payment Status
-              </TableHead>
-              <TableHead className="w-[100px] text-center">
-                Delivery Status
-              </TableHead>
-              <TableHead className="w-[100px] text-center">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {isLoading || isFetching ? (
-              Array.from({ length: 10 }).map((_, i) => (
-                <TableRow key={i}>
-                  {Array.from({ length: 9 }).map((_, j) => (
-                    <TableCell key={j} className="text-center">
-                      <Skeleton className="h-5 w-20 mx-auto" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : bookings.length > 0 ? (
-              bookings.map((item) => (
-                <TableRow key={item._id}>
-                  <TableCell className="text-center font-medium">
-                    {item?._id?.toUpperCase()}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item?.dressName}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item?.customer?.email}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    ${item?.totalAmount}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex flex-col items-center space-y-1">
-                      <span>
-                        {new Date(item?.rentalStartDate).toLocaleDateString()}
-                      </span>
-                      <span className="text-gray-500">to</span>
-                      <span>
-                        {new Date(item?.rentalEndDate).toLocaleDateString()}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        ({item?.rentalDurationDays} days)
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${item?.deliveryMethod === "Shipping"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-green-100 text-green-800"
-                        }`}
-                    >
-                      {item?.deliveryMethod}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${item?.paymentStatus === "Paid"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-orange-100 text-orange-800"
-                        }`}
-                    >
-                      {item?.paymentStatus}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeStyle(
-                        item?.deliveryStatus
-                      )}`}
-                    >
-                      {formatStatus(item?.deliveryStatus)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-primary/5"
-                              asChild
-                            >
-                              <Link href={`/bookings/${item?._id}`}>
-                                <Eye className="h-4 w-4" />
-                              </Link>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent side="top">
-                            <p className="text-xs font-medium">View Booking Details</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={9}
-                  className="text-center py-6 text-gray-500"
-                >
-                  No bookings found
-                </TableCell>
+    <div className="mt-8 space-y-6">
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
+        <div className="overflow-x-auto">
+          <Table className="min-w-[1000px]">
+            <TableHeader>
+              <TableRow className="border-none">
+                <TableHead className="w-[100px] text-center">Order ID</TableHead>
+                <TableHead className="w-[100px] text-center">
+                  Dress Name
+                </TableHead>
+                <TableHead className="w-[100px] text-center">
+                  Customer Email
+                </TableHead>
+                <TableHead className="w-[100px] text-center">Price</TableHead>
+                <TableHead className="w-[100px] text-center">
+                  Rental Period
+                </TableHead>
+                <TableHead className="w-[100px] text-center">
+                  Delivery Type
+                </TableHead>
+                <TableHead className="w-[100px] text-center">
+                  Payment Status
+                </TableHead>
+                <TableHead className="w-[100px] text-center">
+                  Delivery Status
+                </TableHead>
+                <TableHead className="w-[100px] text-center">Action</TableHead>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
+            </TableHeader>
+
+            <TableBody>
+              {isLoading || isFetching ? (
+                Array.from({ length: 10 }).map((_, i) => (
+                  <TableRow key={i}>
+                    {Array.from({ length: 9 }).map((_, j) => (
+                      <TableCell key={j} className="text-center">
+                        <Skeleton className="h-5 w-20 mx-auto" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : bookings.length > 0 ? (
+                bookings.map((item) => (
+                  <TableRow key={item._id}>
+                    <TableCell className="text-center font-medium">
+                      {item?._id?.toUpperCase()}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {item?.dressName}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {item?.customer?.email}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      ${item?.totalAmount}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex flex-col items-center space-y-1">
+                        <span>
+                          {new Date(item?.rentalStartDate).toLocaleDateString()}
+                        </span>
+                        <span className="text-gray-500">to</span>
+                        <span>
+                          {new Date(item?.rentalEndDate).toLocaleDateString()}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          ({item?.rentalDurationDays} days)
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${item?.deliveryMethod === "Shipping"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                          }`}
+                      >
+                        {item?.deliveryMethod}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${item?.paymentStatus === "Paid"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-orange-100 text-orange-800"
+                          }`}
+                      >
+                        {item?.paymentStatus}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeStyle(
+                          item?.deliveryStatus
+                        )}`}
+                      >
+                        {formatStatus(item?.deliveryStatus)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <TooltipProvider delayDuration={0}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-primary/5"
+                                asChild
+                              >
+                                <Link href={`/bookings/${item?._id}`}>
+                                  <Eye className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              <p className="text-xs font-medium">View Booking Details</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={9}
+                    className="text-center py-6 text-gray-500"
+                  >
+                    No bookings found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {isLoading || isFetching ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 space-y-4">
+              <div className="flex justify-between">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-8 w-8 rounded-md" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+              <div className="pt-4 border-t flex justify-between items-center">
+                <Skeleton className="h-8 w-1/2" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-6 w-12 rounded-full" />
+                  <Skeleton className="h-6 w-12 rounded-full" />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : bookings.length > 0 ? (
+          bookings.map((item) => (
+            <BookingCard key={item._id} item={item} token={token} />
+          ))
+        ) : (
+          <div className="bg-white p-10 rounded-xl text-center text-gray-500 shadow-sm border border-gray-100">
+            No bookings found
+          </div>
+        )}
       </div>
 
       {paginationInfo && (
-        <div className="flex justify-between items-center mt-4 text-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm bg-white p-4 rounded-lg shadow-sm">
           <span>
             Page {paginationInfo?.currentPage} of {paginationInfo?.totalPages} •{" "}
             {paginationInfo?.totalItems} records

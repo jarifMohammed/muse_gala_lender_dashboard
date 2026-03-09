@@ -16,10 +16,10 @@ export default async function RootLayout({
   if (!cu?.user) redirect('/sign-in')
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col w-full max-w-full overflow-x-hidden overflow-y-auto selection:bg-primary/20 scrollbar-hide">
       <Sidebar />
       {/* Main Content */}
-      <div className="ml-64 flex flex-1 flex-col">
+      <div className="lg:ml-64 flex flex-1 flex-col w-full max-w-full overflow-x-hidden overflow-y-auto scrollbar-hide">
         {/* Top Bar */}
         <ClientProvider session={cu} />
         <Topbar name={cu?.user.firstName as string} />

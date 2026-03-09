@@ -30,68 +30,70 @@ const PickupStatus = ({ deliveryStatus, token, lenderId }: Props) => {
   const currentIndex = getCurrentIndex(deliveryStatus as string);
 
   return (
-    <div className="flex w-full gap-12 items-start py-6">
-      {/* accept/reject */}
-      <AcceptStatus
-        deliveryStatus={deliveryStatus as string}
-        token={token}
-        bookingId={bookingId as string}
-        lenderId={lenderId}
-      />
+    <div className="max-w-full overflow-x-auto pb-4 -mb-4">
+      <div className="flex w-fit min-w-full gap-6 md:gap-12 items-start py-6">
+        {/* accept/reject */}
+        <AcceptStatus
+          deliveryStatus={deliveryStatus as string}
+          token={token}
+          bookingId={bookingId as string}
+          lenderId={lenderId}
+        />
 
-      {/* ready for pickup */}
-      <UpdateStatus
-        deliveryStatus={deliveryStatus as string}
-        statusValue="ReadyForPickup"
-        negativeStatusValue="Cannot Fullfill"
-        negativeBtnName="Cannot Fulfill"
-        completedBtnName="Ready"
-        IconName={Check}
-        bookingId={bookingId as string}
-        btnName="Ready for Pickup"
-        token={token}
-        isCompleted={currentIndex >= statusOrder.indexOf("ReadyForPickup")}
-        isDisabled={currentIndex !== statusOrder.indexOf("Pending")}
-      />
+        {/* ready for pickup */}
+        <UpdateStatus
+          deliveryStatus={deliveryStatus as string}
+          statusValue="ReadyForPickup"
+          negativeStatusValue="Cannot Fullfill"
+          negativeBtnName="Cannot Fulfill"
+          completedBtnName="Ready"
+          IconName={Check}
+          bookingId={bookingId as string}
+          btnName="Ready for Pickup"
+          token={token}
+          isCompleted={currentIndex >= statusOrder.indexOf("ReadyForPickup")}
+          isDisabled={currentIndex !== statusOrder.indexOf("Pending")}
+        />
 
-      {/* mark as shipped */}
-      <UpdateStatus
-        deliveryStatus={deliveryStatus as string}
-        statusValue="PickedUpByCustomer"
-        completedBtnName="Picked Up"
-        IconName={MapPinCheck}
-        bookingId={bookingId as string}
-        btnName="Picked Up By Customer"
-        token={token}
-        isCompleted={currentIndex >= statusOrder.indexOf("PickedUpByCustomer")}
-        isDisabled={currentIndex !== statusOrder.indexOf("ReadyForPickup")}
-      />
+        {/* mark as shipped */}
+        <UpdateStatus
+          deliveryStatus={deliveryStatus as string}
+          statusValue="PickedUpByCustomer"
+          completedBtnName="Picked Up"
+          IconName={MapPinCheck}
+          bookingId={bookingId as string}
+          btnName="Picked Up By Customer"
+          token={token}
+          isCompleted={currentIndex >= statusOrder.indexOf("PickedUpByCustomer")}
+          isDisabled={currentIndex !== statusOrder.indexOf("ReadyForPickup")}
+        />
 
-      {/* return due */}
-      <UpdateStatus
-        deliveryStatus={deliveryStatus as string}
-        statusValue="Return Due"
-        completedBtnName="Handed Over"
-        IconName={Undo2}
-        bookingId={bookingId as string}
-        btnName="Return Due"
-        token={token}
-        isCompleted={currentIndex >= statusOrder.indexOf("Return Due")}
-        isDisabled={currentIndex !== statusOrder.indexOf("PickedUpByCustomer")}
-      />
+        {/* return due */}
+        <UpdateStatus
+          deliveryStatus={deliveryStatus as string}
+          statusValue="Return Due"
+          completedBtnName="Handed Over"
+          IconName={Undo2}
+          bookingId={bookingId as string}
+          btnName="Return Due"
+          token={token}
+          isCompleted={currentIndex >= statusOrder.indexOf("Return Due")}
+          isDisabled={currentIndex !== statusOrder.indexOf("PickedUpByCustomer")}
+        />
 
-      {/* dress returned */}
-      <UpdateStatus
-        deliveryStatus={deliveryStatus as string}
-        statusValue="Dress Returned"
-        completedBtnName="Returned"
-        IconName={Box}
-        bookingId={bookingId as string}
-        btnName="Dress Returned"
-        token={token}
-        isCompleted={currentIndex >= statusOrder.indexOf("Dress Returned")}
-        isDisabled={currentIndex !== statusOrder.indexOf("Return Due")}
-      />
+        {/* dress returned */}
+        <UpdateStatus
+          deliveryStatus={deliveryStatus as string}
+          statusValue="Dress Returned"
+          completedBtnName="Returned"
+          IconName={Box}
+          bookingId={bookingId as string}
+          btnName="Dress Returned"
+          token={token}
+          isCompleted={currentIndex >= statusOrder.indexOf("Dress Returned")}
+          isDisabled={currentIndex !== statusOrder.indexOf("Return Due")}
+        />
+      </div>
     </div>
   );
 };

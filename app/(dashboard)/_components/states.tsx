@@ -31,29 +31,29 @@ const States = ({ data, isLoading }: StatesProps) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-10">
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
-            <div
-              key={index}
-              className={cn(
-                "rounded-lg border bg-card text-card-foreground shadow-sm"
-              )}
-            >
-              <div className="p-6">
-                <Skeleton className="h-5 w-3/4 mb-2" />
-                <Skeleton className="h-7 w-1/2" />
-              </div>
+          <div
+            key={index}
+            className={cn(
+              "rounded-lg border bg-card text-card-foreground shadow-sm"
+            )}
+          >
+            <div className="p-6">
+              <Skeleton className="h-5 w-3/4 mb-2" />
+              <Skeleton className="h-7 w-1/2" />
             </div>
-          ))
+          </div>
+        ))
         : statCards.map((card, index) => (
-            <StatCard
-              key={index}
-              title={card.title}
-              value={card.value as string}
-              className={card.className}
-            />
-          ))}
+          <StatCard
+            key={index}
+            title={card.title}
+            value={card.value as string}
+            className={card.className}
+          />
+        ))}
     </div>
   );
 };

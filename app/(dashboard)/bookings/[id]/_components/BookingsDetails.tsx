@@ -8,8 +8,8 @@ import AboutPayment from "./about-payment";
 import AboutReturn from "./about-return";
 import DisputeForm from "./dispute-form";
 import DeliveryStatus from "./delivery-status";
-import PayoutButton from "../../_components/payout-button";
-import AcceptRejectButton from "../../_components/accept-reject-button";
+import Link from "next/link";
+import BookingActions from "./booking-actions";
 import { Button } from "@/components/ui/button";
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -55,23 +55,16 @@ const BookingsDetails = ({ token }: Props) => {
         </Button>
       </div>
 
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="uppercase text-2xl">Booking Details</h1>
-        <div className="flex items-center gap-2">
-          {!isLoading && bookingDetails && (
-            <>
-              <PayoutButton
-                paymentStatus={bookingDetails?.paymentStatus}
-                payoutStatus={bookingDetails?.payoutStatus}
-                id={bookingDetails?._id}
-                token={token}
-              />
-            </>
-          )}
-        </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
+        <h1 className="uppercase text-xl md:text-2xl font-semibold">Booking Details</h1>
+        <BookingActions
+          bookingDetails={bookingDetails}
+          token={token}
+          isLoading={isLoading}
+        />
       </div>
 
-      <div className="mb-10">
+      <div className="mb-6 md:mb-10">
         <DeliveryStatus
           bookingDetails={bookingDetails}
           token={token}
@@ -80,13 +73,13 @@ const BookingsDetails = ({ token }: Props) => {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
         <AboutBooking bookingDetails={bookingDetails} isLoading={isLoading} />
         <AboutPayment bookingDetails={bookingDetails} isLoading={isLoading} />
         <AboutReturn bookingDetails={bookingDetails} isLoading={isLoading} />
       </div>
 
-      <div>
+      <div className="mt-6 md:mt-10">
         <DisputeForm />
       </div>
     </div>
