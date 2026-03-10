@@ -54,13 +54,13 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
     const hasPaymentMethod = userInfo?.stripeCustomerId && userInfo?.defaultPaymentMethodId;
 
     return (
-        <div className="bg-white p-8 rounded-xl shadow-[0px_4px_20px_0px_#0000000D] border border-gray-100">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="bg-white p-5 md:p-8 rounded-xl shadow-[0px_4px_20px_0px_#0000000D] border border-gray-100">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                        <h2 className="text-xl font-semibold text-gray-900">Payment Methods</h2>
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-900">Payment Methods</h2>
                         {hasPaymentMethod && (
-                            <span className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                            <span className="flex items-center gap-1 text-[10px] md:text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
                                 <CheckCircle2 className="h-3 w-3" />
                                 Connected
                             </span>
@@ -71,13 +71,13 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                     {hasPaymentMethod ? (
                         <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-lg border border-gray-100">
-                            <CreditCard className="h-5 w-5 text-gray-400" />
+                            <CreditCard className="h-5 w-5 text-gray-400 shrink-0" />
                             <div className="text-sm">
                                 <p className="font-medium text-gray-900">Default Card Linked</p>
-                                <p className="text-xs text-gray-1000">Securely stored via Stripe</p>
+                                <p className="text-xs text-gray-400">Securely stored via Stripe</p>
                             </div>
                         </div>
                     ) : null}
@@ -85,9 +85,9 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
                     <Button
                         onClick={handleAddPaymentMethod}
                         disabled={isPending || hasPaymentMethod}
-                        className={`min-w-[200px] h-11 transition-all duration-300 ${hasPaymentMethod
+                        className={`min-w-0 sm:min-w-[200px] h-11 transition-all duration-300 ${hasPaymentMethod
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed border-none"
-                            : "bg-[#891d33] hover:bg-[#a0243d] text-white shadow-lg shadow-red-900/10"
+                            : "bg-[#54051d] hover:bg-[#400416] text-white shadow-lg shadow-red-900/10"
                             }`}
                     >
                         {isPending ? (

@@ -31,7 +31,7 @@ const States = ({ data, isLoading }: StatesProps) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-10">
+    <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-10">
       {isLoading
         ? Array.from({ length: 3 }).map((_, index) => (
           <div
@@ -40,9 +40,9 @@ const States = ({ data, isLoading }: StatesProps) => {
               "rounded-lg border bg-card text-card-foreground shadow-sm"
             )}
           >
-            <div className="p-6">
-              <Skeleton className="h-5 w-3/4 mb-2" />
-              <Skeleton className="h-7 w-1/2" />
+            <div className="p-3 md:p-4 flex flex-col items-center">
+              <Skeleton className="h-4 w-3/4 mb-2" />
+              <Skeleton className="h-5 w-1/2" />
             </div>
           </div>
         ))

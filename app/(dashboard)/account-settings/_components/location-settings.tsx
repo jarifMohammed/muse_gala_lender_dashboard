@@ -97,10 +97,10 @@ export default function LocationSettings({
         location.longitude !== (source?.longitude || 0);
 
     return (
-        <div className="p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
+        <div className="p-4 md:p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
             <div className="flex items-center gap-2 mb-6">
-                <MapPin className="h-6 w-6 text-[#891D33]" />
-                <h1 className="text-xl font-medium">Business Location</h1>
+                <MapPin className="h-5 w-5 md:h-6 md:w-6 text-[#891D33]" />
+                <h1 className="text-lg md:text-xl font-medium">Business Location</h1>
             </div>
 
             <div className="space-y-6">
@@ -118,7 +118,7 @@ export default function LocationSettings({
                 </div>
 
                 {/* Read-only Information Panel */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#f7f2ee]/50 p-5 rounded-[8px] border border-[#999999]/20">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 bg-[#f7f2ee]/50 p-4 md:p-5 rounded-[8px] border border-[#999999]/20">
                     <div>
                         <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
                             Selected Address

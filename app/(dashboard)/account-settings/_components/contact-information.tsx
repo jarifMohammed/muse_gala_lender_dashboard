@@ -79,11 +79,11 @@ const ContactInformation = ({
   };
 
   return (
-    <div className="p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
-      <h1 className="text-xl ">Contact Information</h1>
+    <div className="p-4 md:p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
+      <h1 className="text-lg md:text-xl font-medium">Contact Information</h1>
 
       <form onSubmit={handleSubmit}>
-        <div className="mt-5 grid grid-cols-2 items-center gap-8">
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-8">
           <div>
             <h1 className="mb-2">First Name</h1>
             <Input

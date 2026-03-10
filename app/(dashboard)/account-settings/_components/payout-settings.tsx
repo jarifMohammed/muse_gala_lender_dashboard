@@ -55,14 +55,14 @@ const PayoutSettings = ({ token, userID, userInfo }: Props) => {
     const isOnboarded = userInfo?.stripeOnboardingCompleted;
 
     return (
-        <div className="p-8 bg-white shadow-[0px_4px_20px_0px_#0000000D] rounded-xl border border-gray-100">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-5 md:p-8 bg-white shadow-[0px_4px_20px_0px_#0000000D] rounded-xl border border-gray-100">
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                        <Landmark className="h-6 w-6 text-[#891d33]" />
-                        <h2 className="text-xl font-semibold text-gray-900">Payout Onboarding</h2>
+                        <Landmark className="h-5 w-5 md:h-6 md:w-6 text-[#54051d]" />
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-900">Payout Onboarding</h2>
                         {isOnboarded && (
-                            <span className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                            <span className="flex items-center gap-1 text-[10px] md:text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
                                 <CheckCircle2 className="h-3 w-3" />
                                 Onboarding Successful
                             </span>
@@ -73,30 +73,30 @@ const PayoutSettings = ({ token, userID, userInfo }: Props) => {
                     </p>
                 </div>
 
-                <div>
+                <div className="w-full xl:w-auto">
                     {isOnboarded ? (
                         <div className="space-y-4">
-                            <div className="flex items-center gap-3 px-6 py-3 bg-green-50 text-green-700 rounded-lg border border-green-100 mb-4">
-                                <CheckCircle2 className="h-5 w-5" />
-                                <span className="font-medium">Stripe Account Linked</span>
+                            <div className="flex items-center gap-3 px-5 py-3 bg-green-50 text-green-700 rounded-lg border border-green-100 mb-4">
+                                <CheckCircle2 className="h-5 w-5 shrink-0" />
+                                <span className="font-medium text-sm md:text-base">Stripe Account Linked</span>
                             </div>
 
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3 min-w-[280px]">
-                                <div className="flex items-center justify-between text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">
+                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3 min-w-0 md:min-w-[280px]">
+                                <div className="flex items-center justify-between text-[10px] md:text-xs uppercase tracking-wider text-gray-400 font-bold mb-1">
                                     <span>Stripe Status</span>
                                 </div>
-                                <div className="flex items-center text-sm gap-4">
-                                    <span className="text-gray-500 w-32">Account ID</span>
-                                    <span className="font-mono font-medium text-gray-700">{userInfo?.stripeAccountId || "—"}</span>
+                                <div className="flex flex-col sm:flex-row sm:items-center text-sm gap-1 sm:gap-4">
+                                    <span className="text-gray-500 sm:w-32">Account ID</span>
+                                    <span className="font-mono font-medium text-gray-700 break-all">{userInfo?.stripeAccountId || "—"}</span>
                                 </div>
-                                <div className="flex items-center text-sm gap-4">
-                                    <span className="text-gray-500 w-32">Charges Enabled</span>
+                                <div className="flex flex-col sm:flex-row sm:items-center text-sm gap-1 sm:gap-4">
+                                    <span className="text-gray-500 sm:w-32">Charges Enabled</span>
                                     <span className={userInfo?.chargesEnabled ? "text-green-600 font-semibold" : "text-red-500 font-semibold"}>
                                         {userInfo?.chargesEnabled ? "Yes" : "No"}
                                     </span>
                                 </div>
-                                <div className="flex items-center text-sm gap-4">
-                                    <span className="text-gray-500 w-32">Payouts Enabled</span>
+                                <div className="flex flex-col sm:flex-row sm:items-center text-sm gap-1 sm:gap-4">
+                                    <span className="text-gray-500 sm:w-32">Payouts Enabled</span>
                                     <span className={userInfo?.payoutsEnabled ? "text-green-600 font-semibold" : "text-red-500 font-semibold"}>
                                         {userInfo?.payoutsEnabled ? "Yes" : "No"}
                                     </span>
@@ -107,7 +107,7 @@ const PayoutSettings = ({ token, userID, userInfo }: Props) => {
                         <Button
                             onClick={handleSetupStripe}
                             disabled={setupStripe.isPending}
-                            className="bg-[#891d33] hover:bg-[#a0243d] text-white min-w-[200px] h-12 shadow-lg shadow-red-900/10 transition-all duration-300 flex items-center gap-2"
+                            className="bg-[#54051d] hover:bg-[#400416] text-white w-full sm:min-w-[200px] h-12 shadow-lg shadow-red-900/10 transition-all duration-300 flex items-center justify-center gap-2"
                         >
                             {setupStripe.isPending ? (
                                 <>

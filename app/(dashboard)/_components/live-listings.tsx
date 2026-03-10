@@ -42,7 +42,7 @@ const LiveListings = ({ liveListings, isLoading }: liveListingsProps) => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-4 md:gap-6">
         {isLoading ? (
           Array.from({ length: 6 }).map((_, index) => (
             <ListingSkeleton key={index} />

@@ -67,13 +67,13 @@ const PasswordSecurity = ({
   };
 
   return (
-    <div className="p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
-      <h1 className="text-xl ">Password & Security</h1>
+    <div className="p-4 md:p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
+      <h1 className="text-lg md:text-xl font-medium">Password & Security</h1>
 
       <form onSubmit={handleSubmit}>
-        <div className="mt-5 grid grid-cols-2 items-center gap-8">
+        <div className="mt-5 grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-8">
           <div>
-            <h1 className="mb-2">Current Password</h1>
+            <h1 className="mb-2 text-sm font-medium">Current Password</h1>
             <Input
               className="focus-visible:ring-0"
               placeholder="Enter Current Password"
@@ -83,10 +83,10 @@ const PasswordSecurity = ({
             />
           </div>
 
-          <div></div>
+          <div className="hidden md:block"></div>
 
           <div>
-            <h1 className="mb-2">New Password</h1>
+            <h1 className="mb-2 text-sm font-medium">New Password</h1>
             <Input
               className="focus-visible:ring-0"
               placeholder="Enter New Password"
@@ -97,7 +97,7 @@ const PasswordSecurity = ({
           </div>
 
           <div>
-            <h1 className="mb-2">Confirm New Password</h1>
+            <h1 className="mb-2 text-sm font-medium">Confirm New Password</h1>
             <Input
               className="focus-visible:ring-0"
               placeholder="Confirm New Password"

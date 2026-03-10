@@ -32,21 +32,23 @@ const Overview = ({ token }: { token: string }) => {
   return (
     <div>
 
-      <div>
+      <div className="mb-10">
         <States data={data} isLoading={isLoading} />
       </div>
 
-      {/* Live Listings Section */}
-      <div>
-        <LiveListings liveListings={liveListings} isLoading={isLoading} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+        {/* Upcoming Orders Section - 1/3 width on desktop */}
+        <UpcomingOrder upcomingOrders={upcomingOrders} isLoading={isLoading} />
+
+        {/* Live Listings Section - 2/3 width on desktop */}
+        <div className="lg:col-span-2">
+          <LiveListings liveListings={liveListings} isLoading={isLoading} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Calendar Section */}
+      {/* Calendar Section - Full width or consistent row below */}
+      <div className="mb-10">
         <Calendar token={token} />
-
-        {/* Upcoming Orders Section */}
-        <UpcomingOrder upcomingOrders={upcomingOrders} isLoading={isLoading} />
       </div>
     </div>
   );
