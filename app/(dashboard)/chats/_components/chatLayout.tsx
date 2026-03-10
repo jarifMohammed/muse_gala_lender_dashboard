@@ -110,29 +110,32 @@ export default function ChatLayout({
   }
 
   return (
-    <div className="font-sans px-4 sm:px-6 md:px-8">
+    <div className="font-sans px-0 sm:px-6 md:px-8">
       {!isConnected && (
-        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4 text-sm">
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4 text-sm mx-4 sm:mx-0">
           Connecting to chat...
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row md:h-[500px] lg:h-[650px] gap-6 rounded-lg overflow-hidden">
-        {/* ✅ Sidebar */}
-        <ChatList
-          conversations={conversations}
-          activeConversation={activeConversation}
-          onSelect={handleSelectConversation}
-        />
+      <div className="flex flex-col md:flex-row h-[calc(100vh-80px)] md:h-[500px] lg:h-[650px] gap-0 md:gap-6 overflow-hidden">
+        {/* ✅ Sidebar - Hidden on mobile if a conversation is active */}
+        <div className={`${activeConversation ? 'hidden md:block' : 'block'} w-full md:w-1/3 px-0 md:px-0`}>
+          <ChatList
+            conversations={conversations}
+            activeConversation={activeConversation}
+            onSelect={handleSelectConversation}
+          />
+        </div>
 
-        {/* ✅ Main Chat Window */}
-        <div className="w-full md:w-2/3 flex flex-col">
+        {/* ✅ Main Chat Window - Hidden on mobile if no conversation is active */}
+        <div className={`${activeConversation ? 'flex' : 'hidden md:flex'} w-full md:w-2/3 flex-col h-full md:h-auto`}>
           <ChatHeader
             name={activeConv?.name}
             orderId={activeConv?.orderId?.dressName}
+            onBack={() => onSelect('')}
           />
 
-          <div className="flex-1 flex flex-col border border-[#E6E6E6] mt-5 rounded-xl overflow-hidden bg-white">
+          <div className="flex-1 flex flex-col border-none md:border border-[#E6E6E6] mt-0 md:mt-5 rounded-none md:rounded-xl overflow-hidden bg-white mx-0 md:mx-0 mb-0 md:mb-0">
             {/* ✅ Messages */}
             {(isLoading || localLoading) && (
               <div className="flex justify-center items-center py-4">

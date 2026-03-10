@@ -1,9 +1,7 @@
 "use client";
 
-import { Layout } from "@/components/layout";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { SupportForm } from "./_components/support-form";
 
 // FAQ sections with questions
@@ -129,67 +127,65 @@ export default function HelpCenterPage() {
   };
 
   return (
-    <Layout>
-      <div className="p-8">
-        <div className="space-y-[30px]">
-          {faqSections.map((section) => (
-            <div
-              key={section.title}
-              className="bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-[15px] p-[30px]"
-            >
-              <div className="flex justify-between items-center mb-[30px]">
-                <h3 className="text-xl font-medium text-black font-avenirNormal tracking-[0%] leading-[120%]">
-                  {section.title}
-                </h3>
-              </div>
-
-              {!openSections[section.title] && (
-                <div className="">
-                  {section.questions.map((item, index) => (
-                    <div
-                      key={index}
-                      className="border border-[#E6E6E6] rounded-[15px] p-[15px] mb-[15px]"
-                    >
-                      <div
-                        className="flex justify-between items-center cursor-pointer"
-                        onClick={() => toggleQuestion(item.question)}
-                      >
-                        <h4 className="text-[16px] font-normal text-[#891D33] leading-[120%] font-avenirNormal tracking-[0%]">
-                          {item.question}
-                        </h4>
-                        <button>
-                          {openQuestions[item.question] ? (
-                            <Minus className="h-5 w-5 text-[#891D33]" />
-                          ) : (
-                            <Plus className="h-5 w-5 text-[#891D33]" />
-                          )}
-                        </button>
-                      </div>
-
-                      {openQuestions[item.question] && (
-                        <div className="mt-[20px]">
-                          <p className="text-base text-[14px] font-normal text-black/60 font-avenirNormal leading-[120%] tracking-[0%]">
-                            {item.answer}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+    <div className="p-4 md:p-8">
+      <div className="space-y-[20px] md:space-y-[30px]">
+        {faqSections.map((section) => (
+          <div
+            key={section.title}
+            className="bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-[15px] p-[20px] md:p-[30px]"
+          >
+            <div className="flex justify-between items-center mb-[20px] md:mb-[30px]">
+              <h3 className="text-lg md:text-xl font-medium text-black font-avenirNormal tracking-[0%] leading-[120%] uppercase">
+                {section.title}
+              </h3>
             </div>
-          ))}
 
-          {/* Contact Support Section */}
-          <div className="bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-[15px] p-[30px]">
-            <h3 className="text-xl font-medium text-black font-avenirNormal tracking-[0%] leading-[120%] mb-[30px]">
-              CONTACT SUPPORT
-            </h3>
+            {!openSections[section.title] && (
+              <div className="">
+                {section.questions.map((item, index) => (
+                  <div
+                    key={index}
+                    className="border border-[#E6E6E6] rounded-[15px] p-[12px] md:p-[15px] mb-[15px]"
+                  >
+                    <div
+                      className="flex justify-between items-center cursor-pointer gap-2"
+                      onClick={() => toggleQuestion(item.question)}
+                    >
+                      <h4 className="text-[14px] md:text-[16px] font-normal text-[#891D33] leading-[140%] md:leading-[120%] font-avenirNormal tracking-[0%]">
+                        {item.question}
+                      </h4>
+                      <button className="shrink-0">
+                        {openQuestions[item.question] ? (
+                          <Minus className="h-4 w-4 md:h-5 md:w-5 text-[#891D33]" />
+                        ) : (
+                          <Plus className="h-4 w-4 md:h-5 md:w-5 text-[#891D33]" />
+                        )}
+                      </button>
+                    </div>
 
-            <SupportForm />
+                    {openQuestions[item.question] && (
+                      <div className="mt-[15px] md:mt-[20px]">
+                        <p className="text-[13px] md:text-[14px] font-normal text-black/60 font-avenirNormal leading-[150%] md:leading-[120%] tracking-[0%]">
+                          {item.answer}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        ))}
+
+        {/* Contact Support Section */}
+        <div className="bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-[15px] p-[20px] md:p-[30px]">
+          <h3 className="text-lg md:text-xl font-medium text-black font-avenirNormal tracking-[0%] leading-[120%] mb-[20px] md:mb-[30px] uppercase">
+            CONTACT SUPPORT
+          </h3>
+
+          <SupportForm />
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

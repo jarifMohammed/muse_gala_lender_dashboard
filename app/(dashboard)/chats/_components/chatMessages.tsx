@@ -12,6 +12,7 @@ import {
   Check,
   X as CloseIcon,
   AlertTriangle,
+  User,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
@@ -241,32 +242,33 @@ export default function ChatMessages({
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 bg-white scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+        className="flex-1 overflow-y-auto p-4 md:p-6 bg-white scrollbar-hide"
       >
         {hasNextPage && (
-          <div className="flex justify-center mb-4 sticky top-0 z-10">
+          <div className="flex justify-center mb-6 sticky top-0 z-10">
             <Button
               onClick={fetchNextPage}
               disabled={isFetchingNextPage}
               variant="outline"
               size="sm"
-              className="bg-slate-50 border-gray-200 rounded-full font-light text-[12px] hover:bg-slate-100/80 text text shadow-sm"
+              className="bg-white border-gray-100 rounded-full font-medium text-[11px] hover:bg-gray-50 text-[#54051d] shadow-sm px-4"
             >
               {isFetchingNextPage ? (
                 <>
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#891D33] mr-2"></div>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#54051d] mr-2"></div>
                   Loading...
                 </>
               ) : (
-                'Load More Messages....'
+                'Load more messages'
               )}
             </Button>
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
-          {orderedMessages.map((message) => {
+        <div className="flex flex-col gap-2">
+          {orderedMessages.map((message, index) => {
             const isMyMessage = message.sender
+            const nextMessageIsSameSender = orderedMessages[index + 1]?.sender === isMyMessage
             const messageDate = new Date(message.timestamp)
             const time = messageDate.toLocaleTimeString('en-US', {
               hour: '2-digit',
@@ -277,112 +279,98 @@ export default function ChatMessages({
             return (
               <motion.div
                 key={message.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="relative"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.1 }}
+                className={`flex items-end gap-2 ${isMyMessage ? 'flex-row-reverse' : 'flex-row'
+                  } ${!nextMessageIsSameSender ? 'mb-4' : 'mb-1'}`}
                 onMouseEnter={() => setHoveredMessageId(message.id)}
                 onMouseLeave={() => setHoveredMessageId(null)}
               >
-                <div
-                  className={`flex ${
-                    isMyMessage ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  <div
-                    className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-sm shadow-sm relative ${
-                      isMyMessage
-                        ? 'bg-[#891D33] text-white rounded-br-none'
-                        : 'bg-gray-100 text-gray-800 rounded-bl-none'
-                    }`}
-                  >
-                    {/* Edit/Delete buttons (only for my messages) */}
-                    {isMyMessage &&
-                      hoveredMessageId === message.id &&
-                      !editingMessageId && (
-                        <div className="absolute top-[50%] translate-y-[-50%] -left-[75px] flex gap-1 bg-white rounded-lg p-1 shadow-md border border-gray-200">
-                          <button
-                            onClick={() => handleEditClick(message)}
-                            className="p-1.5 hover:bg-gray-50 rounded transition-colors"
-                            title="Edit message"
-                          >
-                            <Edit3 className="h-3 w-3 text-gray-700" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(message.id)}
-                            className="p-1.5 hover:bg-red-50 rounded transition-colors"
-                            title="Delete message"
-                          >
-                            <Trash2 className="h-3.5 w-3.5 text-gray-600" />
-                          </button>
-                        </div>
-                      )}
+                {/* Avatar for receiver */}
+                {!isMyMessage && (
+                  <div className={`w-8 h-8 rounded-full bg-gray-100 shrink-0 flex items-center justify-center overflow-hidden transition-opacity ${!nextMessageIsSameSender ? 'opacity-100' : 'opacity-0'}`}>
+                    <User className="w-5 h-5 text-gray-500" />
+                  </div>
+                )}
 
-                    {/* Message content - either editable or static */}
-                    {editingMessageId === message.id ? (
-                      <div className="mb-1">
-                        <textarea
-                          value={editText}
-                          onChange={(e) => setEditText(e.target.value)}
-                          className="w-full p-2 border border-[#891D33] rounded-lg text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-[#891D33]"
-                          rows={3}
-                          autoFocus
-                          disabled={isEditing}
-                        />
-                        <div className="flex gap-2 mt-2">
-                          <Button
-                            onClick={handleEditSave}
-                            size="sm"
-                            disabled={isEditing || !editText.trim()}
-                            className="bg-white h-8 text-[#891D33] hover:bg-white/80"
-                          >
-                            {isEditing ? (
-                              <>
-                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#891D33] mr-1"></div>
-                                Saving...
-                              </>
-                            ) : (
-                              <>
-                                <Check className="h-3 w-3 mr-1" />
-                                Save
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            onClick={handleEditCancel}
-                            variant="default"
-                            size="sm"
-                            disabled={isEditing}
-                            className="h-8 bg-[#891D33] hover:bg-[#891D33]/70"
-                          >
-                            <CloseIcon className="h-3 w-3 mr-1" />
-                            Cancel
-                          </Button>
-                        </div>
+                <div
+                  className={`relative max-w-[75%] sm:max-w-[70%] px-4 py-2.5 text-sm transition-all ${isMyMessage
+                    ? 'bg-[#54051d] text-white rounded-[20px] rounded-br-[4px]'
+                    : 'bg-[#E4E6EB] text-gray-900 rounded-[20px] rounded-bl-[4px]'
+                    }`}
+                >
+                  {/* Edit/Delete buttons (only for my messages) */}
+                  {isMyMessage &&
+                    hoveredMessageId === message.id &&
+                    !editingMessageId && (
+                      <div className="absolute top-1/2 -translate-y-1/2 -left-20 flex gap-1 bg-white rounded-full px-2 py-1 shadow-sm border border-gray-100 scale-90">
+                        <button
+                          onClick={() => handleEditClick(message)}
+                          className="p-1 px-1.5 hover:bg-gray-50 rounded-full transition-colors"
+                          title="Edit"
+                        >
+                          <Edit3 className="h-3.5 w-3.5 text-gray-500" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(message.id)}
+                          className="p-1 px-1.5 hover:bg-gray-50 rounded-full transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-red-400" />
+                        </button>
                       </div>
-                    ) : (
-                      <>
-                        {message.content && (
-                          <p className="break-words whitespace-pre-wrap">
-                            {message.content}
-                          </p>
-                        )}
-                        {message.attachments?.length
-                          ? message.attachments.map((a, i) => (
-                              <div key={i}>{renderAttachment(a)}</div>
-                            ))
-                          : null}
-                      </>
                     )}
 
-                    <p
-                      className={`text-[10px] mt-1 text-right ${
-                        isMyMessage ? 'text-gray-300' : 'text-gray-500'
-                      }`}
-                    >
+                  {/* Message content */}
+                  {editingMessageId === message.id ? (
+                    <div className="mb-1 min-w-[200px]">
+                      <textarea
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        className="w-full p-2 border-none bg-white/10 rounded-lg text-white placeholder:text-white/50 resize-none focus:outline-none focus:ring-1 focus:ring-white/20 text-sm"
+                        rows={3}
+                        autoFocus
+                        disabled={isEditing}
+                      />
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={handleEditSave}
+                          disabled={isEditing || !editText.trim()}
+                          className="px-3 py-1 bg-white text-[#54051d] rounded-full text-xs font-bold disabled:opacity-50"
+                        >
+                          {isEditing ? '...' : 'Save'}
+                        </button>
+                        <button
+                          onClick={handleEditCancel}
+                          disabled={isEditing}
+                          className="px-3 py-1 bg-transparent text-white border border-white/20 rounded-full text-xs"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {message.content && (
+                        <p className="break-words whitespace-pre-wrap leading-relaxed">
+                          {message.content}
+                        </p>
+                      )}
+                      {message.attachments?.length
+                        ? message.attachments.map((a, i) => (
+                          <div key={i}>{renderAttachment(a)}</div>
+                        ))
+                        : null}
+                    </>
+                  )}
+
+                  {/* Tooltip-style time */}
+                  {!nextMessageIsSameSender && (
+                    <span className={`absolute -bottom-5 whitespace-nowrap text-[10px] text-gray-400 font-medium ${isMyMessage ? 'right-1' : 'left-1'}`}>
                       {time}
-                    </p>
-                  </div>
+                    </span>
+                  )}
                 </div>
               </motion.div>
             )

@@ -104,12 +104,14 @@ export default function ChatPage() {
       }
     }) || []
 
-  // ✅ Set first conversation active by default
+  // ✅ Set first conversation active by default (Desktop only)
   useEffect(() => {
     if (conversations.length > 0 && !activeConversation) {
-      setActiveConversation(conversations[0].id)
+      if (typeof window !== "undefined" && window.innerWidth >= 768) {
+        setActiveConversation(conversations[0].id);
+      }
     }
-  }, [conversations, activeConversation])
+  }, [conversations, activeConversation]);
 
   const handleSelectConversation = async (id: string) => {
     setActiveConversation(id)
@@ -171,10 +173,10 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="px-6">
-      <div>
-        <h2 className="text-3xl pl-[30px] font-light tracking-widest pt-8 pb-5">
-          Chats
+    <div className={`px-0 md:px-6 ${activeConversation ? 'h-screen overflow-hidden' : ''}`}>
+      <div className={`${activeConversation ? 'hidden md:block' : 'block'}`}>
+        <h2 className="text-2xl md:text-3xl pl-5 md:pl-[30px] font-bold md:font-light tracking-tight md:tracking-widest pt-5 md:pt-8 pb-2 md:pb-5">
+          {activeConversation ? 'Chats' : 'Messages'}
         </h2>
       </div>
       <ChatLayout

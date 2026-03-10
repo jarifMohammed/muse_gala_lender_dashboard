@@ -104,7 +104,7 @@ export function SupportForm() {
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
                         disabled={supportMutation.isPending}
-                        className="h-12 border-[#E6E6E6] rounded-[10px]"
+                        className="h-12 border-[#E6E6E6] rounded-[10px] text-sm md:text-base"
                     />
                 </div>
 
@@ -115,7 +115,7 @@ export function SupportForm() {
                         onValueChange={setIssueType}
                         disabled={supportMutation.isPending}
                     >
-                        <SelectTrigger id="issueType" className="h-12 border-[#E6E6E6] rounded-[10px]">
+                        <SelectTrigger id="issueType" className="h-12 border-[#E6E6E6] rounded-[10px] text-sm md:text-base">
                             <SelectValue placeholder="Select Issue Type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -135,20 +135,20 @@ export function SupportForm() {
                     placeholder="Describe your issue in detail..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="min-h-[150px] resize-none border-[#E6E6E6] rounded-[10px]"
+                    className="min-h-[120px] md:min-h-[150px] resize-none border-[#E6E6E6] rounded-[10px] text-sm md:text-base"
                     disabled={supportMutation.isPending}
                 />
             </div>
 
-            <div className="flex flex-col md:flex-row gap-5 items-end">
+            <div className="flex flex-col md:flex-row gap-5 items-stretch md:items-end">
                 <div className="space-y-2 flex-1 w-full">
                     <Label htmlFor="file-upload">Attachment (Optional)</Label>
-                    <div className="flex">
+                    <div className="flex h-12">
                         <Input
                             readOnly
                             placeholder="No file chosen"
                             value={fileName}
-                            className="rounded-r-none h-12 border-[#E6E6E6]"
+                            className="rounded-r-none h-full border-[#E6E6E6] text-xs md:text-sm flex-1"
                         />
                         <div className="relative">
                             <input
@@ -160,7 +160,7 @@ export function SupportForm() {
                             />
                             <Button
                                 type="button"
-                                className="bg-[#891D33] hover:bg-[#70182b] text-white h-12 px-6 rounded-l-none"
+                                className="bg-[#54051d] hover:bg-[#400416] text-white h-full px-4 md:px-6 rounded-l-none text-xs md:text-sm whitespace-nowrap"
                                 disabled={supportMutation.isPending}
                             >
                                 Upload
@@ -171,7 +171,7 @@ export function SupportForm() {
 
                 <Button
                     type="submit"
-                    className="bg-[#891D33] hover:bg-[#70182b] text-white px-10 h-12 rounded-[10px] w-full md:w-auto"
+                    className="bg-[#54051d] hover:bg-[#400416] text-white px-10 h-12 rounded-[10px] w-full md:w-auto text-sm md:text-base font-medium"
                     disabled={supportMutation.isPending}
                 >
                     {supportMutation.isPending ? "Sending..." : "Send Message"}

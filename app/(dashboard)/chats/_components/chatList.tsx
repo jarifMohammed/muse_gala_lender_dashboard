@@ -60,27 +60,28 @@ export default function ChatList({
   }, [debouncedSearch, conversations])
 
   return (
-    <div className="w-full md:w-1/3">
+    <div className="w-full md:w-1/3 flex flex-col h-full bg-white md:bg-transparent">
       {/* ✅ Search Field */}
-      <div className="mb-4">
+      <div className="px-5 md:px-0 mt-2 mb-4">
         <div className="relative">
-          <Search className="absolute left-3 top-[16px] h-5 w-5 text-[#595959]" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="SEARCH MESSAGE....."
-            className="pl-11 py-6 border-[#E6E6E6] bg-white focus-visible:ring-0 text-sm"
+            placeholder="Search"
+            className="pl-10 h-11 md:h-12 border-none bg-gray-100 rounded-full focus-visible:ring-1 focus-visible:ring-blue-100 text-sm placeholder:text-gray-400 shadow-none outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
 
+
       {/* ✅ Conversations */}
-      <div className="overflow-y-auto scrollbar-hide max-h-[400px] md:max-h-[544px]">
+      <div className="flex-1 overflow-y-auto scrollbar-hide">
         {/* ✅ No Results Found */}
         {filteredConversations.length === 0 && (
           <div className="text-center py-10 text-gray-500">
-            <p className="text-sm tracking-wide">No results found for:</p>
-            <p className="font-semibold mt-1 text-gray-700">
+            <p className="text-xs md:text-sm tracking-wide">No results found for:</p>
+            <p className="font-semibold mt-1 text-gray-700 text-sm">
               {debouncedSearch}
             </p>
           </div>
@@ -89,40 +90,45 @@ export default function ChatList({
         {filteredConversations.map((conversation) => (
           <div
             key={conversation.id}
-            className={`p-4 flex items-start gap-3 rounded-md cursor-pointer hover:bg-red-50 border-b ${activeConversation === conversation.id ? 'bg-red-100' : ''
+            className={`px-4 py-3 flex items-center gap-3 cursor-pointer transition-colors active:bg-gray-100 md:hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-blue-50 md:bg-red-50' : ''
               }`}
             onClick={() => onSelect(conversation.id)}
           >
-            {/* Icon */}
-            <div className="bg-red-300 rounded-full p-2 flex-shrink-0">
-              <User className="h-5 w-5 text-pink-800" />
+            <div className="relative shrink-0">
+              <div className="bg-gray-200 rounded-full w-12 h-12 md:w-12 md:h-12 flex items-center justify-center overflow-hidden">
+                <User className="h-6 w-6 text-gray-500" />
+              </div>
             </div>
 
             {/* Texts */}
             <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-baseline gap-2">
                 <p
-                  className="font-normal tracking-wide text-sm"
+                  className="font-semibold text-sm md:text-md truncate text-gray-900"
                   dangerouslySetInnerHTML={{
                     __html: highlightText(conversation.name, debouncedSearch),
                   }}
                 />
-
-                <span className="text-xs text-gray-500">
+                <span className="text-[10px] md:text-xs text-gray-400 shrink-0">
                   {conversation.timestamp}
                 </span>
               </div>
 
-              <p
-                className="text-sm text-gray-500 truncate pt-2"
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(conversation.preview, debouncedSearch),
-                }}
-              />
+              <div className="flex justify-between items-center gap-2 mt-0.5">
+                <p
+                  className={`text-xs md:text-sm truncate flex-1 ${activeConversation === conversation.id ? 'text-gray-800' : 'text-gray-500'
+                    }`}
+                  dangerouslySetInnerHTML={{
+                    __html: highlightText(conversation.preview, debouncedSearch),
+                  }}
+                />
+                {/* Unread indicator placeholder */}
+                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0"></div>
+              </div>
 
               {conversation.orderId && (
                 <p
-                  className="text-[10px] text-gray-400 mt-1 uppercase"
+                  className="text-[9px] md:text-[10px] text-gray-400 mt-1 uppercase truncate"
                   dangerouslySetInnerHTML={{
                     __html: `ID: ${highlightText(
                       conversation.orderId,
