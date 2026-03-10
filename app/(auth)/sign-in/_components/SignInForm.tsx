@@ -46,10 +46,7 @@ export default function SignInForm() {
 
         toast.success(res.message || "Login successful");
 
-        // Determine redirect target based on screen width
-        // If mobile/tablet (< 1024px), redirect to Bookings
-        const isMobile = typeof window !== "undefined" && window.innerWidth < 1024;
-        const targetUrl = isMobile ? "/bookings" : "/";
+        const targetUrl = "/bookings";
 
         // Use window.location.href instead of router.push to force a hard reset
         // This ensures the SessionProvider fetches the newly set authentication cookies!

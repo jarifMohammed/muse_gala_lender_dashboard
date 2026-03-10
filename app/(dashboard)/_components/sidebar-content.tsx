@@ -228,14 +228,14 @@ const SidebarContent = ({ onClose, token, userID }: SidebarContentProps) => {
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                                 You will be logged out of your account and redirected to the
-                                homepage. You can sign back in at any time.
+                                sign-in page. You can sign back in at any time.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={async () => {
-                                    await signOut({ redirectTo: "/", redirect: true });
+                                    await signOut({ redirectTo: "/sign-in", redirect: true });
                                 }}
                             >
                                 Sign Out
