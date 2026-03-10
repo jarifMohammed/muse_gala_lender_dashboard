@@ -88,7 +88,7 @@ const Topbar = ({ token, userID }: Props) => {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-[280px] max-w-[80vw]">
-              <SidebarContent onClose={() => { }} />
+              <SidebarContent onClose={() => { }} token={token} userID={userID} />
             </SheetContent>
           </Sheet>
 
@@ -107,7 +107,7 @@ const Topbar = ({ token, userID }: Props) => {
         </div>
 
         {/* Right: Profile Initials */}
-        <div className="flex items-center justify-end gap-1 md:gap-4">
+        <div className="flex lg:hidden items-center justify-end gap-1 md:gap-4">
           <Link href="/account-settings">
             <Avatar className="h-8 w-8 md:h-9 md:w-9 border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity">
               <AvatarFallback className="bg-[#54051d] text-white text-xs md:text-sm font-medium">

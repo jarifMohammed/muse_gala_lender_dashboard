@@ -17,7 +17,10 @@ export default async function RootLayout({
 
   return (
     <div className="flex min-h-screen flex-col selection:bg-primary/20">
-      <Sidebar />
+      <Sidebar
+        token={cu?.user.accessToken as string}
+        userID={cu?.user?.id as string}
+      />
       {/* Main Content */}
       <div className="lg:pl-64 flex flex-1 flex-col min-w-0">
         {/* Top Bar */}

@@ -30,6 +30,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
+import { useUserStore } from "@/zustand/useUserStore";
+
 const routes = [
     {
         id: 1,
@@ -89,10 +93,63 @@ const routes = [
 
 interface SidebarContentProps {
     onClose?: () => void;
+    token?: string;
+    userID?: string;
 }
 
-const SidebarContent = ({ onClose }: SidebarContentProps) => {
+const SidebarContent = ({ onClose, token, userID }: SidebarContentProps) => {
     const pathname = usePathname();
+    const { user: userStore } = useUserStore();
+
+    const { data: userInfo, isLoading: isQueryLoading } = useQuery({
+        queryKey: ["user-info", userID],
+        queryFn: async () => {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${userID}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            const data = await res.json();
+            return data;
+        },
+        enabled: !!userID && !!token,
+    });
+
+    const getProfileData = () => {
+        if (userInfo?.data?.user) return userInfo.data.user;
+        if (userInfo?.user) return userInfo.user;
+        if (userInfo?.data) return userInfo.data;
+        if (userInfo?.firstName || userInfo?.email) return userInfo;
+        return null;
+    };
+
+    const profile = getProfileData();
+    const firstName = profile?.firstName || userStore?.firstName || "";
+    const lastName = profile?.lastName || userStore?.lastName || "";
+    const displayName = profile?.fullName || profile?.FullName || `${firstName} ${lastName}`.trim();
+
+    const getInitials = () => {
+        if (firstName || lastName) {
+            const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : "";
+            const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : "";
+            return `${firstInitial}${lastInitial}` || "U";
+        }
+        if (displayName && displayName !== "U" && displayName !== "Loading") {
+            const parts = displayName.trim().split(/\s+/);
+            if (parts.length >= 2) {
+                return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`.toUpperCase();
+            }
+            return parts[0].charAt(0).toUpperCase();
+        }
+        return "U";
+    };
+
+    const initials = getInitials();
+    const fullName = displayName || (isQueryLoading ? "Loading" : "U");
 
     return (
         <div className="flex h-full flex-col bg-[#54051d]">
@@ -132,11 +189,34 @@ const SidebarContent = ({ onClose }: SidebarContentProps) => {
                 </ul>
             </nav>
 
-            {/* Logout Button */}
-            <div className=" p-3">
+            {/* Profile & Logout Section */}
+            <div className="p-3 space-y-2">
+                {/* Desktop Profile Section */}
+                <div className="hidden lg:block px-3 py-2 mb-2">
+                    <Link
+                        href="/account-settings"
+                        onClick={onClose}
+                        className="flex items-center gap-3 group"
+                    >
+                        <Avatar className="h-9 w-9 border border-white/20 group-hover:opacity-80 transition-opacity">
+                            <AvatarFallback className="bg-white/20 text-white text-sm font-medium">
+                                {initials}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col min-w-0">
+                            <span className="text-sm font-medium text-white truncate">
+                                {fullName}
+                            </span>
+                            <span className="text-xs text-white/50 truncate">
+                                View Profile
+                            </span>
+                        </div>
+                    </Link>
+                </div>
+
                 <AlertDialog>
                     <AlertDialogTrigger asChild>
-                        <Button className="w-full justify-start gap-3">
+                        <Button className="w-full justify-start gap-3 bg-white/10 hover:bg-white/20 text-white border-none">
                             <LogOut className="h-5 w-5" />
                             <span>Sign Out</span>
                         </Button>
