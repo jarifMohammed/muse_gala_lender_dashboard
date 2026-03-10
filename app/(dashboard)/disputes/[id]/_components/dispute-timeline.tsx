@@ -39,9 +39,9 @@ const DisputeTimeline: React.FC<AboutBookingProps> = ({
   const timeline = disputesDetails?.timeline ?? [];
 
   return (
-    <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
+    <div className="bg-white p-4 md:p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
       <div>
-        <h1 className="text-xl font-medium">Dispute History</h1>
+        <h1 className="text-lg md:text-xl font-medium">Dispute History</h1>
       </div>
 
       <div className="mt-6 relative">
@@ -56,7 +56,7 @@ const DisputeTimeline: React.FC<AboutBookingProps> = ({
 
                 {/* Role Dot */}
                 <div className={`h-6 w-6 rounded-full flex-shrink-0 z-10 flex items-center justify-center text-[10px] font-bold text-white ${i.role === "LENDER" ? "bg-primary" :
-                    i.role === "CUSTOMER" ? "bg-blue-600" : "bg-purple-600"
+                  i.role === "CUSTOMER" ? "bg-blue-600" : "bg-purple-600"
                   }`}>
                   {i.role[0]}
                 </div>

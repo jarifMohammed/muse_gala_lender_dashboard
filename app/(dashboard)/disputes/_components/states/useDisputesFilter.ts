@@ -5,6 +5,7 @@ interface IBookingFilter {
   setSearch: (value: string) => void;
   status: string;
   setStatus: (value: string) => void;
+  resetFilters: () => void;
 }
 
 const initialStates = {
@@ -16,4 +17,5 @@ export const useDisputesFilter = create<IBookingFilter>((set) => ({
   ...initialStates,
   setSearch: (value: string) => set({ search: value }),
   setStatus: (value: string) => set({ status: value }),
+  resetFilters: () => set(initialStates),
 }));

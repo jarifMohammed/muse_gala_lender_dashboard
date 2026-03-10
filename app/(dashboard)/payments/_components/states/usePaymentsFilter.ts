@@ -9,6 +9,7 @@ interface IPaymentsFilter {
   setStatus: (value: string) => void;
   date: string;
   setDate: (value: string) => void;
+  resetFilters: () => void;
 }
 
 const initialStates = {
@@ -24,4 +25,5 @@ export const usePaymentsFilter = create<IPaymentsFilter>((set) => ({
   setDeliveryType: (value: string) => set({ deliveryType: value }),
   setStatus: (value: string) => set({ status: value }),
   setDate: (value: string) => set({ date: value }),
+  resetFilters: () => set(initialStates),
 }));

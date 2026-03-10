@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
 import BookingDetailsSkeleton from "./booking-details-skeleton";
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
 
 interface Customer {
   _id?: string;
@@ -31,14 +33,19 @@ const AboutDisputes: React.FC<AboutDisputesProps> = ({
   disputesDetails,
   isLoading,
 }) => {
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
+  };
+
   if (isLoading) {
     return <BookingDetailsSkeleton />;
   }
 
   return (
-    <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
+    <div className="bg-white p-4 md:p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-medium">Dispute Summary</h1>
+        <h1 className="text-lg md:text-xl font-medium font-medium">Dispute Summary</h1>
         <div>
           <span
             className={`px-2 rounded-3xl font-semibold text-xs py-1 ${disputesDetails?.status === "Pending"
@@ -58,13 +65,43 @@ const AboutDisputes: React.FC<AboutDisputesProps> = ({
       </div>
 
       <div className="mt-4 space-y-2 text-sm">
-        <div className="flex justify-between border-b pb-1 gap-4">
+        <div className="flex justify-between border-b pb-1 gap-4 items-center">
           <span className="text-gray-500 whitespace-nowrap">Dispute ID</span>
-          <span className="font-medium text-right break-all">{disputesDetails?._id ?? "N/A"}</span>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-right break-all">
+              {disputesDetails?._id ?? "N/A"}
+            </span>
+            {disputesDetails?._id && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-gray-400 hover:text-[#54051d]"
+                onClick={() => handleCopy(disputesDetails._id!, "Dispute ID")}
+              >
+                <Copy className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
         </div>
-        <div className="flex justify-between border-b pb-1 gap-4">
+        <div className="flex justify-between border-b pb-1 gap-4 items-center">
           <span className="text-gray-500 whitespace-nowrap">Booking ID</span>
-          <span className="font-medium text-right break-all">{disputesDetails?.booking?._id ?? "N/A"}</span>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-right break-all">
+              {disputesDetails?.booking?._id ?? "N/A"}
+            </span>
+            {disputesDetails?.booking?._id && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-gray-400 hover:text-[#54051d]"
+                onClick={() =>
+                  handleCopy(disputesDetails.booking!._id!, "Booking ID")
+                }
+              >
+                <Copy className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
         </div>
         <div className="flex justify-between border-b pb-1">
           <span className="text-gray-500">Customer</span>

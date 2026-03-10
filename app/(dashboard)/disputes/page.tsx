@@ -8,7 +8,7 @@ const page = async () => {
   const token = cu?.user?.accessToken;
 
   return (
-    <div className="p-10 space-y-8">
+    <div className="p-4 md:p-10 space-y-6 md:space-y-8">
       <DisputeHeader token={token as string} />
       <DisputesTable token={token as string} />
     </div>

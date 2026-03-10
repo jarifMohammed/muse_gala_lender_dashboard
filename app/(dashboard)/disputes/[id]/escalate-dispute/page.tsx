@@ -2,10 +2,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { MoveLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import AboutDisputes from "../_components/about-dispute";
 import EscalateForm from "./_components/escalate-form";
 
 const page = () => {
+  const router = useRouter();
   const { id } = useParams();
   const session = useSession();
   const token = session?.data?.user?.accessToken;
@@ -29,12 +33,25 @@ const page = () => {
   });
 
   return (
-    <div className="p-10">
-      <h1 className="text-2xl font-medium uppercase tracking-widest">
+    <div className="p-4 md:p-10">
+      <div className="mb-4">
+        <Button
+          className="p-0 h-auto hover:bg-transparent"
+          effect="expandIcon"
+          icon={MoveLeft}
+          iconPlacement="left"
+          variant="link"
+          onClick={() => router.back()}
+        >
+          Back Now
+        </Button>
+      </div>
+
+      <h1 className="text-xl md:text-2xl font-medium uppercase tracking-widest">
         Escalate Dispute
       </h1>
 
-      <div className="space-y-8 mt-8">
+      <div className="space-y-6 md:space-y-8 mt-6 md:mt-8">
         <AboutDisputes
           disputesDetails={disputesDetails}
           isLoading={isLoading}

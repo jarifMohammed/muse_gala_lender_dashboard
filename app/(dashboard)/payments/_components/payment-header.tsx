@@ -45,7 +45,7 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
         <h1 className="text-2xl font-medium uppercase tracking-[0.3rem]">
           Payments
         </h1>
@@ -53,7 +53,7 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
         <div className="space-x-5">
           {isOnboarded ? (
             <Button
-              variant="outline"
+              className="bg-[#54051d] hover:bg-[#6b0726] text-white shadow-md border-none transition-all duration-300"
               asChild
               disabled={dashboardLoading}
             >

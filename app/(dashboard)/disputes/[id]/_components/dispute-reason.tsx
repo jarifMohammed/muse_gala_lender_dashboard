@@ -22,9 +22,9 @@ const DisputeReason: React.FC<AboutBookingProps> = ({
   }
 
   return (
-    <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
+    <div className="bg-white p-4 md:p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
       <div>
-        <h1 className="text-xl font-medium">Dispute Reasons</h1>
+        <h1 className="text-lg md:text-xl font-medium">Dispute Reasons</h1>
       </div>
 
       <div className="mt-4 space-y-4">

@@ -9,7 +9,7 @@ const page = async () => {
   const token = cu?.user?.accessToken;
 
   return (
-    <div className="p-10 space-y-8">
+    <div className="p-4 md:p-10 space-y-6 md:space-y-8">
       <PaymentHeader token={token as string} id={cu?.user?.id as string} />
       <PaymentFilter />
       <PaymentsTable token={token as string} />
