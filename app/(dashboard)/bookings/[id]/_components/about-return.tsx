@@ -37,7 +37,7 @@ const AboutReturn: React.FC<AboutReturnProps> = ({
 
             <div className="mt-4 space-y-2 text-sm">
                 <h1>
-                    Method: <span className="font-semibold">{bookingDetails?.returnMethod ?? "N/A"}</span>
+                    Method: <span className="font-semibold">{bookingDetails?.returnMethod ? bookingDetails.returnMethod.replace(/([A-Z])/g, ' $1').trim() : "N/A"}</span>
                 </h1>
 
                 <h1 className="break-all">

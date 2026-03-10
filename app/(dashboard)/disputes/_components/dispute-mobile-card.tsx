@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Eye, Copy } from "lucide-react";
+import { MoreHorizontal, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 interface Dispute {
@@ -87,7 +87,7 @@ const DisputeMobileCard = ({ dispute, getStatusColor }: DisputeMobileCardProps) 
                     </div>
                     <Link href={`/disputes/${dispute._id}`}>
                         <Button size="icon" className="h-9 w-9 font-bold bg-[#54051d] hover:bg-[#6b0726]">
-                            <Eye className="h-4 w-4" />
+                            <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </Link>
                 </div>

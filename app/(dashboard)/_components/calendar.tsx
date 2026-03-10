@@ -1,7 +1,14 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CalendarIcon } from "lucide-react";
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import { SearchInput } from "@/components/ui/search-input";
+import dayjs, { Dayjs } from 'dayjs';
+import { CustomDateRangePicker } from "@/components/ui/custom-date-range-picker";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/components/ui/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface Event {
   bookingId: string;
@@ -13,20 +20,19 @@ interface Event {
 }
 
 interface CalendarData {
-  month: number;
-  year: number;
+  startDate: string;
+  endDate: string;
   totalEvents: number;
   events: Event[];
 }
 
 const Calendar = ({ token }: { token: string }) => {
-  const [selectedDress, setSelectedDress] = useState<string>("All");
-  const [selectedMonth, setSelectedMonth] = useState<number>(
-    new Date().getMonth() + 1
-  );
-  const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear()
-  );
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
+    dayjs().startOf('month'),
+    dayjs().endOf('month')
+  ]);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [hoveredDate, setHoveredDate] = useState<{
     date: Date;
     events: Event[];
@@ -36,23 +42,34 @@ const Calendar = ({ token }: { token: string }) => {
     top: number;
     left: number;
   }>({ top: 0, left: 0 });
+  const isMobile = useIsMobile();
 
   const calendarRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useQuery<{ data: CalendarData }>({
-    queryKey: ["calendar-data", selectedMonth, selectedYear],
+    queryKey: ["calendar-data", dateRange[0]?.toISOString(), dateRange[1]?.toISOString()],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/overview/rental-calendar?month=${selectedMonth}&year=${selectedYear}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `bearer ${token}`,
-          },
-        }
-      );
+      const start = dateRange[0]?.format('YYYY-MM-DD');
+      const end = dateRange[1]?.format('YYYY-MM-DD');
+
+      const url = new URL(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/overview/rental-calendar`);
+      if (start && end) {
+        url.searchParams.append("startDate", start);
+        url.searchParams.append("endDate", end);
+      } else {
+        // Fallback to current month if no range is selected (shouldn't happen with default state)
+        url.searchParams.append("startDate", dayjs().startOf('month').format('YYYY-MM-DD'));
+        url.searchParams.append("endDate", dayjs().endOf('month').format('YYYY-MM-DD'));
+      }
+
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `bearer ${token}`,
+        },
+      });
 
       const data = await res.json();
       return data;
@@ -89,20 +106,22 @@ const Calendar = ({ token }: { token: string }) => {
     return ["All", ...Array.from(new Set(names))];
   }, [data?.data?.events]);
 
-  // Filter events based on selected dress
+  // Filter events based on search term
   const filteredEvents = useMemo(() => {
     if (!data?.data?.events) return [];
-    if (selectedDress === "All") return data.data.events;
-    return data.data.events.filter(
-      (event) => event.dressName === selectedDress
+    if (!searchTerm.trim()) return data.data.events;
+    return data.data.events.filter((event) =>
+      event.dressName.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [data?.data?.events, selectedDress]);
+  }, [data?.data?.events, searchTerm]);
 
   // Generate calendar days dynamically based on the month and year from API
   const calendarDays = useMemo(() => {
-    if (!data?.data) return [];
+    if (!data?.data?.startDate) return [];
 
-    const { month, year } = data.data;
+    const start = dayjs(data.data.startDate);
+    const month = start.month() + 1;
+    const year = start.year();
 
     const firstDayOfMonth = new Date(year, month - 1, 1);
     const lastDayOfMonth = new Date(year, month, 0);
@@ -127,12 +146,8 @@ const Calendar = ({ token }: { token: string }) => {
       const dateString = currentDate.toISOString().split("T")[0];
 
       const dayEvents = filteredEvents.filter((event) => {
-        const eventStartDate = new Date(event.rentalStartDate)
-          .toISOString()
-          .split("T")[0];
-        const eventEndDate = new Date(event.rentalEndDate)
-          .toISOString()
-          .split("T")[0];
+        const eventStartDate = dayjs(event.rentalStartDate).format('YYYY-MM-DD');
+        const eventEndDate = dayjs(event.rentalEndDate).format('YYYY-MM-DD');
         return dateString >= eventStartDate && dateString <= eventEndDate;
       });
 
@@ -167,11 +182,7 @@ const Calendar = ({ token }: { token: string }) => {
     });
   };
 
-  // Generate year options (current year -2 to +2)
-  const yearOptions = useMemo(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
-  }, []);
+
 
   // Format date for display
   const formatDate = (date: Date) => {
@@ -202,15 +213,13 @@ const Calendar = ({ token }: { token: string }) => {
   // Calendar Skeleton Component
   const CalendarSkeleton = () => (
     <div className="lg:col-span-2 bg-white p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A]">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="h-7 w-40 bg-gray-200 rounded-md animate-pulse"></div>
-        <div className="flex flex-wrap gap-2">
-          {/* Dress Filter Skeleton */}
-          <div className="h-9 w-24 bg-gray-200 rounded-md animate-pulse"></div>
-          {/* Month Filter Skeleton */}
-          <div className="h-9 w-24 bg-gray-200 rounded-md animate-pulse"></div>
-          {/* Year Filter Skeleton */}
-          <div className="h-9 w-20 bg-gray-200 rounded-md animate-pulse"></div>
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {/* Dress Search Skeleton */}
+          <div className="h-10 w-full md:w-64 bg-gray-200 rounded-md animate-pulse"></div>
+          {/* Date Picker Skeleton */}
+          <div className="h-10 w-24 bg-gray-200 rounded-md animate-pulse"></div>
         </div>
       </div>
 
@@ -263,119 +272,117 @@ const Calendar = ({ token }: { token: string }) => {
       className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-[15px] shadow-[0px_4px_10px_0px_#0000001A] relative"
       onMouseLeave={handleCalendarMouseLeave}
     >
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h3 className="text-lg font-semibold text-gray-800">
-          {data?.data
-            ? `${getMonthName(data.data.month)} ${data.data.year}`
-            : "Calendar"}
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {/* Dress Filter */}
-          <div className="relative group">
-            <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
-              {selectedDress === "All" ? "Dresses" : selectedDress}
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </button>
-            <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              {dressNames.map((dress) => (
-                <button
-                  key={dress}
-                  onClick={() => setSelectedDress(dress)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${selectedDress === dress
-                    ? "bg-gray-50 text-[#891d33] font-medium"
-                    : "text-gray-700"
-                    }`}
-                >
-                  {dress}
-                </button>
-              ))}
-            </div>
+      <div className="flex flex-col sm:flex-row justify-end items-center gap-3 mb-6">
+        <div className="flex flex-row items-center gap-2 w-full sm:w-auto">
+          {/* Dress Search */}
+          <div className="flex-1 min-w-[150px] sm:w-64">
+            <SearchInput
+              placeholder="Search dress..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onClear={() => setSearchTerm("")}
+              className="h-10"
+            />
           </div>
 
-          {/* Month Filter */}
-          <div className="relative group">
-            <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
-              Month
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </button>
-            <div className="absolute top-full left-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                <button
-                  key={month}
-                  onClick={() => setSelectedMonth(month)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${selectedMonth === month
-                    ? "bg-gray-50 text-[#891d33] font-medium"
-                    : "text-gray-700"
-                    }`}
-                >
-                  {getMonthName(month)}
+          {/* Date Range Picker */}
+          {isMobile ? (
+            <Sheet open={isPickerOpen} onOpenChange={setIsPickerOpen}>
+              <SheetTrigger asChild>
+                <button className="h-10 px-3 sm:px-4 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors gap-2 flex-shrink-0">
+                  <CalendarIcon className="h-4 w-4" />
+                  <span className="hidden xs:inline">
+                    {dateRange[0] && dateRange[1]
+                      ? `${dateRange[0].format('MMM D')} - ${dateRange[1].format('MMM D')}`
+                      : "Select Dates"}
+                  </span>
+                  <span className="xs:hidden text-xs">Dates</span>
+                  <ChevronDown className="h-4 w-4" />
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Year Filter */}
-          <div className="relative group">
-            <button className="px-4 py-2 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors">
-              Year
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </button>
-            <div className="absolute top-full left-0 mt-1 w-24 bg-white border border-gray-200 rounded-md shadow-lg z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              {yearOptions.map((year) => (
-                <button
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className={`block w-full text-left px-4 py-2 hover:bg-gray-50 first:rounded-t-md last:rounded-b-md text-sm ${selectedYear === year
-                    ? "bg-gray-50 text-[#891d33] font-medium"
-                    : "text-gray-700"
-                    }`}
-                >
-                  {year}
+              </SheetTrigger>
+              <SheetContent side="bottom" className="p-0 h-auto rounded-t-3xl border-none">
+                <SheetHeader className="p-4 border-b">
+                  <SheetTitle>Select Date Range</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col items-center">
+                  <CustomDateRangePicker
+                    value={dateRange}
+                    onChange={(newValue) => setDateRange(newValue)}
+                    onClose={() => setIsPickerOpen(false)}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <Popover open={isPickerOpen} onOpenChange={setIsPickerOpen}>
+              <PopoverTrigger asChild>
+                <button className="h-10 px-3 sm:px-4 bg-[#891d33] text-white rounded-md flex items-center text-sm hover:bg-[#6a1526] transition-colors gap-2 flex-shrink-0">
+                  <CalendarIcon className="h-4 w-4" />
+                  <span className="hidden xs:inline">
+                    {dateRange[0] && dateRange[1]
+                      ? `${dateRange[0].format('MMM D')} - ${dateRange[1].format('MMM D')}`
+                      : "Select Dates"}
+                  </span>
+                  <span className="xs:hidden text-xs">Dates</span>
+                  <ChevronDown className="h-4 w-4" />
                 </button>
-              ))}
-            </div>
-          </div>
+              </PopoverTrigger>
+              <PopoverContent className="p-0 w-auto bg-white border-none shadow-2xl z-[60]" align="end">
+                <CustomDateRangePicker
+                  value={dateRange}
+                  onChange={(newValue) => setDateRange(newValue)}
+                  onClose={() => setIsPickerOpen(false)}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="max-w-full overflow-x-auto pb-4 -mb-4 scrollbar-hide">
-        <div className="grid grid-cols-7 gap-1 mb-4 min-w-[600px] md:min-w-0">
+      {/* Calendar Grid Container */}
+      <div className="max-w-full overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="grid grid-cols-7 gap-1 mb-4 min-w-[500px] md:min-w-0">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <div
               key={day}
-              className="text-center font-semibold text-gray-600 text-sm py-2"
+              className="text-center font-semibold text-gray-600 text-xs sm:text-sm py-2"
             >
               {day}
             </div>
           ))}
 
-          {calendarDays.map((date, index) => (
-            <div
-              key={index}
-              className={`min-h-[80px] p-2 border border-gray-100 rounded-lg transition-all duration-200 ${date.month !== "current"
-                ? "bg-gray-50 text-gray-400"
-                : "bg-white hover:bg-gray-50 hover:shadow-sm cursor-pointer"
-                } ${date.events.length > 0 ? "border-l-4 border-l-[#891d33]" : ""}`}
-              onMouseEnter={(e) => handleDateHover(date, e)}
-            >
+          {calendarDays.map((date, index) => {
+            return (
               <div
-                className={`text-sm font-medium mb-1 ${date.month === "current" ? "text-gray-900" : "text-gray-400"
-                  }`}
+                key={index}
+                className={cn(
+                  "min-h-[60px] sm:min-h-[80px] p-1 sm:p-2 border border-gray-100 rounded-lg transition-all duration-200 relative",
+                  date.month !== "current" ? "bg-gray-50 text-gray-400" : "bg-white text-gray-900",
+                  date.events.length > 0 && "border-l-4 border-l-[#891d33]",
+                  date.month === "current" && "hover:bg-gray-50 hover:shadow-sm cursor-pointer"
+                )}
+                onMouseEnter={(e) => handleDateHover(date, e)}
               >
-                {date.day}
-              </div>
-
-              {/* Event Count Badge */}
-              {date.events.length > 0 && (
-                <div className="flex justify-center">
-                  <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold bg-[#891d33] text-white rounded-full min-w-[20px]">
-                    {date.events.length}
-                  </span>
+                <div
+                  className={cn(
+                    "text-xs sm:text-sm font-medium mb-1",
+                    date.month !== "current" && "text-gray-400"
+                  )}
+                >
+                  {date.day}
                 </div>
-              )}
-            </div>
-          ))}
+
+                {/* Event Count Badge */}
+                {date.events.length > 0 && (
+                  <div className="flex justify-center">
+                    <span className="inline-flex items-center justify-center px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold bg-[#891d33] text-white rounded-full min-w-[16px] sm:min-w-[20px]">
+                      {date.events.length}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -432,24 +439,16 @@ const Calendar = ({ token }: { token: string }) => {
       )}
 
       {/* Legend */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-        <div className="flex items-center space-x-4 text-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200 mt-2">
+        <div className="flex items-center space-x-4 text-sm font-medium">
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-[#891d33] rounded-sm"></div>
             <span className="text-gray-600">Bookings</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-sm"></div>
-            <span className="text-gray-600">Paid</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-sm"></div>
-            <span className="text-gray-600">Pending</span>
-          </div>
         </div>
 
-        <div className="text-sm text-gray-500">
-          Total: {filteredEvents.length} bookings
+        <div className="text-xs sm:text-sm text-gray-500 font-medium">
+          Total: {filteredEvents.length} bookings in selected range
         </div>
       </div>
     </div>

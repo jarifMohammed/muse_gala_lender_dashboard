@@ -46,7 +46,7 @@ const AboutPayment: React.FC<AboutBookingProps> = ({
           </span>
         </div>
 
-        <h1>Method: {bookingDetails?.deliveryMethod ?? "N/A"}</h1>
+        <h1>Method: {bookingDetails?.deliveryMethod ? bookingDetails.deliveryMethod.replace(/([A-Z])/g, ' $1').trim() : "N/A"}</h1>
         <h1>Dress Fees: ${bookingDetails?.totalAmount ?? 0}</h1>
         <h1>
           Paid On:{" "}

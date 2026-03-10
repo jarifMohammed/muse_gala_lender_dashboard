@@ -3,7 +3,7 @@
 import React from "react";
 import { Booking } from "@/types/bookings/bookingTypes";
 import { Button } from "@/components/ui/button";
-import { Copy, Eye } from "lucide-react";
+import { Copy, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import AcceptRejectButton from "./accept-reject-button";
 import { cn } from "@/lib/utils";
@@ -55,13 +55,34 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
 
     return (
         <div className="bg-white p-4 rounded-xl shadow-[0px_2px_8px_0px_#00000010] space-y-3 border border-gray-100">
-            {/* Header: Order ID & View Button */}
-            <div className="flex justify-between items-center">
-                <div className="flex flex-col gap-2.5">
+            {/* Header: Customer Name, Order ID & View Button */}
+            <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-3">
+                    <div className="flex flex-col">
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Customer Name</p>
+                        <div className="flex items-center gap-1.5">
+                            <p className="font-semibold text-sm break-all">
+                                {item?.customer?.firstName ? (
+                                    `${item.customer.firstName} ${item.customer.lastName || ""}`
+                                ) : (
+                                    item?.customer?.email || "N/A"
+                                )}
+                            </p>
+                            <button
+                                onClick={() => {
+                                    const nameToCopy = item?.customer?.firstName ? `${item.customer.firstName} ${item.customer.lastName || ""}`.trim() : item?.customer?.email || "N/A";
+                                    handleCopy(nameToCopy, "Customer Name");
+                                }}
+                                className="text-gray-400 hover:text-gray-600 active:scale-95 transition-all outline-none"
+                            >
+                                <Copy className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    </div>
                     <div className="flex flex-col">
                         <p className="text-[10px] text-gray-500 uppercase tracking-wider">Order ID</p>
                         <div className="flex items-center gap-1.5">
-                            <p className="font-semibold text-xs break-all">{item._id.toUpperCase()}</p>
+                            <p className="font-medium text-xs break-all text-gray-600">{item._id.toUpperCase()}</p>
                             <button
                                 onClick={() => handleCopy(item._id.toUpperCase(), "Order ID")}
                                 className="text-gray-400 hover:text-gray-600 active:scale-95 transition-all outline-none"
@@ -74,11 +95,11 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
                 <Button
                     size="icon"
                     variant="ghost"
-                    className="h-7 w-7 text-neutral-500 hover:text-primary hover:bg-primary/5"
+                    className="h-7 w-7 text-neutral-500 hover:text-primary hover:bg-primary/5 shrink-0"
                     asChild
                 >
                     <Link href={`/bookings/${item._id}`}>
-                        <Eye className="h-3.5 w-3.5" />
+                        <MoreHorizontal className="h-4 w-4" />
                     </Link>
                 </Button>
             </div>

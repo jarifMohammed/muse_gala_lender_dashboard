@@ -9,7 +9,7 @@ interface SidebarProps {
 
 const Sidebar = ({ token, userID }: SidebarProps) => {
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 border-r bg-[#54051d] hidden lg:block">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#54051d] hidden lg:block">
       <SidebarContent token={token} userID={userID} />
     </div>
   );

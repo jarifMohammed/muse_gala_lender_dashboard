@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Listing } from "@/types/listings/index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Table } from "@tanstack/react-table";
-import { Trash, Eye } from "lucide-react";
+import { Trash, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -67,7 +67,7 @@ const ListingViewAction = ({ data, table }: Props) => {
               asChild
             >
               <Link href={`/listings/${data._id}`} prefetch={false}>
-                <Eye className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4" />
               </Link>
             </Button>
           </TooltipTrigger>

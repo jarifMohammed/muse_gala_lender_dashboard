@@ -23,7 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Eye } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import BookingCard from "./booking-card";
 
@@ -139,7 +139,7 @@ const BookingsTable = ({ token }: Props) => {
                   Dress Name
                 </TableHead>
                 <TableHead className="w-[100px] text-center">
-                  Customer Email
+                  Customer Name
                 </TableHead>
                 <TableHead className="w-[100px] text-center">Price</TableHead>
                 <TableHead className="w-[100px] text-center">
@@ -243,7 +243,7 @@ const BookingsTable = ({ token }: Props) => {
                                 asChild
                               >
                                 <Link href={`/bookings/${item?._id}`}>
-                                  <Eye className="h-4 w-4" />
+                                  <MoreHorizontal className="h-4 w-4" />
                                 </Link>
                               </Button>
                             </TooltipTrigger>
