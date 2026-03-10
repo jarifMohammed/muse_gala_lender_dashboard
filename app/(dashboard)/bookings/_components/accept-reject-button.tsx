@@ -80,7 +80,7 @@ const AcceptRejectButton = ({ token, bookingId, lenderId }: Props) => {
         disabled={isPending}
         className="w-full h-9 text-xs py-1"
       >
-        {isPending ? "Accept..." : "Accept"}
+        {isPending ? "Accept" : "Accept"}
       </Button>
 
       <Button
@@ -89,7 +89,7 @@ const AcceptRejectButton = ({ token, bookingId, lenderId }: Props) => {
         variant="outline"
         className="w-full h-9 text-xs py-1 border-gray-300"
       >
-        {isPending ? "Reject..." : "Reject"}
+        {isPending ? "Reject" : "Reject"}
       </Button>
     </div>
   );

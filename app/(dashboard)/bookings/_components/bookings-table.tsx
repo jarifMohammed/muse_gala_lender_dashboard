@@ -40,7 +40,7 @@ const BookingsTable = ({ token }: Props) => {
     queryKey: ["all-bookings", page, search, startDate, endDate, deliveryType, status],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/allocated?page=${page}&search=${search}&startDate=${startDate}&endDate=${endDate}&status=${status}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/allocated?page=${page}&search=${search}&startDate=${startDate}&endDate=${endDate}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -53,8 +53,7 @@ const BookingsTable = ({ token }: Props) => {
     },
   });
 
-  const bookings = data?.data ?? [];
-  const paginationInfo = data?.pagination;
+  const apiBookings = data?.data ?? [];
 
   // Helper function to get current status from statusHistory
   const getCurrentStatus = (
@@ -73,6 +72,42 @@ const BookingsTable = ({ token }: Props) => {
     if (!status) return "Pending";
     return status.replace(/([A-Z])/g, " $1").trim();
   };
+
+  // Frontend filtering for deliveryType and specific status checks if backend doesn't handle them perfectly
+  const bookings = React.useMemo(() => {
+    let filtered = [...apiBookings];
+
+    if (deliveryType) {
+      if (deliveryType === "Local Pickup") {
+        filtered = filtered.filter(b => b.deliveryMethod === "Pickup");
+      } else {
+        filtered = filtered.filter(b => b.deliveryMethod === deliveryType);
+      }
+    }
+
+    if (status) {
+      filtered = filtered.filter(b => {
+        if (status === "Pending") {
+          return b.deliveryStatus === "Pending";
+        }
+
+        // For other statuses, check all relevant fields to be safe
+        const currentStatus = getCurrentStatus(b.statusHistory);
+        return (
+          (b.paymentStatus === status) ||
+          (b.deliveryStatus === status) ||
+          (currentStatus === status) ||
+          (formatStatus(b.deliveryStatus) === status)
+        );
+      });
+    }
+
+    return filtered;
+  }, [apiBookings, deliveryType, status]);
+
+  const paginationInfo = data?.pagination;
+
+
 
   // Helper function to get status badge styling
   const getStatusBadgeStyle = (status: string) => {
@@ -94,7 +129,7 @@ const BookingsTable = ({ token }: Props) => {
   return (
     <div className="mt-8 space-y-6">
       {/* Desktop Table View */}
-      <div className="hidden md:block bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
+      <div className="hidden md:block bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] min-w-0">
         <div className="overflow-x-auto">
           <Table className="min-w-[1000px]">
             <TableHeader>
@@ -144,7 +179,11 @@ const BookingsTable = ({ token }: Props) => {
                       {item?.dressName}
                     </TableCell>
                     <TableCell className="text-center">
-                      {item?.customer?.email}
+                      {item?.customer?.firstName ? (
+                        `${item.customer.firstName} ${item.customer.lastName || ""}`
+                      ) : (
+                        item?.customer?.email || "N/A"
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
                       ${item?.totalAmount}

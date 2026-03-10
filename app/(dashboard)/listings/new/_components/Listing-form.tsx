@@ -215,8 +215,8 @@ export default function ListingForm({ token, initialId }: Props) {
   const loading = isPending || isLoading || isUpdating;
 
   return (
-    <Card className="p-5  border-0 space-y-5">
-      <CardHeader className="p-0">
+    <Card className="p-0 sm:p-5 border-0 bg-transparent sm:bg-white space-y-4 sm:space-y-6">
+      <CardHeader className="p-0 px-2 sm:px-0">
         <Button
           className="w-fit"
           effect="expandIcon"
@@ -235,51 +235,52 @@ export default function ListingForm({ token, initialId }: Props) {
             noValidate
             className=" space-y-6"
           >
-            <Card className="shadow-none">
-              <CardHeader>
-                <CardTitle>Basic Details</CardTitle>
+            <Card className="shadow-none border border-neutral-200 sm:border-0 rounded-xl sm:rounded-none">
+              <CardHeader className="px-4 py-4 sm:px-6 sm:py-6 border-b border-neutral-100 sm:border-b-0">
+                <CardTitle className="text-lg sm:text-2xl">Basic Details</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 py-5 sm:px-6 sm:py-0">
                 <BasicDetailsForm form={form} otherCategoryRef={otherCategoryRef} />
               </CardContent>
             </Card>
-            <Card className="shadow-none">
-              <CardHeader>
-                <CardTitle>Media</CardTitle>
+            <Card className="shadow-none border border-neutral-200 sm:border-0 rounded-xl sm:rounded-none">
+              <CardHeader className="px-4 py-4 sm:px-6 sm:py-6 border-b border-neutral-100 sm:border-b-0">
+                <CardTitle className="text-lg sm:text-2xl">Media</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 py-5 sm:px-6 sm:py-0">
                 <MediaForm form={form} />
               </CardContent>
             </Card>
-            <Card className="shadow-none">
-              <CardHeader>
-                <CardTitle>Price & Fees</CardTitle>
-                <CardDescription>
+            <Card className="shadow-none border border-neutral-200 sm:border-0 rounded-xl sm:rounded-none">
+              <CardHeader className="px-4 py-4 sm:px-6 sm:py-6 border-b border-neutral-100 sm:border-b-0">
+                <CardTitle className="text-lg sm:text-2xl">Price & Fees</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
                   Note: This listing price is inclusive of dry-cleaning fees.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 py-5 sm:px-6 sm:py-0">
                 <PricingAndFeesForm form={form} />
               </CardContent>
             </Card>
-            <Card className="shadow-none">
-              <CardHeader>
-                <CardTitle>Description & Details</CardTitle>
+            <Card className="shadow-none border border-neutral-200 sm:border-0 rounded-xl sm:rounded-none">
+              <CardHeader className="px-4 py-4 sm:px-6 sm:py-6 border-b border-neutral-100 sm:border-b-0">
+                <CardTitle className="text-lg sm:text-2xl">Description & Details</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 py-5 sm:px-6 sm:py-0">
                 <DescriptionAndDetailsForm form={form} />
               </CardContent>
             </Card>
 
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-4 pb-8 sm:pb-0 px-2 sm:px-0">
               <Button
                 type="button"
                 variant="outline"
+                className="w-full sm:w-auto h-12 sm:h-auto font-medium"
                 onClick={() => form.reset()}
               >
                 Reset
               </Button>
-              <Button type="submit" effect="shineHover" disabled={loading}>
+              <Button type="submit" effect="shineHover" className="w-full sm:w-auto h-12 sm:h-auto font-medium" disabled={loading}>
                 {initialId ? "Save Listing" : "Create Listing"}
                 {loading && <Loader2 className="animate-spin ml-2" />}
               </Button>

@@ -24,7 +24,7 @@ const PricingAndFeesForm = ({ form }: Props) => {
           name="rentalPrice.fourDays"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
+              <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">
                 Rental Price ($ / 4 days){" "}
                 <span className="text-red-500">*</span>
               </FormLabel>
@@ -49,7 +49,7 @@ const PricingAndFeesForm = ({ form }: Props) => {
           name="rentalPrice.eightDays"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
+              <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">
                 Rental Price ($ / 8 days){" "}
                 <span className="text-red-500">*</span>
               </FormLabel>

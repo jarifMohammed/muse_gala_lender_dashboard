@@ -25,6 +25,14 @@ export type BookingDetails = {
   rentalEndDate?: string;
   totalAmount?: number;
   createdAt?: string;
+  shippingAddress?: string | {
+    street?: string;
+    city?: string;
+    state?: string;
+    postcode?: string;
+    address?: string;
+  };
+  pickupLocation?: string;
 };
 
 type AboutBookingProps = {
@@ -45,11 +53,21 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
     return status.replace(/([A-Z])/g, " $1").trim();
   };
 
+  const formatAddress = (address: any) => {
+    if (!address) return "N/A";
+    if (typeof address === "string") return address;
+    const { street, city, state, postcode, address: addr } = address;
+    if (addr) return addr;
+    return [street, city, state, postcode].filter(Boolean).join(", ") || "N/A";
+  };
+
+  const displayAddress = formatAddress(bookingDetails?.shippingAddress || bookingDetails?.pickupLocation);
+
   return (
     <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
       <div>
         <h1 className="text-xl font-medium break-all">
-          Booking ID: {bookingDetails?.id}
+          Customer Name: {bookingDetails?.customer?.firstName} {bookingDetails?.customer?.lastName}
         </h1>
       </div>
 
@@ -60,12 +78,13 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
             {formatStatus(bookingDetails?.deliveryStatus)}
           </span>
         </div>
+        <h1 className="break-all">Booking ID: {bookingDetails?.id}</h1>
         <h1 className="break-all">Customer ID: {bookingDetails?.customer?._id ?? "N/A"}</h1>
-        <h1 className="break-all">Customer Name: {bookingDetails?.customer?.firstName} {bookingDetails?.customer?.lastName}</h1>
         <h1>Dress: {bookingDetails?.dressName ?? "N/A"}</h1>
         <h1>Brand: {bookingDetails?.brand ?? "N/A"}</h1>
         <h1>Size: {bookingDetails?.size ?? "N/A"}</h1>
         <h1>Color: {bookingDetails?.color ?? "N/A"}</h1>
+        <h1 className="break-all">Address: {displayAddress}</h1>
         <h1>
           Rental Period:{" "}
           {bookingDetails?.rentalStartDate

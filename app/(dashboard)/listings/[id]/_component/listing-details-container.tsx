@@ -81,8 +81,8 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
   const isRejected = data?.data.approvalStatus === "rejected";
 
   return (
-    <div className="p-8 bg-[#fefaf6] space-y-8">
-      <div className="mb-4">
+    <div className="p-4 sm:p-8 bg-[#fefaf6] space-y-5 sm:space-y-8">
+      <div className="mb-2 sm:mb-4">
         <Button
           className="p-0 h-auto hover:bg-transparent"
           effect="expandIcon"
@@ -94,10 +94,10 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
           Back Now
         </Button>
       </div>
-      <h2 className="text-[20px] font-normal uppercase  ">LISTINGS DETAILS</h2>
+      <h2 className="text-[16px] sm:text-[20px] font-normal uppercase tracking-wide">LISTINGS DETAILS</h2>
 
       {data?.data.approvalStatus === "rejected" && (
-        <Alert className="mb-6 border-red-200 bg-red-50">
+        <Alert className="mb-4 sm:mb-6 border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4 text-primary" />
           <AlertDescription className="text-red-500 font-medium">
             <span className="font-bold underline mr-1">Rejection Reason:</span>
@@ -107,9 +107,9 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
       )}
 
       <SkeletonWrapper isLoading={isLoading || isRefetching}>
-        <Card className="grid grid-cols-1 lg:grid-cols-12 rounded-none border-none shadow-sm">
-          <div className="lg:col-span-2">
-            <div className="relative w-full h-[400px] ">
+        <Card className="grid grid-cols-1 lg:grid-cols-12 rounded-none border-none shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] overflow-hidden">
+          <div className="lg:col-span-5 xl:col-span-4">
+            <div className="relative w-full h-[350px] sm:h-[450px] lg:h-[500px] bg-gray-50/50">
               <Image
                 src={
                   data?.data.media[0] ??
@@ -123,24 +123,26 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
             </div>
           </div>
 
-          <div className="lg:col-span-10 bg-white p-6 rounded-none">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-bold">
+          <div className="lg:col-span-7 xl:col-span-8 bg-white p-5 sm:p-8 xl:p-10 rounded-none flex flex-col">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-50">
+              <div className="space-y-1">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
                   {data?.data.brand} - {data?.data.dressName}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  Product ID: {data?.data.dressId}
+                <p className="text-xs sm:text-sm text-gray-500 font-medium tracking-wide">
+                  Product ID: <span className="font-semibold text-gray-700">{data?.data.dressId}</span>
                 </p>
               </div>
-              <div className="flex space-x-3">
+              <div className="w-full sm:w-auto shrink-0 flex justify-start sm:justify-end">
                 {/* <Link href={`/listings/${data?.data._id}/edit`}> */}
                 {!isApproved && !isRejected ? (
                   <Tooltip>
-                    <TooltipTrigger>
-                      <Button disabled={!isApproved || !isRejected}>
-                        Edit Details
-                      </Button>
+                    <TooltipTrigger asChild>
+                      <div className="w-full sm:w-auto">
+                        <Button disabled className="w-full sm:w-auto hover:bg-[#891d33] bg-[#891d33] text-white brightness-75">
+                          Edit Details
+                        </Button>
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="max-w-[200px]">
@@ -150,67 +152,121 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
                     </TooltipContent>
                   </Tooltip>
                 ) : (
-                  <Button
-                    effect="ringHover"
-                    onClick={() => setEditAlertDialog((p) => !p)}
-                  >
-                    Edit Details
-                  </Button>
+                  <div className="w-full sm:w-auto">
+                    <Button
+                      effect="ringHover"
+                      className="w-full sm:w-auto bg-[#891d33] hover:bg-[#732032] text-white"
+                      onClick={() => setEditAlertDialog((p) => !p)}
+                    >
+                      Edit Details
+                    </Button>
+                  </div>
                 )}
-
-                {/* </Link> */}
               </div>
             </div>
 
-            <div className="mb-6">
-              <p className="text-base mb-3">
-                <span className="font-medium">Size: </span>
-                {Array.isArray(data?.data.size)
-                  ? data.data.size.join(", ")
-                  : data?.data.size}
-              </p>
-              <div className="text-base mb-3 ">
-                <span className="font-medium  mr-2">Color: </span>
-                {Array.isArray(data?.data.colour) ? (
-                  data.data.colour.join(", ")
-                ) : data?.data.colour ? (
-                  data.data.colour
-                ) : (
-                  <span className="text-gray-400 italic text-sm">N/A</span>
-                )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 sm:gap-y-6 gap-x-8">
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Size</span>
+                  <span className="font-medium text-gray-800">
+                    {Array.isArray(data?.data.size)
+                      ? data.data.size.join(", ")
+                      : data?.data.size}
+                  </span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Color</span>
+                  <span className="font-medium text-gray-800 capitalize">
+                    {Array.isArray(data?.data.colour) ? (
+                      data.data.colour.join(", ")
+                    ) : data?.data.colour ? (
+                      data.data.colour
+                    ) : (
+                      <span className="text-gray-400 italic">N/A</span>
+                    )}
+                  </span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Condition</span>
+                  <span className="font-medium text-gray-800">{data?.data.condition}</span>
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Categories</span>
+                  <span className="font-medium text-gray-800 capitalize">
+                    {Array.isArray(data?.data.category) ? (
+                      data.data.category.join(", ")
+                    ) : data?.data.category ? (
+                      data.data.category
+                    ) : (
+                      <span className="text-gray-400 italic">N/A</span>
+                    )}
+                  </span>
+                </div>
               </div>
-              <p className="text-base mb-3">
-                <span className="font-medium">Condition:</span>{" "}
-                {data?.data.condition}
-              </p>
-              <p className="text-base mb-3">
-                <span className="font-medium mr-2">Rental Price:</span>$
-                {data?.data.rentalPrice.fourDays}/ 4 days
-              </p>
-              <p className="text-base mb-3">
-                <span className="font-medium">Last Updated:</span>{" "}
-                {moment(data?.data.updatedAt).format(
-                  "DD MMM, YYYY [at] hh:mm A"
-                )}
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">Status:</span>
-                <span
-                  className={`inline-flex items-center gap-1 px-4 py-1 rounded-2xl text-sm font-medium ${isApproved
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                    }`}
-                >
-                  {isApproved ? "Active" : "Inactive"}
-                  {isApproved ? (
-                    <div className="relative">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <div className="absolute inset-0 w-2 h-2 bg-green-500 rounded-full animate-ping opacity-75"></div>
-                    </div>
-                  ) : (
-                    <X className="w-4 h-4" />
-                  )}
-                </span>
+
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Price</span>
+                  <div className="flex items-center gap-4">
+                    <span className="font-medium text-gray-800">
+                      <span className="text-[#891d33] font-bold">${data?.data.rentalPrice.fourDays}</span> / 4 Days
+                    </span>
+                    <span className="text-gray-300">|</span>
+                    <span className="font-medium text-gray-800">
+                      <span className="text-[#891d33] font-bold">${data?.data.rentalPrice.eightDays}</span> / 8 Days
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Platform Status</span>
+                  <span
+                    className={`inline-flex items-center w-fit gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold leading-tight ${isApproved
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                      }`}
+                  >
+                    {isApproved ? "Approved" : "Rejected"}
+                    {isApproved ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                      </span>
+                    ) : (
+                      <X className="w-3 h-3" />
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold text-gray-900 min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Availability</span>
+                  <span
+                    className={`inline-flex items-center w-fit gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold leading-tight ${data?.data.isActive
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-gray-100 text-gray-700"
+                      }`}
+                  >
+                    {data?.data.isActive ? "Active" : "Inactive"}
+                    {data?.data.isActive ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                      </span>
+                    ) : (
+                      <span className="h-2 w-2 rounded-full bg-gray-400" />
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2 text-sm sm:text-base">
+                  <span className="font-semibold min-w-[100px] uppercase tracking-wider text-[11px] sm:text-xs text-gray-400">Last Updated</span>
+                  <span className="font-medium text-gray-600 text-[13px] sm:text-sm">
+                    {moment(data?.data.updatedAt).format(
+                      "DD MMM, YYYY [at] hh:mm A"
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -218,19 +274,23 @@ const ListingDetailsContainer = ({ listingId, token }: Props) => {
       </SkeletonWrapper>
 
       <SkeletonWrapper isLoading={isLoading || isRefetching}>
-        <Card className="bg-white p-6 rounded-none border-none shadow-sm">
-          <h3 className="text-2xl font-normal mb-4">Description & Details</h3>
+        <Card className="bg-white p-5 sm:p-8 xl:p-10 rounded-none border-none shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+          <h3 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 border-b border-gray-50 pb-3 sm:pb-4">Description & Details</h3>
 
-          <div className="space-y-4">
-            <p className="text-base font-normal">
-              <span className="font-normal">Description:</span>{" "}
-              {data?.data.description}
-            </p>
-            <p className="text-base">
-              <span className="font-normal">Materials:</span>{" "}
-              {data?.data.material}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            <div className="space-y-1.5">
+              <h4 className="font-semibold uppercase tracking-wider text-[11px] sm:text-xs text-gray-400 mb-2">Description</h4>
+              <p className="text-sm sm:text-base font-medium text-gray-800 leading-relaxed">
+                {data?.data.description || <span className="text-gray-400 italic">No description provided.</span>}
+              </p>
+            </div>
 
+            <div className="space-y-1.5">
+              <h4 className="font-semibold uppercase tracking-wider text-[11px] sm:text-xs text-gray-400 mb-2">Materials</h4>
+              <p className="text-sm sm:text-base font-medium text-gray-800 leading-relaxed">
+                {data?.data.material || <span className="text-gray-400 italic">Material information not available.</span>}
+              </p>
+            </div>
           </div>
         </Card>
       </SkeletonWrapper>

@@ -6,13 +6,73 @@ import SidebarContent from "./sidebar-content";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
+
+import { useUserStore } from "@/zustand/useUserStore";
 
 interface Props {
-  name: string;
+  token: string;
+  userID: string;
 }
 
-const Topbar = ({ name }: Props) => {
-  const firstLetter = name ? name.charAt(0).toUpperCase() : "U";
+const Topbar = ({ token, userID }: Props) => {
+  const { user: userStore } = useUserStore();
+  const { data: userInfo, error, isLoading: isQueryLoading } = useQuery({
+    queryKey: ["user-info", userID],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      return data; // Return the whole object to check nesting
+    },
+    enabled: !!userID && !!token,
+  });
+
+  // Resilient name extraction
+  const getProfileData = () => {
+    // 1. Check nested data.data.user
+    if (userInfo?.data?.user) return userInfo.data.user;
+    // 2. Check data.user
+    if (userInfo?.user) return userInfo.user;
+    // 3. Check data.data
+    if (userInfo?.data) return userInfo.data;
+    // 4. Case where data is the user object itself
+    if (userInfo?.firstName || userInfo?.email) return userInfo;
+
+    return null;
+  };
+
+  const profile = getProfileData();
+
+  const firstName = profile?.firstName || userStore?.firstName || "";
+  const lastName = profile?.lastName || userStore?.lastName || "";
+  const displayName = profile?.fullName || profile?.FullName || profile?.fullName || `${firstName} ${lastName}`.trim();
+
+  const getInitials = () => {
+    if (firstName || lastName) {
+      const firstInitial = firstName ? firstName.charAt(0).toUpperCase() : "";
+      const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : "";
+      return `${firstInitial}${lastInitial}` || "U";
+    }
+    if (displayName && displayName !== "U" && displayName !== "Loading") {
+      const parts = displayName.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        return `${parts[0].charAt(0)}${parts[parts.length - 1].charAt(0)}`.toUpperCase();
+      }
+      return parts[0].charAt(0).toUpperCase();
+    }
+    return "U";
+  };
+
+  const initials = getInitials();
+  const fullName = displayName || (isQueryLoading ? "Loading" : "U");
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center border-b bg-white px-4 md:px-6 w-full max-w-full">
@@ -32,7 +92,7 @@ const Topbar = ({ name }: Props) => {
           </Sheet>
 
           <div className="hidden lg:block">
-            <h1 className="text-lg font-semibold truncate max-w-[200px]">{name}</h1>
+            <h1 className="text-lg font-semibold truncate max-w-[200px]">{fullName}</h1>
             <p className="text-sm text-muted-foreground">Lender Dashboard</p>
           </div>
         </div>
@@ -49,7 +109,7 @@ const Topbar = ({ name }: Props) => {
         <div className="flex items-center justify-end gap-4">
           <Avatar className="h-8 w-8 md:h-9 md:w-9 border border-gray-200">
             <AvatarFallback className="bg-[#54051d] text-white text-xs md:text-sm font-medium">
-              {firstLetter}
+              {initials}
             </AvatarFallback>
           </Avatar>
         </div>

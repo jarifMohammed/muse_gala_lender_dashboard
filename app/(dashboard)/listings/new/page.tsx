@@ -7,7 +7,7 @@ const Page = async () => {
   if (!cu || !cu?.user.accessToken) redirect("/login");
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <ListingForm token={cu.user.accessToken} />
     </div>
   );

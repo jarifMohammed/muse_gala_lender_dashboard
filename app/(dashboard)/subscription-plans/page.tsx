@@ -9,7 +9,7 @@ const page = async () => {
   const id = cu?.user?.id;
 
   return (
-    <div className="p-10 space-y-8">
+    <div className="p-4 sm:p-6 md:p-10 space-y-8">
       <SubscriptionHeader token={token as string} id={id as string} />
       <SubscriptionTable token={token as string} id={id as string} />
     </div>

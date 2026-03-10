@@ -30,7 +30,7 @@ interface AustraliaLocationSelectorProps {
 export function AustraliaLocationSelector({
     accessToken,
     onLocationSelect,
-    placeholder = "Search for your business location...",
+    placeholder = "Search for your business location",
     defaultValue = "",
 }: AustraliaLocationSelectorProps) {
     const [open, setOpen] = useState(false)
@@ -222,7 +222,7 @@ export function AustraliaLocationSelector({
                         </div>
                     ) : (
                         <div className="p-4 text-center text-sm text-gray-500">
-                            Type at least 3 characters to search...
+                            Type at least 3 characters to search
                         </div>
                     )}
                 </ScrollArea>

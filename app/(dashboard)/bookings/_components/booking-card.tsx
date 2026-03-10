@@ -3,10 +3,11 @@
 import React from "react";
 import { Booking } from "@/types/bookings/bookingTypes";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Copy, Eye } from "lucide-react";
 import Link from "next/link";
 import AcceptRejectButton from "./accept-reject-button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface BookingCardProps {
     item: Booking;
@@ -17,6 +18,12 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
     const formatStatus = (status?: string) => {
         if (!status) return "Pending";
         return status.replace(/([A-Z])/g, " $1").trim();
+    };
+
+    const handleCopy = (text: string, type: string) => {
+        if (!text) return;
+        navigator.clipboard.writeText(text);
+        toast.success(`${type} copied to clipboard`);
     };
 
     const getStatusBadgeStyle = (status: string) => {
@@ -37,47 +44,107 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
 
     const isPending = item.deliveryStatus === "Pending";
 
+    const formatAddress = (address: any) => {
+        if (!address) return "N/A";
+        if (typeof address === "string") return address;
+        const { street, city, state, postcode } = address;
+        return [street, city, state, postcode].filter(Boolean).join(", ") || "N/A";
+    };
+
+    const displayAddress = formatAddress(item.shippingAddress || item.pickupLocation);
+
     return (
-        <div className="bg-white p-5 rounded-xl shadow-[0px_4px_10px_0px_#0000001A] space-y-4 border border-gray-50">
-            <div className="flex justify-between items-start">
-                <div className="flex flex-col gap-1">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Order ID</p>
-                    <p className="font-semibold text-sm break-all">{item._id.toUpperCase()}</p>
+        <div className="bg-white p-4 rounded-xl shadow-[0px_2px_8px_0px_#00000010] space-y-3 border border-gray-100">
+            {/* Header: Order ID & View Button */}
+            <div className="flex justify-between items-center">
+                <div className="flex flex-col gap-2.5">
+                    <div className="flex flex-col">
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Order ID</p>
+                        <div className="flex items-center gap-1.5">
+                            <p className="font-semibold text-xs break-all">{item._id.toUpperCase()}</p>
+                            <button
+                                onClick={() => handleCopy(item._id.toUpperCase(), "Order ID")}
+                                className="text-gray-400 hover:text-gray-600 active:scale-95 transition-all outline-none"
+                            >
+                                <Copy className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <Button
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-primary/5"
+                    className="h-7 w-7 text-neutral-500 hover:text-primary hover:bg-primary/5"
                     asChild
                 >
                     <Link href={`/bookings/${item._id}`}>
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-3.5 w-3.5" />
                     </Link>
                 </Button>
             </div>
 
-            <div>
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Dress Name</p>
-                <p className="text-sm font-medium line-clamp-1 break-all">{item.dressName}</p>
+            {/* Dress Details: Name, Brand, Size, Color */}
+            <div className="space-y-2">
+                <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Dress Name</p>
+                    <p className="text-sm font-medium line-clamp-1 break-all">{item.dressName}</p>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                    <div>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Brand</p>
+                        <p className="text-xs font-medium truncate capitalize">{item.brand || "N/A"}</p>
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Size</p>
+                        <p className="text-xs font-medium truncate">{item.size || "N/A"}</p>
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Color</p>
+                        <p className="text-xs font-medium truncate capitalize">{item.color || "N/A"}</p>
+                    </div>
+                    <div>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Method</p>
+                        <p className="text-xs font-medium truncate capitalize">{item.deliveryMethod || "N/A"}</p>
+                    </div>
+                </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 border-t pt-4">
-                <div className="flex flex-col gap-1">
+            {/* Rental Period & Address */}
+            <div className="space-y-2 pt-2 border-t">
+                <div className="flex justify-between items-end">
+                    <div>
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Rental Period</p>
+                        <p className="text-xs font-medium">
+                            {new Date(item.rentalStartDate).toLocaleDateString()} - {new Date(item.rentalEndDate).toLocaleDateString()}
+                        </p>
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-medium">({item.rentalDurationDays} days)</p>
+                </div>
+                <div>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Address</p>
+                    <p className="text-xs font-medium line-clamp-1 text-gray-600">{displayAddress}</p>
+                </div>
+            </div>
+
+            {/* Status & Actions */}
+            <div className="grid grid-cols-2 gap-3 border-t pt-3">
+                <div className="flex flex-col gap-0.5">
                     <p className="text-[10px] text-gray-500 uppercase tracking-wider">Payment</p>
                     <span
                         className={cn(
-                            "px-2 py-1 rounded-full text-[10px] font-medium w-fit",
+                            "px-2 py-0.5 rounded-full text-[10px] font-medium w-fit",
                             item.paymentStatus === "Paid" ? "bg-green-50 text-green-700" : "bg-orange-50 text-orange-700"
                         )}
                     >
                         {item.paymentStatus}
                     </span>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                     <p className="text-[10px] text-gray-500 uppercase tracking-wider">Delivery</p>
                     <span
                         className={cn(
-                            "px-2 py-1 rounded-full text-[10px] font-medium w-fit",
+                            "px-2 py-0.5 rounded-full text-[10px] font-medium w-fit",
                             getStatusBadgeStyle(item.deliveryStatus)
                         )}
                     >
@@ -87,7 +154,7 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
             </div>
 
             {isPending && (
-                <div className="pt-2 w-full">
+                <div className="pt-1 w-full">
                     <AcceptRejectButton
                         token={token}
                         bookingId={item._id}

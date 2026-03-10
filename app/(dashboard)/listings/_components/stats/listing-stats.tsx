@@ -42,16 +42,16 @@ const ListingStats = ({ token }: Props) => {
   const stats = data?.data;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div className="grid grid-cols-3 gap-3 md:gap-6">
       <SkeletonWrapper isLoading={isLoading}>
-        <Card className="bg-[#891d33] ">
-          <CardHeader>
-            <CardTitle className="text-white/80 text-sm">
+        <Card className="bg-[#891d33] h-full">
+          <CardHeader className="p-3 md:p-6">
+            <CardTitle className="text-white/80 text-[10px] md:text-sm">
               Most Popular Listing
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-[20px] text-white   font-medium text-left">
+          <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
+            <p className="text-xs md:text-xl text-white font-medium text-left truncate">
               {"No listings"}
             </p>
           </CardContent>
@@ -59,28 +59,28 @@ const ListingStats = ({ token }: Props) => {
       </SkeletonWrapper>
 
       <SkeletonWrapper isLoading={isLoading}>
-        <Card className="bg-white">
-          <CardHeader>
-            <CardTitle className="text-gray-600 text-sm">
+        <Card className="bg-white h-full">
+          <CardHeader className="p-3 md:p-6">
+            <CardTitle className="text-gray-600 text-[10px] md:text-sm">
               Total Listings
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-[25px] text-black  font-medium text-left">
+          <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
+            <p className="text-xl md:text-[25px] text-black font-medium text-left">
               {stats?.totalListings ?? 0}
             </p>
           </CardContent>
         </Card>
       </SkeletonWrapper>
       <SkeletonWrapper isLoading={isLoading}>
-        <Card className="bg-white">
-          <CardHeader>
-            <CardTitle className="text-gray-600 text-sm">
+        <Card className="bg-white h-full">
+          <CardHeader className="p-3 md:p-6">
+            <CardTitle className="text-gray-600 text-[10px] md:text-sm">
               Active Listings
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-[25px] text-black  font-medium text-left">
+          <CardContent className="p-3 md:p-6 pt-0 md:pt-0">
+            <p className="text-xl md:text-[25px] text-black font-medium text-left">
               {stats?.activeListings ?? 0}
             </p>
           </CardContent>

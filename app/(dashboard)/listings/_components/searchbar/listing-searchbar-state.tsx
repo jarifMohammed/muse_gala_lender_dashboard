@@ -21,7 +21,7 @@ export const useListingFilterStrate = create<FilterStore>((set) => ({
   statusFilter: "All",
   sizeFilter: "All",
   conditionFilter: "All",
-  pickupFilter: "All",
+  pickupFilter: "",
   page: 1, // default page
   setSearchTerm: (value) => set({ searchTerm: value }),
   setStatusFilter: (value) => set({ statusFilter: value }),
@@ -35,7 +35,7 @@ export const useListingFilterStrate = create<FilterStore>((set) => ({
       statusFilter: "All",
       sizeFilter: "All",
       conditionFilter: "All",
-      pickupFilter: "All",
+      pickupFilter: "",
       page: 1, // reset page too
     }),
 }));

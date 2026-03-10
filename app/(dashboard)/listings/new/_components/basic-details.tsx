@@ -107,9 +107,9 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
         name="dressName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Name</FormLabel>
+            <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">Name</FormLabel>
             <FormControl>
-              <Input placeholder="eg. Classic Tee" {...field} />
+              <Input placeholder="eg. Classic Tee" className="h-11 bg-neutral-50/50 focus:bg-white transition-colors" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -122,9 +122,9 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
         name="brand"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Brand</FormLabel>
+            <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">Brand</FormLabel>
             <FormControl>
-              <Input placeholder="eg. Acme Co." {...field} />
+              <Input placeholder="eg. Acme Co." className="h-11 bg-neutral-50/50 focus:bg-white transition-colors" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -137,13 +137,13 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
         name="condition"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Condition</FormLabel>
+            <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">Condition</FormLabel>
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value || ""}
             >
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className="h-11 bg-neutral-50/50 focus:bg-white transition-colors">
                   <SelectValue placeholder="Select condition" />
                 </SelectTrigger>
               </FormControl>
@@ -166,11 +166,12 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
         name="colour"
         render={({ field }) => (
           <FormItem className="sm:col-span-2">
-            <FormLabel>Colours</FormLabel>
+            <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">Colours</FormLabel>
             <div className="flex gap-2">
               <Input
                 ref={colourInputRef}
                 placeholder="eg. Red, Sky Blue..."
+                className="h-11 bg-neutral-50/50 focus:bg-white transition-colors"
                 value={colourInput}
                 onChange={(e) => setColourInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -183,7 +184,7 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
               <button
                 type="button"
                 onClick={addColour}
-                className="shrink-0 px-4 py-2 bg-black text-white text-sm rounded-md hover:bg-neutral-800 transition-colors"
+                className="h-11 shrink-0 px-5 bg-black text-white text-sm font-medium rounded-md hover:bg-neutral-800 transition-colors"
               >
                 Add
               </button>
@@ -219,8 +220,8 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
         name="size"
         render={({ field }) => (
           <FormItem className="sm:col-span-2">
-            <FormLabel>Sizes</FormLabel>
-            <div className="flex flex-wrap gap-3 mt-1">
+            <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">Sizes</FormLabel>
+            <div className="flex flex-wrap gap-3 mt-1.5">
               {SIZE_OPTIONS.map((s) => {
                 const selected = (field.value as string[]).includes(s);
                 return (
@@ -272,8 +273,8 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
         name="category"
         render={({ field }) => (
           <FormItem className="sm:col-span-2">
-            <FormLabel>Categories</FormLabel>
-            <div className="flex flex-wrap gap-3 mt-1">
+            <FormLabel className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">Categories</FormLabel>
+            <div className="flex flex-wrap gap-3 mt-1.5">
               {CATEGORY_OPTIONS.map((opt) => {
                 const isChecked = (field.value as string[]).includes(opt.value);
                 return (
@@ -322,7 +323,7 @@ const BasicDetailsForm = ({ form, otherCategoryRef }: Props) => {
                   placeholder="e.g., Athleisure, Vintage, Resort"
                   value={otherCategoryInput}
                   onChange={(e) => handleOtherCategoryChange(e)}
-                  className="h-10 bg-neutral-50 border border-neutral-300 rounded-md text-sm px-3 placeholder:text-neutral-400"
+                  className="h-11 bg-neutral-50/50 border border-neutral-300 rounded-md text-sm px-3 placeholder:text-neutral-400 focus:bg-white transition-colors"
                 />
                 <p className="text-[11px] text-neutral-400 mt-1">
                   This custom category will be submitted instead of &quot;Other&quot;

@@ -8,10 +8,7 @@ import ListingViewAction from "./listing-view-action";
 import StatusController from "./status-controller";
 
 export const listingColumn: ColumnDef<Listing>[] = [
-  {
-    accessorKey: "dressId",
-    header: "Dress ID",
-  },
+
   {
     header: "Thumbnail",
     cell: ({ row }) => {
@@ -44,10 +41,7 @@ export const listingColumn: ColumnDef<Listing>[] = [
     accessorKey: "size",
     header: "Size",
   },
-  {
-    accessorKey: "condition",
-    header: "Condition",
-  },
+
   {
     accessorKey: "pickupOption",
     header: "Pickup",

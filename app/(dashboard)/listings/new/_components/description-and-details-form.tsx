@@ -32,14 +32,14 @@ const DescriptionAndDetailsForm = ({ form }: Props) => {
         name="description"
         render={({ field }) => (
           <FormItem className="group">
-            <FormLabel className="flex items-center gap-2 text-sm font-semibold text-neutral-700 tracking-wide uppercase">
-              <FileText className="w-4 h-4 text-neutral-400" />
+            <FormLabel className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">
+              <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-400" />
               Description
             </FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Describe the dress (style, fit, special details)"
-                className="resize-none min-h-[120px] bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm"
+                className="resize-none min-h-[120px] bg-neutral-50/50 border border-neutral-200 rounded-xl px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm"
                 rows={5}
                 {...field}
                 value={field.value ?? ""}
@@ -59,14 +59,14 @@ const DescriptionAndDetailsForm = ({ form }: Props) => {
         name="material"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-2 text-sm font-semibold text-neutral-700 tracking-wide uppercase">
-              <Package className="w-4 h-4 text-neutral-400" />
+            <FormLabel className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">
+              <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-400" />
               Material
             </FormLabel>
             <FormControl>
               <Input
                 placeholder="e.g., Silk, Cotton, Polyester"
-                className="mt-1.5 bg-neutral-50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 placeholder:text-neutral-400 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm"
+                className="mt-1.5 bg-neutral-50/50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 placeholder:text-neutral-400 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm"
                 {...field}
                 value={field.value ?? ""}
               />
@@ -82,13 +82,13 @@ const DescriptionAndDetailsForm = ({ form }: Props) => {
         name="pickupOption"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-2 text-sm font-semibold text-neutral-700 tracking-wide uppercase">
-              <Truck className="w-4 h-4 text-neutral-400" />
+            <FormLabel className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-600">
+              <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-400" />
               Delivery Method
             </FormLabel>
             <Select value={field.value || ""} onValueChange={field.onChange}>
               <FormControl>
-                <SelectTrigger className="mt-1.5 bg-neutral-50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm">
+                <SelectTrigger className="mt-1.5 bg-neutral-50/50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm">
                   <SelectValue placeholder="Select Pickup Option" />
                 </SelectTrigger>
               </FormControl>

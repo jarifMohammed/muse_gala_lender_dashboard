@@ -16,13 +16,16 @@ export default async function RootLayout({
   if (!cu?.user) redirect('/sign-in')
 
   return (
-    <div className="flex min-h-screen flex-col w-full max-w-full overflow-x-hidden overflow-y-auto selection:bg-primary/20 scrollbar-hide">
+    <div className="flex min-h-screen flex-col selection:bg-primary/20">
       <Sidebar />
       {/* Main Content */}
-      <div className="lg:ml-64 flex flex-1 flex-col w-full max-w-full overflow-x-hidden overflow-y-auto scrollbar-hide">
+      <div className="lg:pl-64 flex flex-1 flex-col min-w-0">
         {/* Top Bar */}
         <ClientProvider session={cu} />
-        <Topbar name={cu?.user.firstName as string} />
+        <Topbar
+          token={cu?.user.accessToken as string}
+          userID={cu?.user?.id as string}
+        />
 
         <TooltipProvider>{children}</TooltipProvider>
 

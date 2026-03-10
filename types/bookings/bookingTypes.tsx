@@ -1,6 +1,8 @@
 interface Customer {
   _id: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 interface StatusHistory {
@@ -23,6 +25,17 @@ export interface Booking {
   paymentStatus: string;
   deliveryStatus: string;
   payoutStatus?: string;
+  size?: string;
+  color?: string;
+  brand?: string;
+  shippingAddress?: string | {
+    street?: string;
+    city?: string;
+    state?: string;
+    postcode?: string;
+    address?: string;
+  };
+  pickupLocation?: string;
   statusHistory: StatusHistory[];
   allocatedLender: {
     lenderId: string;

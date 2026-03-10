@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React from "react";
 
 interface Profile {
@@ -30,42 +29,29 @@ const formatDate = (dateString?: string) => {
 
 const PaymentsCard = ({ profile }: Props) => {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div
-        className={`p-4 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 cursor-pointer ${profile?.hasActiveSubscription
+    <div
+      className={`p-4 sm:p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 ${profile?.hasActiveSubscription
           ? "bg-primary text-white"
-          : "bg-white hover:bg-primary hover:text-white"
-          }`}
-      >
-        <h1 className="text-sm mb-2">Subscription</h1>
-        <h1 className="font-medium text-2xl">
-          {profile?.subscription?.planId?.name || "Current plan"}
-        </h1>
-        {profile?.hasActiveSubscription && (
-          <p className="mt-2 text-xs opacity-80 italic">Status: Active</p>
-        )}
-      </div>
-
-      <div
-        className={`p-4 rounded-lg shadow-[0px_4px_10px_0px_#0000001A] transition-all duration-300 cursor-pointer ${profile?.hasActiveSubscription
-          ? "bg-primary text-white"
-          : "bg-white hover:bg-primary hover:text-white"
-          }`}
-      >
-        <h1 className="text-sm mb-2">Subscription Period</h1>
-        {profile?.hasActiveSubscription ? (
-          <div className="space-y-1">
-            <p className="text-sm">
-              <span className="opacity-70">Start Date:</span> {formatDate(profile.subscriptionStartDate)}
-            </p>
-            <p className="text-sm">
-              <span className="opacity-70">Expire Date:</span> {formatDate(profile.subscriptionExpireDate)}
-            </p>
-          </div>
-        ) : (
-          <h1 className="font-medium text-2xl opacity-50 italic">No Active Subscription</h1>
-        )}
-      </div>
+          : "bg-white"
+        }`}
+    >
+      <p className="text-xs sm:text-sm uppercase tracking-wider opacity-70 mb-2">Current Subscription</p>
+      <p className="font-semibold text-xl sm:text-2xl">
+        {profile?.subscription?.planId?.name || "No Active Plan"}
+      </p>
+      {profile?.hasActiveSubscription && (
+        <div className="mt-3 space-y-1 border-t border-white/20 pt-3">
+          <p className="text-xs opacity-80">
+            <span className="font-medium">Start:</span> {formatDate(profile.subscriptionStartDate)}
+          </p>
+          <p className="text-xs opacity-80">
+            <span className="font-medium">Expires:</span> {formatDate(profile.subscriptionExpireDate)}
+          </p>
+        </div>
+      )}
+      {!profile?.hasActiveSubscription && (
+        <p className="mt-2 text-sm text-gray-400 italic">Subscribe to a plan below</p>
+      )}
     </div>
   );
 };
