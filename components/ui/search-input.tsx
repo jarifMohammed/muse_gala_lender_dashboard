@@ -16,7 +16,7 @@ interface SearchInputProps {
 }
 
 export function SearchInput({
-  placeholder = "Search...",
+  placeholder = "Search",
   className,
   onChange,
   value,

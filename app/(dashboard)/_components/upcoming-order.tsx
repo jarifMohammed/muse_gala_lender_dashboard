@@ -5,7 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface Customer {
   _id: string;
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
 }
 
@@ -13,6 +14,8 @@ interface MasterDress {
   _id: string;
   thumbnail?: string;
   name?: string;
+  brand?: string;
+  size?: string;
 }
 
 interface UpcomingOrder {
@@ -75,13 +78,25 @@ const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
                 />
               </div>
 
-              <div className="flex-1 pt-2 px-4 space-y-1 h-28 min-w-0 overflow-hidden">
-                <p className="text-sm font-medium truncate break-all">BOOKING ID: {order?._id}</p>
-                <p className="text-sm text-gray-500 truncate break-all">
-                  Dress Id: {order?.masterdressId?._id}
+              <div className="flex-1 py-2 px-4 space-y-1 h-28 min-w-0 overflow-y-auto scrollbar-hide">
+                <p className="text-[13px] font-semibold truncate uppercase">
+                  {order?.masterdressId?.name || "N/A"}
                 </p>
-                <div className="text-[11px] text-gray-500 flex flex-wrap items-center gap-1">
-                  <span className="whitespace-nowrap">Rental Period : </span>
+                
+                <div className="flex flex-col space-y-0.5">
+                  <p className="text-[11px] text-gray-600">
+                    <span className="font-medium">Brand:</span> {order?.masterdressId?.brand || "N/A"}
+                  </p>
+                  <p className="text-[11px] text-gray-600">
+                    <span className="font-medium">Size:</span> {order?.masterdressId?.size || "N/A"}
+                  </p>
+                  <p className="text-[11px] text-gray-600">
+                    <span className="font-medium">Customer:</span> {order?.customer?.firstName} {order?.customer?.lastName}
+                  </p>
+                </div>
+
+                <div className="text-[11px] text-[#891D33] flex flex-wrap items-center gap-1 font-medium pt-0.5">
+                  <span className="whitespace-nowrap italic">Rental: </span>
                   <span className="whitespace-nowrap">
                     {new Date(order?.rentalStartDate).toLocaleDateString()}
                   </span>
@@ -90,9 +105,6 @@ const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
                     {new Date(order?.rentalEndDate).toLocaleDateString()}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 truncate break-all">
-                  Customer ID: {order?.customer?._id}
-                </p>
               </div>
             </div>
           ))

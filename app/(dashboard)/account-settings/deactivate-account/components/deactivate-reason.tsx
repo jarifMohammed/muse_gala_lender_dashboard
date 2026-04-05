@@ -94,7 +94,7 @@ const DeactivateReason = ({ token }: { token: string }) => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Write your reason..."
+                    placeholder="Write your reason"
                     {...field}
                     className="h-[50px]"
                   />
@@ -127,7 +127,7 @@ const DeactivateReason = ({ token }: { token: string }) => {
           />
 
           <Button disabled={isPending} type="submit">
-            {isPending ? "Starting Deactivation..." : "Start Deactivation"}
+            {isPending ? "Starting Deactivation" : "Start Deactivation"}
           </Button>
         </form>
       </Form>

@@ -99,7 +99,7 @@ const Verification = ({ token }: { token: string }) => {
           />
 
           <Button disabled={isPending} type="submit">
-            {isPending ? "Confirm Deactivation..." : "Confirm Deactivation"}
+            {isPending ? "Confirm Deactivation" : "Confirm Deactivation"}
           </Button>
         </form>
       </Form>

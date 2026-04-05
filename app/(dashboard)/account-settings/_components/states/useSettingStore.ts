@@ -1,23 +1,19 @@
 import { create } from "zustand";
 
 interface ISettingStore {
-  firstName: string;
-  setFirstName: (value: string) => void;
-  lastName: string;
-  setLastName: (value: string) => void;
+  fullName: string;
+  setFullName: (value: string) => void;
   phoneNumber: string;
   setPhoneNumber: (value: string) => void;
 }
 
 const initialStates = {
-  firstName: "",
-  lastName: "",
+  fullName: "",
   phoneNumber: "",
 };
 
 export const useSettingStore = create<ISettingStore>((set) => ({
   ...initialStates,
-  setFirstName: (value: string) => set({ firstName: value }),
-  setLastName: (value: string) => set({ lastName: value }),
+  setFullName: (value: string) => set({ fullName: value }),
   setPhoneNumber: (value: string) => set({ phoneNumber: value }),
 }));

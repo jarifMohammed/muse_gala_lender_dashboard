@@ -20,7 +20,7 @@ export const listingSchema = z.object({
     .max(80, { message: "Brand must be at most 80 characters." }),
   size: z
     .array(
-      z.enum(["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL", "Custom"])
+      z.enum(["XXS", "XS", "S", "M", "L", "XL", "Custom"])
     )
     .nonempty({ message: "Please select at least one size." }),
   colour: z
@@ -95,7 +95,7 @@ export type Listing = {
   dressId: string;
   dressName: string;
   brand?: string;
-  size: ("XXS" | "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL" | "4XL" | "5XL" | "Custom")[];
+  size: ("XXS" | "XS" | "S" | "M" | "L" | "XL" | "Custom")[];
   status: "available" | "booked" | "not-available";
   colour: string[];
   condition:

@@ -98,7 +98,7 @@ const ConfirmDeactivation = ({ token }: { token: string }) => {
           />
 
           <Button disabled={isPending} type="submit">
-            {isPending ? "Sending Deactivation Code..." : "Send Deactivation Code"}
+            {isPending ? "Sending Deactivation Code" : "Send Deactivation Code"}
           </Button>
         </form>
       </Form>

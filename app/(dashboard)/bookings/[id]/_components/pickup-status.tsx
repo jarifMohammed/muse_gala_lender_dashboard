@@ -23,6 +23,7 @@ const PickupStatus = ({ deliveryStatus, token, lenderId }: Props) => {
 
   const getCurrentIndex = (status: string) => {
     if (status === "ReturnLinkSent") return statusOrder.indexOf("Return Due");
+    if (status === "Accepted by Lender") return statusOrder.indexOf("Pending");
     const index = statusOrder.indexOf(status);
     return index === -1 ? 0 : index;
   };

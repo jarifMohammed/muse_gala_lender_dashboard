@@ -162,7 +162,7 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
                     </span>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Delivery</p>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Status</p>
                     <span
                         className={cn(
                             "px-2 py-0.5 rounded-full text-[10px] font-medium w-fit",

@@ -142,10 +142,9 @@ export function SubmitDisputeModal({
       return;
     }
 
-    if (!file) {
-      toast.error("Please upload evidence file");
-      return;
-    }
+    if (submitDisputeMutation.isPending) return;
+
+    if (submitDisputeMutation.isPending) return;
 
     const formData: DisputeFormData = {
       bookingId: bookingId.trim(),
@@ -242,7 +241,7 @@ export function SubmitDisputeModal({
               htmlFor="file-upload"
               className="text-sm font-normal text-foreground"
             >
-              Upload Evidence <span className="text-red-500">*</span>
+              Upload Evidence (Optional)
             </Label>
             <div className="flex">
               <div className="flex-1 relative">
@@ -292,7 +291,7 @@ export function SubmitDisputeModal({
               disabled={submitDisputeMutation.isPending}
             >
               {submitDisputeMutation.isPending
-                ? "Submitting..."
+                ? "Submitting"
                 : "Submit Dispute"}
             </Button>
           </div>

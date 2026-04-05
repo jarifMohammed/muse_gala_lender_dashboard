@@ -21,7 +21,7 @@ const PaymentFilter = () => {
         <div className="relative">
           <Input
             className="pl-7 w-[220px]"
-            placeholder="Search...."
+            placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
 

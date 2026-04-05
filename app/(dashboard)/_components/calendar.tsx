@@ -17,6 +17,7 @@ interface Event {
   dressName: string;
   customer: string;
   status: string;
+  deliveryStatus?: string;
 }
 
 interface CalendarData {
@@ -107,10 +108,28 @@ const Calendar = ({ token }: { token: string }) => {
   }, [data?.data?.events]);
 
   // Filter events based on search term
+  const DELIVERY_STATUS_DOT_COLOR: Record<string, string> = {
+    "Pending": "bg-yellow-400",
+    "Accepted by Lender": "bg-green-500",
+    "Return Due": "bg-orange-500",
+    "Returned": "bg-orange-400",
+    "Disputed": "bg-red-500",
+    // ShippedToCustomer is filtered out — not shown on calendar
+  };
+
+  const getDotColor = (deliveryStatus?: string) => {
+    if (!deliveryStatus) return "bg-[#891d33]";
+    return DELIVERY_STATUS_DOT_COLOR[deliveryStatus] ?? "bg-[#891d33]";
+  };
+
   const filteredEvents = useMemo(() => {
     if (!data?.data?.events) return [];
-    if (!searchTerm.trim()) return data.data.events;
-    return data.data.events.filter((event) =>
+    // Hide bookings that have already been shipped — lender has no pending action
+    const activeEvents = data.data.events.filter(
+      (event) => event.deliveryStatus !== "ShippedToCustomer"
+    );
+    if (!searchTerm.trim()) return activeEvents;
+    return activeEvents.filter((event) =>
       event.dressName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [data?.data?.events, searchTerm]);
@@ -374,10 +393,13 @@ const Calendar = ({ token }: { token: string }) => {
 
                 {/* Event Count Badge */}
                 {date.events.length > 0 && (
-                  <div className="flex justify-center">
-                    <span className="inline-flex items-center justify-center px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-xs font-semibold bg-[#891d33] text-white rounded-full min-w-[16px] sm:min-w-[20px]">
-                      {date.events.length}
-                    </span>
+                  <div className="flex justify-center gap-1 mt-1">
+                    {date.events.slice(0, 3).map((event, i) => (
+                      <span
+                        key={i}
+                        className={`w-1.5 h-1.5 rounded-full inline-block ${getDotColor(event.deliveryStatus)}`}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
@@ -439,16 +461,70 @@ const Calendar = ({ token }: { token: string }) => {
       )}
 
       {/* Legend */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200 mt-2">
-        <div className="flex items-center space-x-4 text-sm font-medium">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-[#891d33] rounded-sm"></div>
-            <span className="text-gray-600">Bookings</span>
-          </div>
-        </div>
+      <div className="pt-4 border-t border-gray-200 mt-2">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium">
+          {(() => {
+            const searchedEvents = !searchTerm.trim()
+              ? (data?.data?.events || [])
+              : (data?.data?.events || []).filter(e => e.dressName.toLowerCase().includes(searchTerm.toLowerCase()));
 
-        <div className="text-xs sm:text-sm text-gray-500 font-medium">
-          Total: {filteredEvents.length} bookings in selected range
+            return (
+              <>
+                {[
+                  {
+                    label: "Pending",
+                    color: "bg-yellow-400",
+                    statuses: ["Pending"],
+                  },
+                  {
+                    label: "Accepted by Lender",
+                    color: "bg-green-500",
+                    statuses: ["Accepted by Lender"],
+                  },
+                  {
+                    label: "Shipped",
+                    color: "bg-[#891d33]",
+                    statuses: ["ShippedToCustomer"],
+                  },
+                  {
+                    label: "Return Due",
+                    color: "bg-orange-500",
+                    statuses: ["Return Due"],
+                  },
+                  {
+                    label: "Returned",
+                    color: "bg-orange-400",
+                    statuses: ["Returned"],
+                  },
+                  {
+                    label: "Disputed",
+                    color: "bg-red-500",
+                    statuses: ["Disputed"],
+                  },
+                ].map(({ label, color, statuses }) => {
+                  const count = searchedEvents.filter((e) =>
+                    statuses.includes(e.deliveryStatus ?? "")
+                  ).length;
+
+                  if (count === 0) return null;
+
+                  return (
+                    <div key={label} className="flex items-center gap-1.5">
+                      <span className={`w-2.5 h-2.5 rounded-full ${color} flex-shrink-0`} />
+                      <span className="text-gray-600">
+                        {label}
+                      </span>
+                      <span className="text-gray-900 font-semibold">({count})</span>
+                    </div>
+                  );
+                })}
+
+                <div className="ml-auto text-gray-500">
+                  Total Bookings: <span className="font-semibold text-gray-800">{searchedEvents.length}</span>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
     </div>

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/popover";
 import { Filter, Plus, RotateCcw, Search } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useListingFilterStrate } from "./listing-searchbar-state";
 import { cn } from "@/lib/utils";
@@ -35,7 +34,7 @@ const ListingSearchHeader: FC = () => {
 
   const statusOptions = ["All", "available", "booked", "not-available"];
   const sizeOptions = [
-    "All", "XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "4XL", "5XL", "Custom",
+    "All", "XXS", "XS", "S", "M", "L", "XL", "Custom",
   ];
 
   // Maps display label → backend value
@@ -45,7 +44,7 @@ const ListingSearchHeader: FC = () => {
     { label: "Shipping & Pickup", value: "Both" },
   ];
 
-  const router = useRouter();
+
 
   const activeFiltersCount = [
     statusFilter !== "All",
@@ -107,9 +106,8 @@ const ListingSearchHeader: FC = () => {
 
               {/* Status Filter */}
               <div className="space-y-1">
-                <label className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Availability</label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="h-8 sm:h-9 text-xs">
+                  <SelectTrigger id="status-filter" className="h-8 sm:h-9 text-xs">
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -124,9 +122,9 @@ const ListingSearchHeader: FC = () => {
 
               {/* Size Filter */}
               <div className="space-y-1">
-                <label className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Size</label>
+                <label htmlFor="size-filter" className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Size</label>
                 <Select value={sizeFilter} onValueChange={setSizeFilter}>
-                  <SelectTrigger className="h-8 sm:h-9 text-xs">
+                  <SelectTrigger id="size-filter" className="h-8 sm:h-9 text-xs">
                     <SelectValue placeholder="All Sizes" />
                   </SelectTrigger>
                   <SelectContent>
@@ -143,9 +141,9 @@ const ListingSearchHeader: FC = () => {
 
               {/* Delivery Filter */}
               <div className="space-y-1">
-                <label className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Delivery Type</label>
+                <label htmlFor="delivery-filter" className="text-[10px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Delivery Type</label>
                 <Select value={pickupFilter} onValueChange={setPickupOption}>
-                  <SelectTrigger className="h-8 sm:h-9 text-xs">
+                  <SelectTrigger id="delivery-filter" className="h-8 sm:h-9 text-xs">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>

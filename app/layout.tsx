@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   title: 'Dress Rental Dashboard',
   description: 'A dashboard for managing dress rentals',
   generator: 'v0.dev',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({

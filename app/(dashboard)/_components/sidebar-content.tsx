@@ -161,7 +161,7 @@ const SidebarContent = ({ onClose, token, userID }: SidebarContentProps) => {
             </div>
 
             {/* Navigation Links */}
-            <nav className="flex-1 overflow-auto p-3">
+            <nav className="flex-1 overflow-hidden p-3">
                 <ul className="space-y-2">
                     {routes.map((route) => {
                         const isActive =

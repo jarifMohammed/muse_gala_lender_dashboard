@@ -68,7 +68,7 @@ const PayoutButton = ({
       {isPending ? (
         <h1 className="flex items-center gap-2">
           <LoaderCircle className="animate-spin h-4 w-4" />
-          <span>Processing...</span>
+          <span>Processing</span>
         </h1>
       ) : payoutStatus && payoutStatus !== "pending" ? (
         <span>

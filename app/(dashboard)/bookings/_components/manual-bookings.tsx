@@ -154,7 +154,7 @@ const ManualBookings = ({ isOpen, setIsOpen }: Props) => {
 
           <div className="text-center mt-10">
             <Button type="submit" disabled={isPending}>
-              {isPending ? "Creating Booking..." : "Manual Booking"}
+              {isPending ? "Creating Booking" : "Manual Booking"}
             </Button>
           </div>
         </form>

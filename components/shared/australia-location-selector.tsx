@@ -110,12 +110,13 @@ export function AustraliaLocationSelector({
         [accessToken]
     )
 
-    // Sync internal query with defaultValue prop ONLY when it changes from parent
+    // Sync internal query with defaultValue prop when it changes or when it arrives after mount
     useEffect(() => {
-        if (defaultValue !== prevDefaultValueRef.current) {
-            setQuery(defaultValue || "")
-            prevDefaultValueRef.current = defaultValue
+        if (defaultValue && defaultValue !== query) {
+            setQuery(defaultValue)
         }
+        prevDefaultValueRef.current = defaultValue
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [defaultValue])
 
     // Debounced search effect

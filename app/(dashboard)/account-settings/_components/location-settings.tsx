@@ -11,43 +11,55 @@ export default function LocationSettings({
     token,
     userID,
     userInfo
-}: {
+}: Readonly<{
     token: string
     userID: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     userInfo: any
-}) {
+}>) {
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || ""
 
-    const [location, setLocation] = useState<PreciseLocationData>({
-        address: userInfo?.location?.address || userInfo?.address || "",
-        placeName: userInfo?.location?.placeName || userInfo?.placeName || userInfo?.address || "",
-        city: userInfo?.location?.city || userInfo?.city || "",
-        state: userInfo?.location?.state || userInfo?.state || "",
-        suburb: userInfo?.location?.suburb || userInfo?.suburb || "",
-        postcode: userInfo?.location?.postcode || userInfo?.postcode || "",
-        country: userInfo?.location?.country || userInfo?.country || "Australia",
-        latitude: userInfo?.location?.latitude || userInfo?.latitude || 0,
-        longitude: userInfo?.location?.longitude || userInfo?.longitude || 0,
-        precision: userInfo?.location?.precision || userInfo?.precision || "approximate",
-    })
+    const getProfileData = (userData: any) => {
+        if (userData?.data?.user) return userData.data.user;
+        if (userData?.user) return userData.user;
+        if (userData?.data) return userData.data;
+        return userData;
+    };
 
+    const extractLocation = (userData: any): PreciseLocationData => {
+        const profile = getProfileData(userData);
+        const l = profile?.location || profile?.businessLocation || profile?.business_location || {};
+        
+        // Helper to find a value at any nesting level with multiple key variations
+        const findField = (keys: string[]) => {
+            for (const key of keys) {
+                if (l[key] !== undefined && l[key] !== null && l[key] !== "") return l[key];
+                if (profile[key] !== undefined && profile[key] !== null && profile[key] !== "") return profile[key];
+            }
+            return "";
+        };
+
+        return {
+            address: findField(["address", "Address", "formatted_address"]),
+            placeName: findField(["placeName", "place_name", "PlaceName", "text", "address", "Address"]),
+            city: findField(["city", "City", "city_name", "town"]),
+            state: findField(["state", "State", "region", "province"]),
+            suburb: findField(["suburb", "Suburb", "locality", "neighborhood"]),
+            postcode: findField(["postcode", "post_code", "Postcode", "PostCode", "zip", "zip_code"]),
+            country: findField(["country", "Country", "country_name"]) || "Australia",
+            latitude: Number(findField(["latitude", "lat", "Latitude"])) || 0,
+            longitude: Number(findField(["longitude", "lng", "Longitude"])) || 0,
+            precision: (findField(["precision", "Precision"]) as "exact" | "approximate" | "interpolated") || "approximate",
+        }
+    };
+
+    const [location, setLocation] = useState<PreciseLocationData>(extractLocation(userInfo))
+
+    // Only sync from userInfo if we don't have a valid address yet or if data arrives from the server
     useEffect(() => {
-        // Handle both nested location and top-level fields from API
-        const source = userInfo?.location || userInfo;
-        if (source?.address) {
-            setLocation({
-                address: source.address || "",
-                placeName: source.placeName || source.address || "",
-                city: source.city || "",
-                state: source.state || "",
-                suburb: source.suburb || "",
-                postcode: source.postcode || "",
-                country: source.country || "Australia",
-                latitude: source.latitude || 0,
-                longitude: source.longitude || 0,
-                precision: source.precision || "approximate",
-            })
+        const extracted = extractLocation(userInfo);
+        if (extracted.address || extracted.placeName) {
+            setLocation(extracted);
         }
     }, [userInfo])
 
@@ -90,11 +102,11 @@ export default function LocationSettings({
     }
 
     // Check if location has actually changed from what's in userInfo
-    const source = userInfo?.location || userInfo;
+    const savedLocation = extractLocation(userInfo);
     const isChanged =
-        location.address !== (source?.address || "") ||
-        location.latitude !== (source?.latitude || 0) ||
-        location.longitude !== (source?.longitude || 0);
+        location.address !== (savedLocation.address || "") ||
+        location.latitude !== (savedLocation.latitude || 0) ||
+        location.longitude !== (savedLocation.longitude || 0);
 
     return (
         <div className="p-4 md:p-6 bg-white shadow-[0px_4px_10px_0px_#0000001A] rounded-lg">
@@ -106,7 +118,7 @@ export default function LocationSettings({
             <div className="space-y-6">
                 {/* Search Input using Mapbox */}
                 <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="address-search" className="block text-sm font-medium text-gray-700 mb-2">
                         Search Address
                     </label>
                     <AustraliaLocationSelector
@@ -120,36 +132,36 @@ export default function LocationSettings({
                 {/* Read-only Information Panel */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 bg-[#f7f2ee]/50 p-4 md:p-5 rounded-[8px] border border-[#999999]/20">
                     <div>
-                        <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
                             Selected Address
-                        </label>
+                        </span>
                         <div className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">
                             {location.placeName || "Not selected"}
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
                             City / Suburb
-                        </label>
+                        </span>
                         <div className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">
                             {location.city || location.suburb || "Not selected"}
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
                             State
-                        </label>
+                        </span>
                         <div className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">
                             {location.state || "Not selected"}
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
+                        <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
                             Postcode & Country
-                        </label>
+                        </span>
                         <div className="text-sm font-medium text-gray-900 border-b border-gray-200 pb-2">
                             {location.postcode ? `${location.postcode}, ` : ""}{location.country || "Not selected"}
                         </div>

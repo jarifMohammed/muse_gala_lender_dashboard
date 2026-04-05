@@ -5,10 +5,6 @@ export const SIZE_OPTIONS = [
   "M",
   "L",
   "XL",
-  "XXL",
-  "XXXL",
-  "4XL",
-  "5XL",
 ] as const;
 
 export const CONDITION_OPTIONS = [

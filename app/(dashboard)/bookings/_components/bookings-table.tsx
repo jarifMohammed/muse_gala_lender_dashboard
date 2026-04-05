@@ -152,7 +152,7 @@ const BookingsTable = ({ token }: Props) => {
                   Payment Status
                 </TableHead>
                 <TableHead className="w-[100px] text-center">
-                  Delivery Status
+                  Status
                 </TableHead>
                 <TableHead className="w-[100px] text-center">Action</TableHead>
               </TableRow>

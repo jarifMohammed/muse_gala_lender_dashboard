@@ -4,7 +4,6 @@ import React from "react";
 import ContactInformation from "./contact-information";
 import LocationSettings from "./location-settings";
 import PasswordSecurity from "./password-security";
-import NotificationPreference from "./notification-preference";
 import PaymentMethods from "./payment-methods";
 import PayoutSettings from "./payout-settings";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +16,7 @@ interface Props {
 
 const SettingContainer = ({ token, userID }: Props) => {
   const { data: userInfo = {} } = useQuery({
-    queryKey: ["user-info"],
+    queryKey: ["user-info", userID],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${userID}`,
@@ -29,7 +28,7 @@ const SettingContainer = ({ token, userID }: Props) => {
         }
       );
       const data = await res.json();
-      return data.data;
+      return data;
     },
   });
 

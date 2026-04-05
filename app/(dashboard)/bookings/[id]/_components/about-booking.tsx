@@ -10,6 +10,7 @@ type StatusHistory = {
 
 export type BookingDetails = {
   id?: string;
+  _id?: string;
   statusHistory?: StatusHistory[];
   deliveryStatus?: string;
   customer?: {
@@ -19,6 +20,8 @@ export type BookingDetails = {
   };
   dressName?: string;
   brand?: string;
+  dressId?: string | { brand?: string };
+  masterdressId?: string | { brand?: string };
   size?: string;
   color?: string;
   rentalStartDate?: string;
@@ -33,6 +36,7 @@ export type BookingDetails = {
     address?: string;
   };
   pickupLocation?: string;
+  address?: string; // Fallback for some API responses
 };
 
 type AboutBookingProps = {
@@ -61,7 +65,19 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
     return [street, city, state, postcode].filter(Boolean).join(", ") || "N/A";
   };
 
-  const displayAddress = formatAddress(bookingDetails?.shippingAddress || bookingDetails?.pickupLocation);
+  // Check shippingAddress, then pickupLocation, then top-level address fallback
+  const displayAddress = formatAddress(
+    bookingDetails?.shippingAddress ||
+    bookingDetails?.pickupLocation ||
+    bookingDetails?.address
+  );
+
+  // Fallback check for brand inside populated objects
+  const displayBrand =
+    bookingDetails?.brand ||
+    (typeof bookingDetails?.dressId === "object" ? bookingDetails.dressId.brand : null) ||
+    (typeof bookingDetails?.masterdressId === "object" ? bookingDetails.masterdressId.brand : null) ||
+    "N/A";
 
   return (
     <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
@@ -73,15 +89,15 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
 
       <div className="mt-4 space-y-2 text-sm">
         <div>
-          Delivery Status:{" "}
+          Status:{" "}
           <span className="font-semibold">
             {formatStatus(bookingDetails?.deliveryStatus)}
           </span>
         </div>
-        <h1 className="break-all">Booking ID: {bookingDetails?.id}</h1>
+        <h1 className="break-all">Booking ID: {bookingDetails?._id || bookingDetails?.id}</h1>
         <h1 className="break-all">Customer ID: {bookingDetails?.customer?._id ?? "N/A"}</h1>
         <h1>Dress: {bookingDetails?.dressName ?? "N/A"}</h1>
-        <h1>Brand: {bookingDetails?.brand ?? "N/A"}</h1>
+        <h1>Brand: {displayBrand}</h1>
         <h1>Size: {bookingDetails?.size ?? "N/A"}</h1>
         <h1>Color: {bookingDetails?.color ?? "N/A"}</h1>
         <h1 className="break-all">Address: {displayAddress}</h1>
