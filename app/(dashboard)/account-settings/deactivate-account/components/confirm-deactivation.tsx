@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import z from "zod";
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
 });
 
 type FormValue = z.input<typeof formSchema>;
@@ -88,6 +88,7 @@ const ConfirmDeactivation = ({ token }: { token: string }) => {
                     type="email"
                     placeholder="Enter your email"
                     {...field}
+                    onChange={(e) => field.onChange(e.target.value.toLowerCase())}
                     className="h-[50px]"
                   />
                 </FormControl>

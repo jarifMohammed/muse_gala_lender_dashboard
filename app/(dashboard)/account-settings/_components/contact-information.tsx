@@ -214,7 +214,7 @@ const ContactInformation = ({
               disabled
               className="focus-visible:ring-0"
               placeholder="Enter Email Address"
-              value={getProfileData(userInfo)?.email}
+              value={getProfileData(userInfo)?.email?.toLowerCase()}
             />
           </div>
         </div>
@@ -264,7 +264,7 @@ const ContactInformation = ({
                   type="email"
                   placeholder="name@example.com"
                   value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
+                  onChange={(e) => setNewEmail(e.target.value.toLowerCase())}
                 />
               </div>
             ) : (

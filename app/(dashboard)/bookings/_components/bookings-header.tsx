@@ -134,7 +134,7 @@ const BookingsHeader = ({ token, id }: { token: string; id: string }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Shipping">Shipping</SelectItem>
-                  <SelectItem value="Local Pickup">Local Pickup</SelectItem>
+                  <SelectItem value="Local Pickup">Local Pick Up</SelectItem>
                 </SelectContent>
               </Select>
             </div>

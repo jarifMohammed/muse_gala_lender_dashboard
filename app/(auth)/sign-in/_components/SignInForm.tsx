@@ -84,6 +84,7 @@ export default function SignInForm() {
                       placeholder="Enter Your Email"
                       className="font-avenir w-full md:w-[400px] h-[40px] bg-transparent border-t-0 border-l-0 border-r-0 border-b border-black text-[12px] placeholder:text-[12px] placeholder:text-[#999999] placeholder:leading-[120%] placeholder:font-normal pl-[52px] pr-4 py-[15px] rounded-none focus-visible:ring-0 focus-visible:border-b-2"
                       {...field}
+                      onChange={(e) => field.onChange(e.target.value.toLowerCase())}
                     />
                   </div>
                 </FormControl>
