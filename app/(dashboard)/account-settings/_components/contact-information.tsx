@@ -27,6 +27,7 @@ type UserInfo = {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
+  businessAddress?: string;
 };
 
 const ContactInformation = ({
@@ -215,6 +216,17 @@ const ContactInformation = ({
               className="focus-visible:ring-0"
               placeholder="Enter Email Address"
               value={getProfileData(userInfo)?.email?.toLowerCase()}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="postal-address" className="block mb-2">Postal Address</label>
+            <Input
+              id="postal-address"
+              disabled
+              className="focus-visible:ring-0"
+              placeholder="No business address provided"
+              value={getProfileData(userInfo)?.businessAddress}
             />
           </div>
         </div>

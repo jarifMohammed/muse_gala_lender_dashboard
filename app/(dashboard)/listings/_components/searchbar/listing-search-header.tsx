@@ -40,8 +40,8 @@ const ListingSearchHeader: FC = () => {
   // Maps display label → backend value
   const deliveryOptions = [
     { label: "Shipping", value: "Australia-wide" },
-    { label: "Local Pickup", value: "Local-Pickup" },
-    { label: "Shipping & Pickup", value: "Both" },
+    { label: "Local Pick Up", value: "Local-Pickup" },
+    { label: "Shipping & Pick Up", value: "Both" },
   ];
 
 

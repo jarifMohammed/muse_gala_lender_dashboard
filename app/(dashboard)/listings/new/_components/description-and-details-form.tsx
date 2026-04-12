@@ -89,13 +89,13 @@ const DescriptionAndDetailsForm = ({ form }: Props) => {
             <Select value={field.value || ""} onValueChange={field.onChange}>
               <FormControl>
                 <SelectTrigger className="mt-1.5 bg-neutral-50/50 border border-neutral-200 rounded-xl h-11 px-4 text-sm text-neutral-800 focus:bg-white focus:border-neutral-400 focus:ring-0 transition-all duration-200 shadow-sm">
-                  <SelectValue placeholder="Select Pickup Option" />
+                  <SelectValue placeholder="Select Delivery Method" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="Local-Pickup">Local Pickup</SelectItem>
+                <SelectItem value="Local-Pickup">Local Pick Up</SelectItem>
                 <SelectItem value="Australia-wide">Shipping</SelectItem>
-                <SelectItem value="Both">Pickup and Shipping</SelectItem>
+                <SelectItem value="Both">Shipping & Pick Up</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage className="text-xs" />

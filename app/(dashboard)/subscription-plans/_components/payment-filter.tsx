@@ -35,7 +35,7 @@ const PaymentFilter = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="light">Shipping</SelectItem>
-              <SelectItem value="dark">Local Pickup</SelectItem>
+              <SelectItem value="dark">Local Pick Up</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -59,6 +59,7 @@ export function BookingDetails({ bookingId }: BookingDetailsProps) {
     totalPrice: "$50",
     rentalFee: "$40",
     fees: "$10",
+    lenderPrice: "$0",
     orderDate: "Apr 10, 2025",
     status: "Confirmed",
     dress: {
@@ -338,7 +339,7 @@ export function BookingDetails({ bookingId }: BookingDetailsProps) {
               <p>Dress: {bookingData.dressName}</p>
               <p>Rental Period: {bookingData.rentalPeriod}</p>
               <p>
-                Total Price: {bookingData.totalPrice} (Rental: {bookingData.rentalFee}, Fees: {bookingData.fees})
+                Price: {bookingData.lenderPrice} , Fees: {bookingData.fees}
               </p>
               <p>Order Date: {bookingData.orderDate}</p>
             </div>

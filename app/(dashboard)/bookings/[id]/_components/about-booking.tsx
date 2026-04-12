@@ -28,6 +28,7 @@ export type BookingDetails = {
   rentalEndDate?: string;
   totalAmount?: number;
   createdAt?: string;
+  lenderPrice?: number;
   shippingAddress?: string | {
     street?: string;
     city?: string;
@@ -111,7 +112,7 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
             ? new Date(bookingDetails.rentalEndDate).toLocaleDateString()
             : "N/A"}
         </h1>
-        <h1>Total Price: ${bookingDetails?.totalAmount ?? 0}</h1>
+        <h1>Price: ${bookingDetails?.lenderPrice ?? 0}</h1>
         <h1>
           Order Date:{" "}
           {bookingDetails?.createdAt

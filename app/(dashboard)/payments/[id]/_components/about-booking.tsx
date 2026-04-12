@@ -17,6 +17,7 @@ type BookingDetails = {
   rentalEndDate?: string;
   totalAmount?: number;
   createdAt?: string;
+  lenderPrice?: number;
 };
 
 type AboutBookingProps = {
@@ -42,15 +43,14 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
           {bookingDetails?.statusHistory?.map((status) => (
             <span
               key={status?._id}
-              className={`px-2 rounded-3xl font-semibold text-xs py-1 ${
-                status?.status === "Pending"
-                  ? "text-orange-600 bg-orange-200"
-                  : status?.status === "Approved"
+              className={`px-2 rounded-3xl font-semibold text-xs py-1 ${status?.status === "Pending"
+                ? "text-orange-600 bg-orange-200"
+                : status?.status === "Approved"
                   ? "text-green-600 bg-green-200"
                   : status?.status === "Rejected"
-                  ? "text-red-600 bg-red-200"
-                  : "text-gray-600 bg-gray-200"
-              }`}
+                    ? "text-red-600 bg-red-200"
+                    : "text-gray-600 bg-gray-200"
+                }`}
             >
               {status?.status}
             </span>
@@ -71,7 +71,7 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
             ? new Date(bookingDetails.rentalEndDate).toLocaleDateString()
             : "N/A"}
         </h1>
-        <h1>Total Price: ${bookingDetails?.totalAmount ?? 0}</h1>
+        <h1>Price: ${bookingDetails?.lenderPrice ?? 0}</h1>
         <h1>
           Order Date:{" "}
           {bookingDetails?.createdAt
