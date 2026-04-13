@@ -111,6 +111,7 @@ const Calendar = ({ token }: { token: string }) => {
   const DELIVERY_STATUS_DOT_COLOR: Record<string, string> = {
     "Pending": "bg-yellow-400",
     "Accepted by Lender": "bg-green-500",
+    "AcceptedByLender": "bg-green-500",
     "Return Due": "bg-orange-500",
     "Returned": "bg-orange-400",
     "Disputed": "bg-red-500",
@@ -479,7 +480,7 @@ const Calendar = ({ token }: { token: string }) => {
                   {
                     label: "Accepted by Lender",
                     color: "bg-green-500",
-                    statuses: ["Accepted by Lender"],
+                    statuses: ["Accepted by Lender", "AcceptedByLender"],
                   },
                   {
                     label: "Shipped",

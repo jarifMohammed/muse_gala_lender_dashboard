@@ -118,6 +118,9 @@ const BookingsTable = ({ token }: Props) => {
         return "text-blue-600 bg-blue-200";
       case "Paid":
         return "text-green-600 bg-green-200";
+      case "AcceptedByLender":
+      case "Accepted by Lender":
+        return "text-green-600 bg-green-200";
       default:
         if (status.includes("Rejected")) {
           return "text-red-600 bg-red-200";

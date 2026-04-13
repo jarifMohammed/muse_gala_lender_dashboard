@@ -34,6 +34,9 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
                 return "text-blue-600 bg-blue-100";
             case "Paid":
                 return "text-green-600 bg-green-100";
+            case "AcceptedByLender":
+            case "Accepted by Lender":
+                return "text-green-600 bg-green-100";
             default:
                 if (status.includes("Rejected")) {
                     return "text-red-600 bg-red-100";
