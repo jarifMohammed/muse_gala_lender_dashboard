@@ -16,6 +16,7 @@ type BookingDetails = {
   listing?: { dressName?: string };
   deliveryMethod?: string;
   totalAmount?: number;
+  lenderPrice?: number;
   createdAt?: string;
 };
 
@@ -47,7 +48,7 @@ const AboutPayment: React.FC<AboutBookingProps> = ({
         </div>
 
         <h1>Method: {bookingDetails?.deliveryMethod ? bookingDetails.deliveryMethod.replace(/([A-Z])/g, ' $1').trim() : "N/A"}</h1>
-        <h1>Dress Fees: ${bookingDetails?.totalAmount ?? 0}</h1>
+        <h1>Dress Fees: ${bookingDetails?.lenderPrice ?? 0}</h1>
         <h1>
           Paid On:{" "}
           {bookingDetails?.createdAt
