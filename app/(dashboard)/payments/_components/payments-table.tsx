@@ -26,6 +26,7 @@ type Payout = {
   lenderId: string;
   bookingId: string;
   bookingAmount: number;
+  lenderPrice: number;
   requestedAmount: number;
   commission: number;
   status: string;
@@ -109,7 +110,7 @@ const PaymentsTable = ({ token }: Props) => {
                   Booking ID
                 </TableHead>
                 <TableHead className="hidden md:table-cell text-center text-gray-500 font-semibold uppercase text-[10px] tracking-wider">
-                  Booking Amount
+                  Dress Price
                 </TableHead>
                 <TableHead className="text-center text-gray-500 font-semibold uppercase text-[10px] tracking-wider">
                   Req. Amount
@@ -157,7 +158,7 @@ const PaymentsTable = ({ token }: Props) => {
                     <TableCell className="text-center font-mono text-xs">{item._id}</TableCell>
                     <TableCell className="text-center text-sm">{item.bookingId}</TableCell>
                     <TableCell className="hidden md:table-cell text-center text-sm font-medium">
-                      ${item.bookingAmount}
+                      ${item.lenderPrice || item.bookingAmount}
                     </TableCell>
                     <TableCell className="text-center text-sm font-bold text-black">
                       ${item.requestedAmount}

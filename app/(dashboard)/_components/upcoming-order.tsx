@@ -13,14 +13,21 @@ interface Customer {
 interface MasterDress {
   _id: string;
   thumbnail?: string;
+  dressName?: string;
   name?: string;
   brand?: string;
   size?: string;
+  colors?: string[];
 }
 
 interface UpcomingOrder {
   _id: string;
   masterdressId: MasterDress;
+  dressName?: string;
+  brand?: string;
+  size?: string;
+  color?: string;
+  paymentStatus?: string;
   rentalStartDate: string;
   rentalEndDate: string;
   customer: Customer;
@@ -80,19 +87,29 @@ const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
 
               <div className="flex-1 py-2 px-4 space-y-1 h-28 min-w-0 overflow-y-auto scrollbar-hide">
                 <p className="text-[13px] font-semibold truncate uppercase">
-                  {order?.masterdressId?.name || "N/A"}
+                  {order?.dressName || order?.masterdressId?.dressName || order?.masterdressId?.name || "N/A"}
                 </p>
                 
                 <div className="flex flex-col space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[11px] text-gray-600">
+                      <span className="font-medium">Size:</span> {order?.size || order?.masterdressId?.size || "N/A"}
+                    </p>
+                    <p className="text-[11px] text-gray-600">
+                      <span className="font-medium">Color:</span> {order?.color || (order?.masterdressId?.colors && order?.masterdressId?.colors[0]) || "N/A"}
+                    </p>
+                  </div>
                   <p className="text-[11px] text-gray-600">
-                    <span className="font-medium">Brand:</span> {order?.masterdressId?.brand || "N/A"}
+                    <span className="font-medium">Customer:</span> {order?.customer?.firstName} {order?.customer?.lastName ? `${order.customer.lastName.charAt(0)}.` : ""}
                   </p>
-                  <p className="text-[11px] text-gray-600">
-                    <span className="font-medium">Size:</span> {order?.masterdressId?.size || "N/A"}
-                  </p>
-                  <p className="text-[11px] text-gray-600">
-                    <span className="font-medium">Customer:</span> {order?.customer?.firstName} {order?.customer?.lastName}
-                  </p>
+                  {order?.paymentStatus && (
+                    <p className="text-[11px] text-gray-600">
+                      <span className="font-medium">Payment:</span>{" "}
+                      <span className={order.paymentStatus === "Paid" ? "text-green-600" : "text-orange-600"}>
+                        {order.paymentStatus}
+                      </span>
+                    </p>
+                  )}
                 </div>
 
                 <div className="text-[11px] text-[#891D33] flex flex-wrap items-center gap-1 font-medium pt-0.5">

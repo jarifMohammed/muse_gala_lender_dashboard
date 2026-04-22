@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   description: 'A dashboard for managing dress rentals',
   generator: 'v0.dev',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/Logo.svg',
+    shortcut: '/Logo.svg',
+    apple: '/Logo.svg',
   },
 }
 

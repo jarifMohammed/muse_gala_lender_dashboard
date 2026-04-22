@@ -2,18 +2,29 @@
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, Handshake, X } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 
 interface Props {
     token: string;
     bookingId: string;
     lenderId: string;
     deliveryStatus: string;
+    isNextCompleted?: boolean;
 }
 
-const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => {
+const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, isNextCompleted }: Props) => {
     const queryClient = useQueryClient();
+    const [isAcceptConfirmOpen, setIsAcceptConfirmOpen] = useState(false);
+    const [isRejectConfirmOpen, setIsRejectConfirmOpen] = useState(false);
+
     const isCompleted = deliveryStatus !== "Pending";
     const isRejected = deliveryStatus.includes("Rejected");
     const isAccepted = isCompleted && !isRejected;
@@ -41,6 +52,8 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => 
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["all-bookings"] });
             toast.success(data?.message || "Operation successful");
+            setIsAcceptConfirmOpen(false);
+            setIsRejectConfirmOpen(false);
         },
         onError: (error: any) => {
             toast.error(error?.message || "Something went wrong");
@@ -55,9 +68,9 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => 
             <div className="relative flex justify-center items-center w-full mb-3">
                 {/* Progress Line extending right from center of icon */}
                 <div
-                    className={`absolute top-1/2 -translate-y-1/2 h-[2px] transition-colors duration-500 ${isCompleted ? "bg-primary" : "bg-neutral-200"
+                    className={`absolute top-1/2 -translate-y-1/2 h-[2px] transition-colors duration-500 ${isNextCompleted ? "bg-primary" : "bg-neutral-200"
                         }`}
-                    style={{ left: "50%", right: "-3rem", zIndex: 0 }}
+                    style={{ left: "50%", right: "-50%", zIndex: 0 }}
                 />
 
                 {/* Icon Circle - always centered */}
@@ -79,14 +92,14 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => 
                 {!isCompleted ? (
                     <>
                         <Button
-                            onClick={() => handleAction("accept")}
+                            onClick={() => setIsAcceptConfirmOpen(true)}
                             disabled={isPending}
-                            className="w-20 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-primary/20 hover:-translate-y-0.5"
+                            className="w-20 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-primary/20 hover:-translate-y-0.5 text-white"
                         >
                             {isPending ? "..." : "Accept"}
                         </Button>
                         <Button
-                            onClick={() => handleAction("reject")}
+                            onClick={() => setIsRejectConfirmOpen(true)}
                             disabled={isPending}
                             variant="outline"
                             className="w-20 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg transition-all duration-300 border-neutral-200 text-neutral-400 hover:bg-neutral-50 hover:text-red-500 hover:border-red-100"
@@ -104,6 +117,68 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus }: Props) => 
                     </Button>
                 )}
             </div>
+
+            {/* Accept Confirmation */}
+            <Dialog open={isAcceptConfirmOpen} onOpenChange={setIsAcceptConfirmOpen}>
+                <DialogContent className="sm:max-w-[425px] p-8">
+                    <DialogHeader className="items-center text-center space-y-4">
+                        <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Check className="h-8 w-8 text-primary" />
+                        </div>
+                        <DialogTitle className="text-xl font-bold">Accept Booking?</DialogTitle>
+                        <p className="text-sm text-neutral-500">
+                            Are you sure you want to <span className="font-semibold text-neutral-900">Accept</span> this booking? This will notify the customer and move the process forward.
+                        </p>
+                    </DialogHeader>
+                    <DialogFooter className="flex-row gap-3 mt-6">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsAcceptConfirmOpen(false)}
+                            className="flex-1 rounded-none border-neutral-200 h-12 uppercase tracking-widest text-[10px] font-bold"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => handleAction("accept")}
+                            disabled={isPending}
+                            className="flex-1 rounded-none h-12 uppercase tracking-widest text-[10px] font-bold shadow-lg shadow-primary/20 text-white"
+                        >
+                            {isPending ? "Accepting..." : "Yes, Accept"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Reject Confirmation */}
+            <Dialog open={isRejectConfirmOpen} onOpenChange={setIsRejectConfirmOpen}>
+                <DialogContent className="sm:max-w-[425px] p-8">
+                    <DialogHeader className="items-center text-center space-y-4">
+                        <div className="h-16 w-16 rounded-full bg-red-50 flex items-center justify-center">
+                            <X className="h-8 w-8 text-red-500" />
+                        </div>
+                        <DialogTitle className="text-xl font-bold text-red-600">Reject Booking?</DialogTitle>
+                        <p className="text-sm text-neutral-500">
+                            Are you sure you want to <span className="font-semibold text-red-600">Reject</span> this booking? This action cannot be undone.
+                        </p>
+                    </DialogHeader>
+                    <DialogFooter className="flex-row gap-3 mt-6">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsRejectConfirmOpen(false)}
+                            className="flex-1 rounded-none border-neutral-200 h-12 uppercase tracking-widest text-[10px] font-bold"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => handleAction("reject")}
+                            disabled={isPending}
+                            className="flex-1 rounded-none bg-red-600 hover:bg-red-700 h-12 uppercase tracking-widest text-[10px] font-bold shadow-lg shadow-red-200 text-white"
+                        >
+                            {isPending ? "Rejecting..." : "Yes, Reject"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

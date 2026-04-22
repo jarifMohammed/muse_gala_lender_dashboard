@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { format, addDays, subDays, isSameDay, isWithinInterval, startOfDay } from "date-fns";
+import { format, addDays, subDays, isSameDay, isWithinInterval, startOfDay, isBefore, isAfter } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
 
 interface Props {
   startDate: string;
@@ -32,27 +33,44 @@ const DateRange = ({
   // Calculate range whenever eventDay or rentalDuration changes
   useEffect(() => {
     if (eventDay) {
-      let start: Date;
-      let end: Date;
+      const clickedDate = startOfDay(eventDay);
+      let from: Date, to: Date;
 
       if (rentalDuration === 4) {
-        start = subDays(eventDay, 2);
-        end = addDays(eventDay, 1);
+        from = addDays(clickedDate, -2);
+        to = addDays(clickedDate, 1);
+      } else if (rentalDuration === 8) {
+        from = addDays(clickedDate, -6);
+        to = addDays(clickedDate, 1);
       } else {
-        start = subDays(eventDay, 6);
-        end = addDays(eventDay, 1);
+        from = clickedDate;
+        to = addDays(clickedDate, rentalDuration - 1);
       }
 
-      setStartDate(start.toISOString().split("T")[0]);
-      setEndDate(end.toISOString().split("T")[0]);
+      setStartDate(format(from, "yyyy-MM-dd"));
+      setEndDate(format(to, "yyyy-MM-dd"));
 
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Include both ends
+      const diffTime = Math.abs(to.getTime() - from.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       setRentalDurationDays(diffDays);
     }
   }, [eventDay, rentalDuration, setStartDate, setEndDate, setRentalDurationDays]);
 
-  const handleDayClick = (day: Date) => {
+  const handleDaySelect = (day: Date | undefined) => {
+    if (!day) return;
+
+    const today = startOfDay(new Date());
+    if (isBefore(day, today)) return;
+
+    // Reset if same date clicked
+    if (eventDay && isSameDay(day, eventDay)) {
+      setEventDay(undefined);
+      setStartDate("");
+      setEndDate("");
+      setRentalDurationDays(0);
+      return;
+    }
+
     setEventDay(startOfDay(day));
   };
 
@@ -68,24 +86,40 @@ const DateRange = ({
   };
 
   // Define modifiers for the calendar
-  const range = (startDate && endDate) ? {
-    from: new Date(startDate),
-    to: new Date(endDate)
-  } : undefined;
+  const from = startDate ? new Date(startDate) : null;
+  const to = endDate ? new Date(endDate) : null;
 
-  const modifiers: Record<string, any> = {};
-  if (eventDay) modifiers.event = eventDay;
-  if (range) modifiers.range = range;
+  const modifiers = {
+    event: (date: Date) => !!(eventDay && isSameDay(date, eventDay)),
+    range: (date: Date) => !!(from && to && (
+      isSameDay(date, from) || 
+      isSameDay(date, to) || 
+      (isAfter(date, from) && isBefore(date, to))
+    )),
+    rangeStart: (date: Date) => !!(from && isSameDay(date, from)),
+    rangeEnd: (date: Date) => !!(to && isSameDay(date, to)),
+  };
 
   const modifiersStyles = {
     event: {
-      backgroundColor: "#891d33",
+      backgroundColor: "#000000",
       color: "white",
       borderRadius: "50%",
-      fontWeight: "bold"
+      fontWeight: "bold",
+      transform: "scale(0.85)",
+      zIndex: 20
     },
     range: {
-      backgroundColor: "rgba(137, 29, 51, 0.1)",
+      backgroundColor: "rgba(137, 29, 51, 0.08)",
+      color: "#891d33",
+    },
+    rangeStart: {
+      borderTopLeftRadius: "50%",
+      borderBottomLeftRadius: "50%",
+    },
+    rangeEnd: {
+      borderTopRightRadius: "50%",
+      borderBottomRightRadius: "50%",
     }
   };
 
@@ -125,7 +159,8 @@ const DateRange = ({
             <DayPicker
               mode="single"
               selected={eventDay}
-              onSelect={setEventDay}
+              onSelect={handleDaySelect}
+              disabled={(date) => isBefore(date, startOfDay(new Date()))}
               modifiers={modifiers}
               modifiersStyles={modifiersStyles}
               className="rdp-custom"
@@ -143,43 +178,45 @@ const DateRange = ({
               <h3 className="text-sm font-semibold text-gray-900 border-b pb-2">Rental Policy</h3>
               <ul className="text-xs text-gray-600 space-y-2">
                 <li className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#891d33]"></span>
-                  <span><strong>Event Day:</strong> The day of your event.</span>
+                  <div className="w-2.5 h-2.5 rounded-full bg-black"></div>
+                  <span><strong>Event Day:</strong> The day of the actual event.</span>
                 </li>
                 {rentalDuration === 4 ? (
-                  <>
-                    <li className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#891d33]/20"></span>
-                      <span><strong>4-Day Buffer:</strong> Starts 2 days before & ends 1 day after.</span>
-                    </li>
-                  </>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 bg-[#891d33]/10 border border-[#891d33]/20"></div>
+                    <span><strong>4-Day Window:</strong> Starts 2 days before & ends 1 day after.</span>
+                  </li>
                 ) : (
-                  <>
-                    <li className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#891d33]/20"></span>
-                      <span><strong>8-Day Buffer:</strong> Starts 6 days before & ends 1 day after.</span>
-                    </li>
-                  </>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 bg-[#891d33]/10 border border-[#891d33]/20"></div>
+                    <span><strong>8-Day Window:</strong> Starts 6 days before & ends 1 day after.</span>
+                  </li>
                 )}
+                <li className="text-[10px] text-neutral-400 mt-2 italic">
+                  * Select your event day on the calendar to automatically calculate the buffer dates.
+                </li>
               </ul>
             </div>
 
             {eventDay && (
-              <div className="p-4 bg-[#891d33]/5 rounded-xl border border-[#891d33]/10 space-y-3 animate-in fade-in slide-in-from-top-1">
-                <h3 className="text-sm font-bold text-[#891d33]">Booking Summary</h3>
+              <div className="p-4 bg-[#891d33]/5 rounded-xl border border-[#891d33]/10 space-y-3 animate-in fade-in slide-in-from-top-1 shadow-sm">
+                <h3 className="text-sm font-bold text-[#891d33] flex items-center gap-2">
+                  <CalendarIcon className="h-4 w-4" />
+                  Booking Summary
+                </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Event Date</p>
-                    <p className="text-sm font-semibold">{format(eventDay, "MMM d, yyyy")}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Event Date</p>
+                    <p className="text-sm font-semibold text-gray-900">{format(eventDay, "MMM d, yyyy")}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-gray-500 uppercase">Duration</p>
-                    <p className="text-sm font-semibold">{rentalDurationDays} Days</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Total Days</p>
+                    <p className="text-sm font-semibold text-gray-900">{rentalDurationDays} Days</p>
                   </div>
                 </div>
-                <div className="pt-2 border-t border-[#891d33]/20">
-                  <p className="text-[10px] text-gray-500 uppercase">Total Rental Period</p>
-                  <p className="text-xs font-medium text-gray-700">
+                <div className="pt-3 border-t border-[#891d33]/10">
+                  <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Full Rental Period</p>
+                  <p className="text-sm font-medium text-[#891d33]">
                     {formatDate(startDate)} — {formatDate(endDate)}
                   </p>
                 </div>
@@ -188,16 +225,6 @@ const DateRange = ({
           </div>
         </div>
       </div>
-
-      <style jsx global>{`
-        .rdp-custom .rdp-day_selected {
-          background-color: transparent !important;
-          color: inherit !important;
-        }
-        .rdp-custom .rdp-day_selected:hover {
-          background-color: #f3f4f6 !important;
-        }
-      `}</style>
     </div>
   );
 };

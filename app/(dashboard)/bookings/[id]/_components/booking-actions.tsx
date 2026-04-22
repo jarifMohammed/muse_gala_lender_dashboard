@@ -6,10 +6,11 @@ import PayoutButton from "../../_components/payout-button";
 interface BookingActionsProps {
     bookingDetails: any;
     token: string;
+    userID: string;
     isLoading: boolean;
 }
 
-const BookingActions = ({ bookingDetails, token, isLoading }: BookingActionsProps) => {
+const BookingActions = ({ bookingDetails, token, userID, isLoading }: BookingActionsProps) => {
     if (isLoading || !bookingDetails) return null;
 
     return (
@@ -18,8 +19,9 @@ const BookingActions = ({ bookingDetails, token, isLoading }: BookingActionsProp
                 <PayoutButton
                     paymentStatus={bookingDetails.paymentStatus}
                     payoutStatus={bookingDetails.payoutStatus}
-                    id={bookingDetails._id}
+                    id={bookingDetails._id || bookingDetails.id}
                     token={token}
+                    userID={userID}
                 />
             </div>
         </div>

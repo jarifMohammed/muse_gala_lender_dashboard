@@ -74,7 +74,7 @@ const ContactInformation = ({
     mutationKey: ["update-user-info"],
     mutationFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${userID}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/account/${userID}`,
         {
           method: "PUT",
           headers: {

@@ -8,6 +8,7 @@ interface Payout {
     lenderId: string;
     bookingId: string;
     bookingAmount: number;
+    lenderPrice?: number;
     requestedAmount: number;
     commission: number;
     status: string;
@@ -51,8 +52,8 @@ const PayoutMobileCard = ({ payout }: PayoutMobileCardProps) => {
                         <span className="text-xs font-medium">{new Date(payout.requestedAt).toLocaleDateString()}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Booking Amt</span>
-                        <span className="text-sm font-bold text-gray-900">${payout.bookingAmount}</span>
+                        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Dress Price</span>
+                        <span className="text-sm font-bold text-gray-900">${payout.lenderPrice || payout.bookingAmount}</span>
                     </div>
                     <div className="flex flex-col text-right">
                         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Commission</span>

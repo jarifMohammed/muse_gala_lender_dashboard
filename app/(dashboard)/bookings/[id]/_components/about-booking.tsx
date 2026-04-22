@@ -84,7 +84,7 @@ const AboutBooking: React.FC<AboutBookingProps> = ({
     <div className="bg-white p-5 rounded-lg shadow-[0px_4px_10px_0px_#0000001A]">
       <div>
         <h1 className="text-xl font-medium break-all">
-          Customer Name: {bookingDetails?.customer?.firstName} {bookingDetails?.customer?.lastName}
+          Customer Name: {bookingDetails?.customer?.firstName} {bookingDetails?.customer?.lastName ? `${bookingDetails.customer.lastName.charAt(0)}.` : ""}
         </h1>
       </div>
 

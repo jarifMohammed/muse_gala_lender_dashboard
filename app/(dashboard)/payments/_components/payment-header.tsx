@@ -9,7 +9,7 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
     queryKey: ["profile", id],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/lender/account/${id}`,
         {
           headers: {
             Authorization: `bearer ${token}`,
@@ -17,7 +17,7 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
         }
       );
       const data = await res.json();
-      return data?.data;
+      return data?.data?.user || data?.data || data?.user || data;
     },
     enabled: !!token && !!id,
   });
@@ -40,7 +40,9 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
     enabled: !!token && !!profile?.stripeOnboardingCompleted,
   });
 
+  const preferredMethod = profile?.payoutSettings?.preferredMethod || "Stripe";
   const isOnboarded = profile?.stripeOnboardingCompleted;
+  const showOnboardingBanner = preferredMethod === "Stripe" && !isOnboarded;
   const dashboardUrl = goToDashboard?.data?.url;
 
   return (
@@ -68,11 +70,14 @@ const PaymentHeader = ({ token, id }: { token: string; id: string }) => {
                 )}
               </a>
             </Button>
-          ) : (
-            <div className="text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
-              Complete Payout Onboarding in Account Settings to access your dashboard.
-            </div>
-          )}
+          ) : showOnboardingBanner ? (
+            <Button
+              disabled
+              className="bg-gray-200 text-gray-500 cursor-not-allowed border-none transition-all duration-300"
+            >
+              Go to Stripe Dashboard
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>

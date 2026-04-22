@@ -78,7 +78,7 @@ export default function ChatPage() {
       )
 
       const name = chatPartner
-        ? `${chatPartner.firstName || ''} ${chatPartner.lastName || ''}`.trim()
+        ? `${chatPartner.firstName || ''} ${chatPartner.lastName ? `${chatPartner.lastName.charAt(0)}.` : ''}`.trim()
         : 'Unknown'
 
       return {

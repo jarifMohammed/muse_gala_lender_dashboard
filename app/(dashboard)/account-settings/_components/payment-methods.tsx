@@ -16,6 +16,15 @@ interface Props {
 const PaymentMethods = ({ token, userID, userInfo }: Props) => {
     const router = useRouter();
 
+    const getProfileData = (userData: any) => {
+        if (userData?.data?.user) return userData.data.user;
+        if (userData?.user) return userData.user;
+        if (userData?.data) return userData.data;
+        return userData;
+    };
+
+    const profile = getProfileData(userInfo);
+
     const { mutateAsync, isPending } = useMutation({
         mutationKey: ["add-card"],
         mutationFn: async () => {
@@ -51,7 +60,7 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
         }
     };
 
-    const hasPaymentMethod = userInfo?.stripeCustomerId && userInfo?.defaultPaymentMethodId;
+    const hasPaymentMethod = profile?.stripeCustomerId && profile?.defaultPaymentMethodId;
 
     return (
         <div className="bg-white p-5 md:p-8 rounded-xl shadow-[0px_4px_20px_0px_#0000000D] border border-gray-100">
@@ -62,7 +71,7 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
                         {hasPaymentMethod && (
                             <span className="flex items-center gap-1 text-[10px] md:text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
                                 <CheckCircle2 className="h-3 w-3" />
-                                Connected
+                                Added
                             </span>
                         )}
                     </div>
@@ -73,18 +82,28 @@ const PaymentMethods = ({ token, userID, userInfo }: Props) => {
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                     {hasPaymentMethod ? (
-                        <div className="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-lg border border-gray-100">
-                            <CreditCard className="h-5 w-5 text-gray-400 shrink-0" />
-                            <div className="text-sm">
-                                <p className="font-medium text-gray-900">Default Card Linked</p>
-                                <p className="text-xs text-gray-400">Securely stored via Stripe</p>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                            <div className="flex flex-col gap-2 px-5 py-3 bg-gray-50 rounded-xl border border-gray-100 min-w-0 md:min-w-[320px]">
+                                <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-gray-400 font-bold mb-1">
+                                    <span>Stripe Payment Details</span>
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <div className="flex justify-between items-center text-xs">
+                                        <span className="text-gray-500">Customer ID</span>
+                                        <span className="font-mono font-medium text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-100">{profile?.stripeCustomerId}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-xs">
+                                        <span className="text-gray-500">Payment ID</span>
+                                        <span className="font-mono font-medium text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-100">{profile?.defaultPaymentMethodId}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ) : null}
 
                     <Button
                         onClick={handleAddPaymentMethod}
-                        disabled={isPending || hasPaymentMethod}
+                        disabled={isPending || !!hasPaymentMethod}
                         className={`min-w-0 sm:min-w-[200px] h-11 transition-all duration-300 ${hasPaymentMethod
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed border-none"
                             : "bg-[#54051d] hover:bg-[#400416] text-white shadow-lg shadow-red-900/10"

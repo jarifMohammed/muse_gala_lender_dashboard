@@ -36,6 +36,7 @@ export interface Booking {
     address?: string;
   };
   pickupLocation?: string;
+  isManualBooking?: boolean;
   statusHistory: StatusHistory[];
   allocatedLender: {
     lenderId: string;

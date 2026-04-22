@@ -16,9 +16,10 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   token: string;
+  userID: string;
 }
 
-const BookingsDetails = ({ token }: Props) => {
+const BookingsDetails = ({ token, userID }: Props) => {
   const router = useRouter();
   const params = useParams();
   const id = params.id;
@@ -60,6 +61,7 @@ const BookingsDetails = ({ token }: Props) => {
         <BookingActions
           bookingDetails={bookingDetails}
           token={token}
+          userID={userID}
           isLoading={isLoading}
         />
       </div>

@@ -24,7 +24,7 @@ import {
 interface Props {
   deliveryStatus: string;
   statusValue: string;
-  IconName: LucideIcon;
+  IconName: React.ElementType;
   btnName: string;
   token: string;
   bookingId: string;
@@ -33,6 +33,8 @@ interface Props {
   negativeStatusValue?: string;
   negativeBtnName?: string;
   completedBtnName?: string;
+  isNextCompleted?: boolean;
+  isLastStep?: boolean;
 }
 
 const UpdateStatus = ({
@@ -47,10 +49,13 @@ const UpdateStatus = ({
   negativeStatusValue,
   negativeBtnName,
   completedBtnName,
+  isNextCompleted,
+  isLastStep,
 }: Props) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [isPickupOpen, setIsPickupOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // Shipping states
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -99,6 +104,7 @@ const UpdateStatus = ({
       toast.success(data?.message || "Status updated successfully");
       setIsOpen(false);
       setIsPickupOpen(false);
+      setIsConfirmOpen(false);
     },
     onError: (error) => {
       toast.error(error?.message || "Failed to update status");
@@ -116,6 +122,11 @@ const UpdateStatus = ({
       return;
     }
 
+    // For all other statuses, show a confirmation modal first
+    setIsConfirmOpen(true);
+  };
+
+  const executeStatusUpdate = async () => {
     try {
       await mutateAsync(undefined);
     } catch (error) {
@@ -168,10 +179,12 @@ const UpdateStatus = ({
       <div className="relative flex justify-center items-center w-full mb-3">
         {/* Progress Line extending right from center of icon */}
         <div
-          className={`absolute top-1/2 -translate-y-1/2 h-[2px] transition-colors duration-500 ${effectiveIsCompleted ? (isFailed ? "bg-red-400" : "bg-primary") : "bg-neutral-200"
-            } ${statusValue === "Dress Returned" ? "hidden" : "block"}`}
-          style={{ left: "50%", right: "-3rem", zIndex: 0 }}
+          className={`absolute top-1/2 -translate-y-1/2 h-[2px] transition-colors duration-500 ${isNextCompleted ? (isFailed ? "bg-red-400" : "bg-primary") : "bg-neutral-200"
+            } ${isLastStep ? "hidden" : "block"}`}
+          style={{ left: "50%", right: "-50%", zIndex: 0 }}
         />
+
+
 
         {/* Icon Circle - always centered */}
         <div
@@ -235,6 +248,37 @@ const UpdateStatus = ({
         )}
       </div>
 
+      {/* Confirmation Dialog */}
+      <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <DialogContent className="sm:max-w-[425px] p-8">
+          <DialogHeader className="items-center text-center space-y-4">
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <StandardIcon className="h-8 w-8 text-primary" />
+            </div>
+            <DialogTitle className="text-xl font-bold">Confirm Status Update</DialogTitle>
+            <p className="text-sm text-neutral-500">
+              Are you sure you want to mark this booking as <span className="font-semibold text-neutral-900 capitalize">"{btnName}"</span>? This action will progress the timeline.
+            </p>
+          </DialogHeader>
+          <DialogFooter className="flex-row gap-3 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setIsConfirmOpen(false)}
+              className="flex-1 rounded-none border-neutral-200 h-12 uppercase tracking-widest text-[10px] font-bold"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={executeStatusUpdate}
+              disabled={isPending}
+              className="flex-1 rounded-none h-12 uppercase tracking-widest text-[10px] font-bold shadow-lg shadow-primary/20"
+            >
+              {isPending ? "Updating..." : "Yes, Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Shipping Details Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -266,13 +310,14 @@ const UpdateStatus = ({
               />
             </div>
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending} className="rounded-none w-full h-12 uppercase tracking-widest text-[10px] font-bold">
                 {isPending ? "Submitting..." : "Confirm Shipping"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
+
       {/* Ready for Pickup Dialog */}
       <Dialog open={isPickupOpen} onOpenChange={setIsPickupOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -312,7 +357,7 @@ const UpdateStatus = ({
               </div>
             </div>
             <DialogFooter className="pt-4">
-              <Button type="submit" disabled={isPending} className="w-full">
+              <Button type="submit" disabled={isPending} className="w-full rounded-none h-12 uppercase tracking-widest text-[10px] font-bold">
                 {isPending ? "Submitting..." : "Confirm Ready Details"}
               </Button>
             </DialogFooter>
@@ -321,6 +366,7 @@ const UpdateStatus = ({
       </Dialog>
     </div>
   );
+
 };
 
 export default UpdateStatus;

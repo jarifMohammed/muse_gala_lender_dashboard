@@ -8,6 +8,7 @@ import { toast } from "sonner";
 interface Customer {
   _id?: string;
   firstName?: string;
+  lastName?: string;
 }
 
 interface Booking {
@@ -105,7 +106,11 @@ const AboutDisputes: React.FC<AboutDisputesProps> = ({
         </div>
         <div className="flex justify-between border-b pb-1">
           <span className="text-gray-500">Customer</span>
-          <span className="font-medium">{disputesDetails?.booking?.customer?.firstName ?? "N/A"}</span>
+          <span className="font-medium">
+            {disputesDetails?.booking?.customer?.firstName 
+              ? `${disputesDetails.booking.customer.firstName} ${disputesDetails.booking.customer.lastName ? `${disputesDetails.booking.customer.lastName.charAt(0)}.` : ""}`.trim()
+              : "N/A"}
+          </span>
         </div>
         <div className="flex justify-between border-b pb-1">
           <span className="text-gray-500">Reported At</span>

@@ -66,14 +66,14 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
                         <div className="flex items-center gap-1.5">
                             <p className="font-semibold text-sm break-all">
                                 {item?.customer?.firstName ? (
-                                    `${item.customer.firstName} ${item.customer.lastName || ""}`
+                                    `${item.customer.firstName} ${item.customer.lastName ? `${item.customer.lastName.charAt(0)}.` : ""}`.trim()
                                 ) : (
                                     item?.customer?.email || "N/A"
                                 )}
                             </p>
                             <button
                                 onClick={() => {
-                                    const nameToCopy = item?.customer?.firstName ? `${item.customer.firstName} ${item.customer.lastName || ""}`.trim() : item?.customer?.email || "N/A";
+                                    const nameToCopy = item?.customer?.firstName ? `${item.customer.firstName} ${item.customer.lastName ? `${item.customer.lastName.charAt(0)}.` : ""}`.trim() : item?.customer?.email || "N/A";
                                     handleCopy(nameToCopy, "Customer Name");
                                 }}
                                 className="text-gray-400 hover:text-gray-600 active:scale-95 transition-all outline-none"
