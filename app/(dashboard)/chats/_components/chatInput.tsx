@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Send, Paperclip, Loader2, Plus } from 'lucide-react'
+import { Loader2, Plus, Send, X } from 'lucide-react'
 
 interface Props {
   onSend: (text: string, file?: File) => void
@@ -23,10 +23,10 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
   }
 
   useEffect(() => {
-    if (!disabled) {
+    if (!disabled && window.matchMedia('(min-width: 768px)').matches) {
       inputRef.current?.focus()
     }
-  }, [message, disabled])
+  }, [disabled])
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
@@ -35,11 +35,25 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
   }
 
   return (
-    <div className="p-3 sm:p-4 bg-white border-t md:border-t-0 md:bg-gray-50/30">
-      <div className="flex items-center gap-2 sm:gap-4 max-w-5xl mx-auto">
+    <div className="bg-white px-3 py-3 sm:px-4">
+      {file && (
+        <div className="mx-auto mb-2 flex max-w-4xl items-center justify-between gap-2 rounded-md border border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-600">
+          <span className="min-w-0 truncate">Attached: {file.name}</span>
+          <button
+            type="button"
+            onClick={() => setFile(null)}
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-white hover:text-red-500"
+            aria-label="Remove attachment"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      <div className="mx-auto flex max-w-4xl items-end gap-2 sm:gap-3">
         {/* Plus / File Upload */}
         <label
-          className={`shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 cursor-pointer transition-colors ${disabled ? 'opacity-50 cursor-not-allowed' : ''
+          className={`flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-md bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200 ${disabled ? 'cursor-not-allowed opacity-50' : ''
             }`}
         >
           <Plus className="h-5 w-5" />
@@ -60,12 +74,9 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            className="rounded-full py-2.5 px-5 border-none w-full outline-none bg-gray-100 text-sm placeholder:text-gray-500 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-1 focus:ring-[#54051d]/20"
+            className="h-10 w-full rounded-md border-none bg-gray-100 px-4 py-2.5 pr-4 text-sm outline-none placeholder:text-gray-500 focus:ring-1 focus:ring-[#54051d]/20 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={disabled}
           />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden sm:block">
-            <Paperclip className="h-4 w-4" />
-          </button>
         </div>
 
         {/* Send Button */}
@@ -74,7 +85,7 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
           onClick={handleSend}
           size="icon"
           disabled={disabled || (!message.trim() && !file)}
-          className="rounded-full h-10 w-10 bg-[#54051d] hover:bg-[#54051d]/90 text-white shadow-md shadow-[#54051d]/20 transition-all active:scale-95 disabled:opacity-50 shrink-0"
+          className="h-10 w-10 shrink-0 rounded-md bg-[#54051d] text-white shadow-md shadow-[#54051d]/20 transition-all hover:bg-[#54051d]/90 active:scale-95 disabled:opacity-50"
         >
           {disabled ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -83,19 +94,6 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
           )}
         </Button>
       </div>
-
-      {/* File preview */}
-      {file && (
-        <div className="mt-2 text-xs text-gray-500">
-          Attached: {file.name}
-          <button
-            onClick={() => setFile(null)}
-            className="ml-2 text-red-500 hover:text-red-700"
-          >
-            Remove
-          </button>
-        </div>
-      )}
     </div>
   )
 }

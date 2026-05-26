@@ -24,6 +24,7 @@ interface ChatLayoutProps {
   onSelect: (id: string) => void
   messages: {
     _id: string
+    chatRoom?: string | { _id?: string }
     message: string
     sender: {
       _id: string
@@ -64,8 +65,6 @@ export default function ChatLayout({
   const isClosed = activeConv?.status === 'closed'
   // const isFlagged = activeConv?.flagged?.status === true
 
-  console.log('active conversations', activeConv)
-
   // 🔄 Handle conversation switch with loading state
   const handleSelectConversation = async (id: string) => {
     setLocalLoading(true)
@@ -76,15 +75,21 @@ export default function ChatLayout({
   // 🧠 Optimized message formatting
   const formattedMessages = useMemo(() => {
     if (!currentUserId || !messages.length) return []
-    return messages.map(m => ({
-      id: m._id,
-      content: m.message,
-      sender: m.sender._id === currentUserId,
-      timestamp: m.createdAt,
-      rawSenderId: m.sender._id,
-      attachments: m.attachments,
-    }))
-  }, [messages, currentUserId])
+    return messages
+      .filter((m) => {
+        const messageRoomId =
+          typeof m.chatRoom === 'string' ? m.chatRoom : m.chatRoom?._id
+        return !messageRoomId || messageRoomId === activeConversation
+      })
+      .map(m => ({
+        id: m._id,
+        content: m.message,
+        sender: m.sender._id === currentUserId,
+        timestamp: m.createdAt,
+        rawSenderId: m.sender._id,
+        attachments: m.attachments,
+      }))
+  }, [messages, currentUserId, activeConversation])
 
   // 📨 Message sending
   const handleSendMessage = async (text: string, file?: File) => {
@@ -110,16 +115,16 @@ export default function ChatLayout({
   }
 
   return (
-    <div className="font-sans px-0 sm:px-6 md:px-8">
+    <div className="font-sans h-full min-h-0 px-0 md:px-0">
       {!isConnected && (
-        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4 text-sm mx-4 sm:mx-0">
-          Connecting to chat...
+        <div className="mx-4 mb-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700 md:mx-0">
+          Connecting to chat. Messages still send through the API.
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row h-[calc(100vh-80px)] md:h-[500px] lg:h-[650px] gap-0 md:gap-6 overflow-hidden">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white md:h-[min(720px,calc(100vh-220px))] md:flex-row md:gap-5 md:rounded-lg md:border md:border-gray-200 md:bg-white md:shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
         {/* ✅ Sidebar - Hidden on mobile if a conversation is active */}
-        <div className={`${activeConversation ? 'hidden md:block' : 'block'} w-full md:w-1/3 px-0 md:px-0`}>
+        <div className={`${activeConversation ? 'hidden md:flex' : 'flex'} h-full min-h-0 w-full flex-col md:w-[360px] md:flex-none md:border-r md:border-gray-100`}>
           <ChatList
             conversations={conversations}
             activeConversation={activeConversation}
@@ -128,25 +133,27 @@ export default function ChatLayout({
         </div>
 
         {/* ✅ Main Chat Window - Hidden on mobile if no conversation is active */}
-        <div className={`${activeConversation ? 'flex' : 'hidden md:flex'} w-full md:w-2/3 flex-col h-full md:h-auto`}>
-          <ChatHeader
-            name={activeConv?.name}
-            orderId={activeConv?.orderId?.dressName}
-            onBack={() => onSelect('')}
-          />
+        <div className={`${activeConversation ? 'flex' : 'hidden md:flex'} h-full min-h-0 w-full flex-1 flex-col bg-white`}>
+          <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-white">
+            <ChatHeader
+              name={activeConv?.name}
+              orderId={activeConv?.orderId}
+              dressName={activeConv?.dressName}
+              onBack={() => onSelect('')}
+            />
 
-          <div className="flex-1 flex flex-col border-none md:border border-[#E6E6E6] mt-0 md:mt-5 rounded-none md:rounded-xl overflow-hidden bg-white mx-0 md:mx-0 mb-0 md:mb-0">
             {/* ✅ Messages */}
             {(isLoading || localLoading) && (
-              <div className="flex justify-center items-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                <span className="ml-2 text-sm text-gray-500">
+              <div className="flex items-center justify-center border-b border-gray-100 bg-white px-4 py-3">
+                <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-[#54051d]"></div>
+                <span className="ml-2 text-xs font-medium text-gray-500">
                   Loading messages...
                 </span>
               </div>
             )}
 
             <ChatMessages
+              key={activeConversation}
               messages={formattedMessages}
               currentUserId={currentUserId}
               chatRoomId={activeConversation}
@@ -157,15 +164,15 @@ export default function ChatLayout({
             />
 
             {/* ✅ Closed or Flagged Conversation Logic */}
-            <div className="border-t">
+            <div className="border-t border-gray-100 bg-white">
               {isClosed ? (
-                <div className="flex items-center justify-center py-4 text-gray-500 text-sm">
+                <div className="flex items-center justify-center px-4 py-4 text-sm text-gray-500">
                   This conversation has been closed.
                 </div>
               ) : (
                 <ChatInput
                   onSend={handleSendMessage}
-                  disabled={isSending || !isConnected}
+                  disabled={isSending}
                 />
               )}
             </div>

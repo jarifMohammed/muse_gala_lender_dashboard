@@ -5,7 +5,15 @@ import { Input } from '@/components/ui/input'
 import { useEffect, useMemo, useState } from 'react'
 
 interface Props {
-  conversations: any[]
+  conversations: Array<{
+    id: string
+    name?: string
+    email?: string
+    orderId?: string
+    dressName?: string
+    timestamp?: string
+    preview?: string
+  }>
   activeConversation: string
   onSelect: (id: string) => void
 }
@@ -37,6 +45,7 @@ export default function ChatList({
         `<span class="bg-yellow-200 font-semibold">$1</span>`
       )
     } catch (e) {
+      void e
       return String(text)
     }
   }
@@ -53,6 +62,7 @@ export default function ChatList({
         String(c.name || '').toLowerCase().includes(lowerQuery) ||
         String(c.email || '').toLowerCase().includes(lowerQuery) ||
         String(c.orderId || '').toLowerCase().includes(lowerQuery) ||
+        String(c.dressName || '').toLowerCase().includes(lowerQuery) ||
         String(c.timestamp || '').toLowerCase().includes(lowerQuery) ||
         String(c.preview || '').toLowerCase().includes(lowerQuery)
       )
@@ -60,14 +70,14 @@ export default function ChatList({
   }, [debouncedSearch, conversations])
 
   return (
-    <div className="w-full md:w-1/3 flex flex-col h-full bg-white md:bg-transparent">
+    <div className="flex h-full min-h-0 w-full flex-col bg-white">
       {/* ✅ Search Field */}
-      <div className="px-5 md:px-0 mt-2 mb-4">
+      <div className="border-b border-gray-100 bg-white px-4 pb-3 pt-2 md:px-4 md:pt-4">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search"
-            className="pl-10 h-11 md:h-12 border-none bg-gray-100 rounded-full focus-visible:ring-1 focus-visible:ring-blue-100 text-sm placeholder:text-gray-400 shadow-none outline-none"
+            placeholder="Search messages"
+            className="h-11 rounded-md border-none bg-gray-100 pl-10 text-sm shadow-none outline-none placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-[#54051d]/20"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -76,11 +86,11 @@ export default function ChatList({
 
 
       {/* ✅ Conversations */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 overflow-y-auto px-2 py-2 scrollbar-hide">
         {/* ✅ No Results Found */}
         {filteredConversations.length === 0 && (
-          <div className="text-center py-10 text-gray-500">
-            <p className="text-xs md:text-sm tracking-wide">No results found for:</p>
+          <div className="rounded-md border border-dashed border-gray-200 px-4 py-10 text-center text-gray-500">
+            <p className="text-xs md:text-sm tracking-wide">No results found</p>
             <p className="font-semibold mt-1 text-gray-700 text-sm">
               {debouncedSearch}
             </p>
@@ -90,12 +100,12 @@ export default function ChatList({
         {filteredConversations.map((conversation) => (
           <div
             key={conversation.id}
-            className={`px-4 py-3 flex items-center gap-3 cursor-pointer transition-colors active:bg-gray-100 md:hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-blue-50 md:bg-red-50' : ''
+            className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-3 transition-colors active:bg-gray-100 md:hover:bg-gray-50 ${activeConversation === conversation.id ? 'bg-[#54051d]/10 ring-1 ring-[#54051d]/10' : ''
               }`}
             onClick={() => onSelect(conversation.id)}
           >
             <div className="relative shrink-0">
-              <div className="bg-gray-200 rounded-full w-12 h-12 md:w-12 md:h-12 flex items-center justify-center overflow-hidden">
+              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f7f2ee] ring-1 ring-black/5 md:h-12 md:w-12">
                 <User className="h-6 w-6 text-gray-500" />
               </div>
             </div>
@@ -104,33 +114,34 @@ export default function ChatList({
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-baseline gap-2">
                 <p
-                  className="font-semibold text-sm md:text-md truncate text-gray-900"
+                  className="truncate text-sm font-semibold text-gray-950"
                   dangerouslySetInnerHTML={{
                     __html: highlightText(conversation.name, debouncedSearch),
                   }}
                 />
-                <span className="text-[10px] md:text-xs text-gray-400 shrink-0">
+                <span className="shrink-0 text-[10px] font-medium text-gray-400 md:text-xs">
                   {conversation.timestamp}
                 </span>
               </div>
 
               <div className="flex justify-between items-center gap-2 mt-0.5">
                 <p
-                  className={`text-xs md:text-sm truncate flex-1 ${activeConversation === conversation.id ? 'text-gray-800' : 'text-gray-500'
+                  className={`flex-1 truncate text-xs md:text-sm ${activeConversation === conversation.id ? 'text-gray-800' : 'text-gray-500'
                     }`}
                   dangerouslySetInnerHTML={{
                     __html: highlightText(conversation.preview, debouncedSearch),
                   }}
                 />
-                {/* Unread indicator placeholder */}
-                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0"></div>
               </div>
 
               {conversation.orderId && (
                 <p
-                  className="text-[9px] md:text-[10px] text-gray-400 mt-1 uppercase truncate"
+                  className="mt-1 truncate text-[9px] uppercase tracking-wide text-gray-400 md:text-[10px]"
                   dangerouslySetInnerHTML={{
-                    __html: `ID: ${highlightText(
+                    __html: `${conversation.dressName
+                      ? `${highlightText(conversation.dressName, debouncedSearch)} · `
+                      : ''
+                      }ID: ${highlightText(
                       conversation.orderId,
                       debouncedSearch
                     )}`,

@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import { useUserStore } from '@/zustand/useUserStore'
 import { useConversations } from '@/hooks/useConversations'
 import { useChat } from '@/hooks/useChat'
 import ChatLayout from './chatLayout'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface Participant {
   _id: string
@@ -19,6 +20,7 @@ interface Participant {
 interface Conversation {
   id: string
   orderId: string
+  dressName: string
   preview: string
   timestamp: string
   participants: Participant[]
@@ -28,6 +30,7 @@ interface Conversation {
 
 interface Message {
   _id: string
+  chatRoom?: string | { _id?: string }
   message: string
   sender: {
     _id: string
@@ -45,7 +48,11 @@ interface Message {
 }
 
 export default function ChatPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const chatIdFromUrl = searchParams.get('id') || ''
   const [activeConversation, setActiveConversation] = useState<string>('')
+  const appliedUrlChatIdRef = useRef<string>('')
 
   // ✅ Get current logged-in user
   const { user } = useUserStore()
@@ -65,7 +72,6 @@ export default function ChatPage() {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    refetch: refetchMessages,
   } = useChat(activeConversation)
 
   // ✅ Format conversations properly
@@ -80,13 +86,22 @@ export default function ChatPage() {
       const name = chatPartner
         ? `${chatPartner.firstName || ''} ${chatPartner.lastName ? `${chatPartner.lastName.charAt(0)}.` : ''}`.trim()
         : 'Unknown'
+      const booking = conv.bookingId
 
       return {
         id: conv._id,
         orderId:
-          typeof conv.bookingId === 'object'
-            ? conv.bookingId?._id || JSON.stringify(conv.bookingId)
-            : conv.bookingId,
+          typeof booking === 'object'
+            ? booking?._id || JSON.stringify(booking)
+            : booking,
+        dressName:
+          typeof booking === 'object'
+            ? booking?.dressName ||
+            booking?.listing?.dressName ||
+            booking?.masterdressId?.dressName ||
+            booking?.masterdressId?.name ||
+            ''
+            : '',
         preview: conv.lastMessage || 'No messages yet',
         timestamp: new Date(
           conv.lastMessageAt || conv.updatedAt
@@ -104,23 +119,34 @@ export default function ChatPage() {
       }
     }) || []
 
+  // ✅ Open a chat directly when routed from a booking action
+  useEffect(() => {
+    if (chatIdFromUrl && appliedUrlChatIdRef.current !== chatIdFromUrl) {
+      appliedUrlChatIdRef.current = chatIdFromUrl
+      setActiveConversation(chatIdFromUrl)
+      refetchConversations()
+    }
+  }, [chatIdFromUrl, refetchConversations])
+
   // ✅ Set first conversation active by default (Desktop only)
   useEffect(() => {
-    if (conversations.length > 0 && !activeConversation) {
+    if (conversations.length > 0 && !activeConversation && !chatIdFromUrl) {
       if (typeof window !== "undefined" && window.innerWidth >= 768) {
         setActiveConversation(conversations[0].id);
       }
     }
-  }, [conversations, activeConversation]);
+  }, [conversations, activeConversation, chatIdFromUrl]);
 
   const handleSelectConversation = async (id: string) => {
+    appliedUrlChatIdRef.current = id
     setActiveConversation(id)
-    if (id) await refetchMessages()
+    router.replace(id ? `/chats?id=${id}` : '/chats', { scroll: false })
   }
 
   // ✅ Format messages with attachments
   const formattedMessages: Message[] = messages.map((msg) => ({
     _id: msg._id,
+    chatRoom: msg.chatRoom,
     message: msg.message,
     sender: {
       _id: msg.sender._id,
@@ -159,7 +185,7 @@ export default function ChatPage() {
     )
   }
 
-  if (!conversations.length) {
+  if (!conversations.length && !chatIdFromUrl) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -173,9 +199,9 @@ export default function ChatPage() {
   }
 
   return (
-    <div className={`px-0 md:px-6 ${activeConversation ? 'h-screen overflow-hidden' : ''}`}>
-      <div className={`${activeConversation ? 'hidden md:block' : 'block'}`}>
-        <h2 className="text-2xl md:text-3xl pl-5 md:pl-[30px] font-bold md:font-light tracking-tight md:tracking-widest pt-5 md:pt-8 pb-2 md:pb-5">
+    <div className={`flex min-h-0 flex-1 flex-col px-0 md:px-0 ${activeConversation ? 'overflow-hidden' : ''}`}>
+      <div className={`${activeConversation ? 'hidden md:block' : 'block'} shrink-0 bg-white px-4 py-4 md:bg-transparent md:px-0 md:pb-5 md:pt-8`}>
+        <h2 className="text-xl font-semibold tracking-tight text-gray-950 md:text-3xl md:font-light md:tracking-widest">
           {activeConversation ? 'Chats' : 'Messages'}
         </h2>
       </div>

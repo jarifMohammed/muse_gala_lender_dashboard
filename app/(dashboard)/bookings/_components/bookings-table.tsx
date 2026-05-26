@@ -15,8 +15,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookingsResponse } from "@/types/bookings/bookingTypes";
 import { useBookingsFilter } from "./states/useBookingsFilter";
 import Link from "next/link";
-import PayoutButton from "./payout-button";
-import AcceptRejectButton from "./accept-reject-button";
 import {
   Tooltip,
   TooltipContent,
@@ -26,13 +24,14 @@ import {
 import { MoreHorizontal } from "lucide-react";
 
 import BookingCard from "./booking-card";
+import MessageCustomerButton from "@/components/message-customer-button";
 
 interface Props {
   token: string;
   userID: string;
 }
 
-const BookingsTable = ({ token, userID }: Props) => {
+const BookingsTable = ({ token }: Props) => {
   const [page, setPage] = React.useState(1);
 
   const { search, startDate, endDate, deliveryType, status } = useBookingsFilter();
@@ -54,7 +53,7 @@ const BookingsTable = ({ token, userID }: Props) => {
     },
   });
 
-  const apiBookings = data?.data ?? [];
+  const apiBookings = React.useMemo(() => data?.data ?? [], [data?.data]);
 
   // Helper function to get current status from statusHistory
   const getCurrentStatus = (
@@ -238,6 +237,22 @@ const BookingsTable = ({ token, userID }: Props) => {
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center space-x-2">
                         <TooltipProvider delayDuration={0}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span>
+                                <MessageCustomerButton
+                                  bookingId={item?._id}
+                                  accessToken={token}
+                                  iconOnly
+                                  variant="ghost"
+                                  className="text-neutral-500 hover:text-primary hover:bg-primary/5"
+                                />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              <p className="text-xs font-medium">Message Customer</p>
+                            </TooltipContent>
+                          </Tooltip>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button

@@ -1,9 +1,9 @@
 "use client";
 
-import { BookingsResponse } from "@/types/bookings/bookingTypes";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import AboutBooking from "./about-booking";
+import type { BookingDetails as AboutBookingDetails } from "./about-booking";
 import AboutPayment from "./about-payment";
 import AboutReturn from "./about-return";
 import DisputeForm from "./dispute-form";
@@ -12,19 +12,32 @@ import Link from "next/link";
 import BookingActions from "./booking-actions";
 import { Button } from "@/components/ui/button";
 import { MoveLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 interface Props {
   token: string;
   userID: string;
 }
 
-const BookingsDetails = ({ token, userID }: Props) => {
-  const router = useRouter();
-  const params = useParams();
-  const id = params.id;
+type BookingDetailsData = AboutBookingDetails & {
+  paymentStatus?: string;
+  payoutStatus?: string;
+  deliveryMethod?: string;
+  returnMethod?: string;
+  returnNotes?: string;
+  returnConfirmedAt?: string;
+  returnTrackingNumber?: string;
+  returnReceiptPhoto?: string;
+  returnDroppedOffAt?: string;
+  allocatedLender?: {
+    lenderId?: string;
+  };
+};
 
-  const { data: bookingDetails, isLoading } = useQuery<any>({
+const BookingsDetails = ({ token, userID }: Props) => {
+  const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  const { data: bookingDetails, isLoading } = useQuery<BookingDetailsData>({
     queryKey: ["all-bookings", id],
     queryFn: async () => {
       const res = await fetch(
@@ -39,20 +52,21 @@ const BookingsDetails = ({ token, userID }: Props) => {
       const json = await res.json();
       return json.data;
     },
+    enabled: Boolean(id),
   });
 
   return (
     <div>
       <div className="mb-4">
         <Button
+          asChild
           className="p-0 h-auto hover:bg-transparent"
           effect="expandIcon"
           icon={MoveLeft}
           iconPlacement="left"
           variant="link"
-          onClick={() => router.back()}
         >
-          Back Now
+          <Link href="/bookings">Back to Bookings</Link>
         </Button>
       </div>
 
@@ -71,7 +85,7 @@ const BookingsDetails = ({ token, userID }: Props) => {
           bookingDetails={bookingDetails}
           token={token}
           isLoading={isLoading}
-          lenderId={bookingDetails?.allocatedLender?.lenderId}
+          lenderId={bookingDetails?.allocatedLender?.lenderId || ""}
         />
       </div>
 

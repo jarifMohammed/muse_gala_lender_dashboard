@@ -8,6 +8,7 @@ import Link from "next/link";
 import AcceptRejectButton from "./accept-reject-button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import MessageCustomerButton from "@/components/message-customer-button";
 
 interface BookingCardProps {
     item: Booking;
@@ -47,11 +48,11 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
 
     const isPending = item.deliveryStatus === "Pending";
 
-    const formatAddress = (address: any) => {
+    const formatAddress = (address: Booking["shippingAddress"] | Booking["pickupLocation"]) => {
         if (!address) return "N/A";
         if (typeof address === "string") return address;
-        const { street, city, state, postcode } = address;
-        return [street, city, state, postcode].filter(Boolean).join(", ") || "N/A";
+        const { street, city, state, postcode, address: fullAddress } = address;
+        return fullAddress || [street, city, state, postcode].filter(Boolean).join(", ") || "N/A";
     };
 
     const displayAddress = formatAddress(item.shippingAddress || item.pickupLocation);
@@ -186,6 +187,12 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
                     />
                 </div>
             )}
+
+            <MessageCustomerButton
+                bookingId={item._id}
+                accessToken={token}
+                className="w-full"
+            />
         </div>
     );
 };

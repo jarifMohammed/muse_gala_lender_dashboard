@@ -21,7 +21,7 @@ interface Sender {
 
 interface Message {
   _id: string
-  chatRoom: string
+  chatRoom: string | { _id?: string }
   sender: Sender
   message: string
   attachments: Attachment[]
@@ -43,6 +43,9 @@ interface MessageResponse {
     }
   }
 }
+
+const getMessageRoomId = (message: Message) =>
+  typeof message.chatRoom === 'string' ? message.chatRoom : message.chatRoom?._id
 
 export const useChat = (roomId?: string) => {
   const queryClient = useQueryClient()
@@ -118,7 +121,10 @@ export const useChat = (roomId?: string) => {
   })
 
   // ✅ Flatten all messages from all pages (oldest first for display)
-  const allMessages = data?.pages.flatMap((page) => page.messages) || []
+  const allMessages =
+    data?.pages
+      .flatMap((page) => page.messages)
+      .filter((message) => getMessageRoomId(message) === roomId) || []
 
   // 🔌 Optimized room joining/leaving
   useEffect(() => {
@@ -157,10 +163,10 @@ export const useChat = (roomId?: string) => {
         currentRoom: currentRoomRef.current,
       })
 
-      const targetRoom = msg.chatRoom
+      const targetRoom = getMessageRoomId(msg)
 
       // Only update if this message is for the current room
-      if (targetRoom !== currentRoomRef.current) {
+      if (!targetRoom || targetRoom !== currentRoomRef.current) {
         console.log('⚠️ Message for different room, skipping update')
         return
       }
@@ -201,10 +207,10 @@ export const useChat = (roomId?: string) => {
   const handleMessageEdited = useCallback(
     (editedMessage: Message) => {
       console.log('✏️ Message edited:', editedMessage._id)
-      const targetRoom = editedMessage.chatRoom
+      const targetRoom = getMessageRoomId(editedMessage)
 
       // Only update if this message is for the current room
-      if (targetRoom !== currentRoomRef.current) {
+      if (!targetRoom || targetRoom !== currentRoomRef.current) {
         console.log('⚠️ Edited message for different room, skipping update')
         return
       }

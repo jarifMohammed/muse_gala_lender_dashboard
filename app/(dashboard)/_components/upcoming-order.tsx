@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import MessageCustomerButton from "@/components/message-customer-button";
 
 interface Customer {
   _id: string;
@@ -36,9 +37,10 @@ interface UpcomingOrder {
 interface UpcomingOrderProps {
   upcomingOrders: UpcomingOrder[];
   isLoading: boolean;
+  token: string;
 }
 
-const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
+const UpcomingOrder = ({ upcomingOrders, isLoading, token }: UpcomingOrderProps) => {
   const OrderSkeleton = () => (
     <div className="flex bg-[#FEFAF6] rounded-[8px] overflow-hidden">
       <Skeleton className="w-24 h-28 rounded-l-[8px]" />
@@ -122,6 +124,13 @@ const UpcomingOrder = ({ upcomingOrders, isLoading }: UpcomingOrderProps) => {
                     {new Date(order?.rentalEndDate).toLocaleDateString()}
                   </span>
                 </div>
+
+                <MessageCustomerButton
+                  bookingId={order._id}
+                  accessToken={token}
+                  size="sm"
+                  className="h-7 px-2 text-[11px]"
+                />
               </div>
             </div>
           ))

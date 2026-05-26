@@ -9,8 +9,6 @@ import {
   Edit3,
   Trash2,
   X,
-  Check,
-  X as CloseIcon,
   AlertTriangle,
   User,
 } from 'lucide-react'
@@ -70,20 +68,21 @@ export default function ChatMessages({
   const orderedMessages = [...messages].sort(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   )
+  const messageCount = orderedMessages.length
 
   // Auto-scroll logic
   useEffect(() => {
     if (!containerRef.current || !isAutoScroll) return
 
-    const isNewMessage = orderedMessages.length > prevMessagesLengthRef.current
+    const isNewMessage = messageCount > prevMessagesLengthRef.current
     if (isNewMessage) {
       containerRef.current.scrollTo({
         top: containerRef.current.scrollHeight,
         behavior: 'smooth',
       })
     }
-    prevMessagesLengthRef.current = orderedMessages.length
-  }, [orderedMessages.length, isAutoScroll])
+    prevMessagesLengthRef.current = messageCount
+  }, [messageCount, isAutoScroll])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -92,8 +91,8 @@ export default function ChatMessages({
       behavior: 'auto',
     })
     setIsAutoScroll(true)
-    prevMessagesLengthRef.current = orderedMessages.length
-  }, [chatRoomId])
+    prevMessagesLengthRef.current = messageCount
+  }, [chatRoomId, messageCount])
 
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return
@@ -168,9 +167,8 @@ export default function ChatMessages({
             alt={fileName}
             width={200}
             height={200}
-            className="rounded-xl max-w-[280px] md:max-w-[400px] cursor-pointer object-cover transition-transform group-hover:scale-[1.02]"
+            className="max-h-64 w-full max-w-[280px] cursor-pointer rounded-md object-cover transition-transform group-hover:scale-[1.01] md:max-h-80 md:max-w-[400px]"
             onClick={() => setPreviewImage(url)}
-            style={{ width: '100%', height: '300px' }}
             unoptimized={url.startsWith('blob:') || url.startsWith('data:')}
           />
           <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition">
@@ -217,7 +215,7 @@ export default function ChatMessages({
 
   if (isLoading && orderedMessages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex flex-1 items-center justify-center bg-[#fbfaf9]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#891D33] mx-auto mb-2"></div>
           <p className="text-gray-400 text-sm">Loading messages...</p>
@@ -228,10 +226,10 @@ export default function ChatMessages({
 
   if (!orderedMessages?.length) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-400 text-sm mb-2">No messages yet</p>
-          <p className="text-gray-400 text-xs">Start a conversation!</p>
+      <div className="flex flex-1 items-center justify-center bg-[#fbfaf9] px-6">
+        <div className="max-w-xs rounded-md border border-dashed border-gray-200 bg-white px-6 py-8 text-center">
+          <p className="mb-2 text-sm font-semibold text-gray-600">No messages yet</p>
+          <p className="text-xs leading-relaxed text-gray-400">Send the first message to start this conversation.</p>
         </div>
       </div>
     )
@@ -242,7 +240,7 @@ export default function ChatMessages({
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto p-4 md:p-6 bg-white scrollbar-hide"
+        className="flex-1 overflow-y-auto bg-[#fbfaf9] px-3 py-4 scrollbar-hide sm:px-5 md:px-6 md:py-6"
       >
         {hasNextPage && (
           <div className="flex justify-center mb-6 sticky top-0 z-10">
@@ -265,7 +263,7 @@ export default function ChatMessages({
           </div>
         )}
 
-        <div className="flex flex-col gap-2">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-2">
           {orderedMessages.map((message, index) => {
             const isMyMessage = message.sender
             const nextMessageIsSameSender = orderedMessages[index + 1]?.sender === isMyMessage
@@ -289,32 +287,32 @@ export default function ChatMessages({
               >
                 {/* Avatar for receiver */}
                 {!isMyMessage && (
-                  <div className={`w-8 h-8 rounded-full bg-gray-100 shrink-0 flex items-center justify-center overflow-hidden transition-opacity ${!nextMessageIsSameSender ? 'opacity-100' : 'opacity-0'}`}>
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/5 transition-opacity ${!nextMessageIsSameSender ? 'opacity-100' : 'opacity-0'}`}>
                     <User className="w-5 h-5 text-gray-500" />
                   </div>
                 )}
 
                 <div
-                  className={`relative max-w-[75%] sm:max-w-[70%] px-4 py-2.5 text-sm transition-all ${isMyMessage
-                    ? 'bg-[#54051d] text-white rounded-[20px] rounded-br-[4px]'
-                    : 'bg-[#E4E6EB] text-gray-900 rounded-[20px] rounded-bl-[4px]'
+                  className={`group relative max-w-[82%] px-3.5 py-2.5 text-sm shadow-sm transition-all sm:max-w-[72%] md:max-w-[66%] ${isMyMessage
+                    ? 'rounded-2xl rounded-br-[4px] bg-[#54051d] text-white'
+                    : 'rounded-2xl rounded-bl-[4px] border border-gray-100 bg-white text-gray-900'
                     }`}
                 >
                   {/* Edit/Delete buttons (only for my messages) */}
                   {isMyMessage &&
                     hoveredMessageId === message.id &&
                     !editingMessageId && (
-                      <div className="absolute top-1/2 -translate-y-1/2 -left-20 flex gap-1 bg-white rounded-full px-2 py-1 shadow-sm border border-gray-100 scale-90">
+                      <div className="absolute -left-20 top-1/2 hidden -translate-y-1/2 gap-1 rounded-full border border-gray-100 bg-white px-2 py-1 shadow-sm md:flex">
                         <button
                           onClick={() => handleEditClick(message)}
-                          className="p-1 px-1.5 hover:bg-gray-50 rounded-full transition-colors"
+                          className="rounded-full p-1 px-1.5 transition-colors hover:bg-gray-50"
                           title="Edit"
                         >
                           <Edit3 className="h-3.5 w-3.5 text-gray-500" />
                         </button>
                         <button
                           onClick={() => handleDeleteClick(message.id)}
-                          className="p-1 px-1.5 hover:bg-gray-50 rounded-full transition-colors"
+                          className="rounded-full p-1 px-1.5 transition-colors hover:bg-gray-50"
                           title="Delete"
                         >
                           <Trash2 className="h-3.5 w-3.5 text-red-400" />
@@ -324,11 +322,11 @@ export default function ChatMessages({
 
                   {/* Message content */}
                   {editingMessageId === message.id ? (
-                    <div className="mb-1 min-w-[200px]">
+                    <div className="mb-1 min-w-[220px] max-w-[72vw]">
                       <textarea
                         value={editText}
                         onChange={(e) => setEditText(e.target.value)}
-                        className="w-full p-2 border-none bg-white/10 rounded-lg text-white placeholder:text-white/50 resize-none focus:outline-none focus:ring-1 focus:ring-white/20 text-sm"
+                        className="w-full resize-none rounded-md border-none bg-white/10 p-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-white/20"
                         rows={3}
                         autoFocus
                         disabled={isEditing}
@@ -367,9 +365,26 @@ export default function ChatMessages({
 
                   {/* Tooltip-style time */}
                   {!nextMessageIsSameSender && (
-                    <span className={`absolute -bottom-5 whitespace-nowrap text-[10px] text-gray-400 font-medium ${isMyMessage ? 'right-1' : 'left-1'}`}>
+                    <span className={`absolute -bottom-5 whitespace-nowrap text-[10px] font-medium text-gray-400 ${isMyMessage ? 'right-1' : 'left-1'}`}>
                       {time}
                     </span>
+                  )}
+
+                  {isMyMessage && !editingMessageId && !nextMessageIsSameSender && (
+                    <div className="absolute -bottom-6 left-0 flex gap-1 md:hidden">
+                      <button
+                        onClick={() => handleEditClick(message)}
+                        className="rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-gray-500 shadow-sm ring-1 ring-gray-100"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(message.id)}
+                        className="rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-red-500 shadow-sm ring-1 ring-gray-100"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </div>
               </motion.div>
