@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: true,
+  trustHost: true,
   secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
