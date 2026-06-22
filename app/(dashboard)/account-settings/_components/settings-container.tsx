@@ -6,6 +6,7 @@ import LocationSettings from "./location-settings";
 import PasswordSecurity from "./password-security";
 import PaymentMethods from "./payment-methods";
 import PayoutSettings from "./payout-settings";
+import ReturnAddressSettings from "./return-address-settings";
 import { useQuery } from "@tanstack/react-query";
 import SettingsAction from "./settings-action";
 
@@ -36,6 +37,7 @@ const SettingContainer = ({ token, userID }: Props) => {
     <div className="mt-8 space-y-8 pb-10">
       <ContactInformation userInfo={userInfo} token={token} userID={userID} />
       <LocationSettings userInfo={userInfo} token={token} userID={userID} />
+      <ReturnAddressSettings userInfo={userInfo} token={token} userID={userID} />
       <PaymentMethods userInfo={userInfo} token={token} userID={userID} />
       <PayoutSettings userInfo={userInfo} token={token} userID={userID} />
       <PasswordSecurity token={token} userID={userID} />

@@ -257,7 +257,13 @@ const UpdateStatus = ({
             </div>
             <DialogTitle className="text-xl font-bold">Confirm Status Update</DialogTitle>
             <p className="text-sm text-neutral-500">
-              Are you sure you want to mark this booking as <span className="font-semibold text-neutral-900 capitalize">"{btnName}"</span>? This action will progress the timeline.
+              {statusValue === "Return Due" ? (
+                "Clicking this will change the status to Return Due and automatically email the return link to the customer."
+              ) : (
+                <>
+                  Are you sure you want to mark this booking as <span className="font-semibold text-neutral-900 capitalize">"{btnName}"</span>? This action will progress the timeline.
+                </>
+              )}
             </p>
           </DialogHeader>
           <DialogFooter className="flex-row gap-3 mt-6">

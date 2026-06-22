@@ -119,7 +119,7 @@ const StaticStatus = ({
     const isKnown = knownStatuses.some((ks) => s.includes(ks));
     if (!isKnown) return "Return Due";
 
-    return "IN USE";
+    return "Initiate Return";
   };
 
   const step3Label = getStep3Label(normStatus);
