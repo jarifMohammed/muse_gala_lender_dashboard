@@ -17,15 +17,16 @@ interface Props {
     bookingId: string;
     lenderId: string;
     deliveryStatus: string;
+    paymentStatus?: string;
     isNextCompleted?: boolean;
 }
 
-const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, isNextCompleted }: Props) => {
+const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, paymentStatus, isNextCompleted }: Props) => {
     const queryClient = useQueryClient();
     const [isAcceptConfirmOpen, setIsAcceptConfirmOpen] = useState(false);
     const [isRejectConfirmOpen, setIsRejectConfirmOpen] = useState(false);
 
-    const isPaymentFailed = deliveryStatus.includes("PaymentFailed") || deliveryStatus.includes("PaymentRetryScheduled") || deliveryStatus.includes("failed_user_action_required");
+    const isPaymentFailed = paymentStatus === "Failed" || paymentStatus === "RetryPending";
     const isCompleted = deliveryStatus !== "Pending" && !isPaymentFailed;
     const isRejected = deliveryStatus.includes("Rejected");
     const isAccepted = isCompleted && !isRejected;
@@ -92,10 +93,11 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, isNextComple
             <div className="flex gap-2">
                 {isPaymentFailed ? (
                     <Button
-                        disabled
-                        className={`w-28 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg bg-neutral-50 border-neutral-100 opacity-60 cursor-default text-red-500`}
+                        onClick={() => handleAction("accept")}
+                        disabled={isPending}
+                        className={`w-28 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg bg-red-50 hover:bg-red-100 border border-red-200 shadow-sm text-red-600 transition-all duration-300`}
                     >
-                        Payment Failed
+                        {isPending ? "..." : "Retry Payment"}
                     </Button>
                 ) : !isCompleted ? (
                     <>

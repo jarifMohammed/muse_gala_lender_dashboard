@@ -21,11 +21,12 @@ const Dress = ({ className }: { className?: string }) => (
 
 interface Props {
   deliveryStatus?: string;
+  paymentStatus?: string;
   token: string;
   lenderId: string;
 }
 
-const PickupStatus = ({ deliveryStatus, token, lenderId }: Props) => {
+const PickupStatus = ({ deliveryStatus, paymentStatus, token, lenderId }: Props) => {
   const params = useParams();
   const bookingId = params.id;
 
@@ -131,6 +132,7 @@ const StaticStatus = ({
         <div className="flex-1 min-w-[140px] relative">
           <AcceptStatus
             deliveryStatus={deliveryStatus as string}
+            paymentStatus={paymentStatus as string}
             token={token}
             bookingId={bookingId as string}
             lenderId={lenderId}

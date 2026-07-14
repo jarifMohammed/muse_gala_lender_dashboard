@@ -7,6 +7,7 @@ interface Props {
   bookingDetails: {
     deliveryMethod?: string;
     deliveryStatus?: string;
+    paymentStatus?: string;
   };
   token: string;
   isLoading: boolean;
@@ -42,12 +43,14 @@ const DeliveryStatus = ({ bookingDetails, token, isLoading, lenderId }: Props) =
       {bookingDetails?.deliveryMethod === "Shipping" ? (
         <ShippingStatus
           deliveryStatus={bookingDetails?.deliveryStatus}
+          paymentStatus={bookingDetails?.paymentStatus}
           token={token}
           lenderId={lenderId}
         />
       ) : (
         <PickupStatus
           deliveryStatus={bookingDetails?.deliveryStatus}
+          paymentStatus={bookingDetails?.paymentStatus}
           token={token}
           lenderId={lenderId}
         />
