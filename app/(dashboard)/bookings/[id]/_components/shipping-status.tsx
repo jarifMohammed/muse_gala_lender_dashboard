@@ -46,7 +46,7 @@ const ShippingStatus = ({ deliveryStatus, token, lenderId }: Props) => {
 
   const getCurrentIndex = (status: string) => {
     const s = status.toLowerCase();
-    if (s === "pending") return 0;
+    if (s === "pending" || s.includes("paymentfailed") || s.includes("paymentretryscheduled") || s.includes("failed_user_action_required")) return 0;
     if (s.includes("accept") || s === "confirmed") return 1;
     if (s === "shippedtocustomer") return 2;
     if (s === "dress returned") return 6;

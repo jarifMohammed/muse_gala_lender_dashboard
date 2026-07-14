@@ -25,7 +25,8 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, isNextComple
     const [isAcceptConfirmOpen, setIsAcceptConfirmOpen] = useState(false);
     const [isRejectConfirmOpen, setIsRejectConfirmOpen] = useState(false);
 
-    const isCompleted = deliveryStatus !== "Pending";
+    const isPaymentFailed = deliveryStatus.includes("PaymentFailed") || deliveryStatus.includes("PaymentRetryScheduled") || deliveryStatus.includes("failed_user_action_required");
+    const isCompleted = deliveryStatus !== "Pending" && !isPaymentFailed;
     const isRejected = deliveryStatus.includes("Rejected");
     const isAccepted = isCompleted && !isRejected;
 
@@ -60,7 +61,7 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, isNextComple
         },
     });
 
-    const IconName = isRejected ? X : isAccepted ? Check : Handshake;
+    const IconName = isRejected || isPaymentFailed ? X : isAccepted ? Check : Handshake;
 
     return (
         <div className="flex flex-col items-center group">
@@ -75,21 +76,28 @@ const AcceptStatus = ({ token, bookingId, lenderId, deliveryStatus, isNextComple
 
                 {/* Icon Circle - always centered */}
                 <div
-                    className={`h-14 w-14 rounded-full flex items-center justify-center z-10 transition-all duration-300 border-2 shadow-sm flex-shrink-0 ${isCompleted
-                        ? isRejected
+                    className={`h-14 w-14 rounded-full flex items-center justify-center z-10 transition-all duration-300 border-2 shadow-sm flex-shrink-0 ${isCompleted || isPaymentFailed
+                        ? isRejected || isPaymentFailed
                             ? "bg-red-500 border-red-500 text-white scale-110 shadow-red-200"
                             : "bg-primary border-primary text-white scale-110 shadow-primary/20"
                         : "bg-white border-neutral-200 text-neutral-400"
                         }`}
                 >
                     <IconName
-                        className={`h-6 w-6 transition-transform duration-300 ${isCompleted ? "scale-110" : ""}`}
+                        className={`h-6 w-6 transition-transform duration-300 ${(isCompleted || isPaymentFailed) ? "scale-110" : ""}`}
                     />
                 </div>
             </div>
 
             <div className="flex gap-2">
-                {!isCompleted ? (
+                {isPaymentFailed ? (
+                    <Button
+                        disabled
+                        className={`w-28 text-[9px] font-semibold uppercase tracking-wider py-1 h-8 rounded-lg bg-neutral-50 border-neutral-100 opacity-60 cursor-default text-red-500`}
+                    >
+                        Payment Failed
+                    </Button>
+                ) : !isCompleted ? (
                     <>
                         <Button
                             onClick={() => setIsAcceptConfirmOpen(true)}

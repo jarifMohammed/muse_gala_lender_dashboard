@@ -54,9 +54,16 @@ const BookingCard = ({ item, token }: BookingCardProps) => {
         const { street, city, state, postcode, address: fullAddress } = address;
         return fullAddress || [street, city, state, postcode].filter(Boolean).join(", ") || "N/A";
     };
-
-    const displayAddress = formatAddress(item.shippingAddress || item.pickupLocation);
-
+    const displayAddress = formatAddress(item.shippingAddress || item.pickupLocation) !== "N/A"
+        ? formatAddress(item.shippingAddress || item.pickupLocation)
+        : [
+            (item as any).address,
+            (item as any).suburb,
+            (item as any).city,
+            (item as any).state,
+            (item as any).postcode,
+            (item as any).country
+        ].filter(Boolean).join(", ") || "N/A";
     return (
         <div className="bg-white p-4 rounded-xl shadow-[0px_2px_8px_0px_#00000010] space-y-3 border border-gray-100">
             {/* Header: Customer Name, Order ID & View Button */}
